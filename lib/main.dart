@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'firebase_options.dart';
@@ -23,15 +24,46 @@ void main() async {
 
   Gemini.init(apiKey: "AIzaSyADGh1jYjjOA5hNJVVFUzBwNZ-SVMYdqXc");
 
+=======
+import 'app/modules/civilian_dashboard/views/civilian_dashboard_view.dart';
+import 'app/modules/predictive_ai/views/predictive_ai_page.dart';
+import 'app/modules/learn/views/learn_page.dart';
+import 'app/modules/refugee_camp/views/refugee_camp_page.dart';
+import 'app/modules/sos/views/sos_page.dart';
+import 'app/modules/user_guide/views/user_guide_page.dart';
+import 'app/modules/call/views/call_page.dart';
+import 'app/modules/profile/views/profile_page.dart';
+import 'app/modules/community_history/views/community_history_page.dart';
+
+void main() {
+>>>>>>> 59efa42 (Initial commit)
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+<<<<<<< HEAD
   const MyApp({super.key});
+=======
+  const MyApp({Key? key}) : super(key: key);
+
+  // Define the named routes here.
+  static final Map<String, WidgetBuilder> routes = {
+    '/': (context) => const CivilianDashboardView(),
+    '/predictive_ai': (context) => const PredictiveAIPage(),
+    '/learn': (context) => const LearnPage(),
+    '/refugee_camp': (context) => const RefugeeCampPage(),
+    '/sos': (context) => const SOSPage(),
+    '/user_guide': (context) => const UserGuidePage(),
+    '/call': (context) => const CallPage(),
+    '/profile': (context) => const ProfilePage(),
+    '/community_history': (context) => const CommunityHistoryPage(),
+  };
+>>>>>>> 59efa42 (Initial commit)
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+<<<<<<< HEAD
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
       initialRoute: '/', // ✅ Set the initial page
@@ -43,6 +75,12 @@ class MyApp extends StatelessWidget {
         '/gov_settings': (context) => SettingsPage(),
         '/ai_chatbot': (context) => AIChatbotScreen(), // ✅ E-Sahyog AI Chatbot
       },
+=======
+      title: 'Disaster Management App',
+      debugShowCheckedModeBanner: false,
+      routes: routes,
+      initialRoute: '/',
+>>>>>>> 59efa42 (Initial commit)
     );
   }
 }
