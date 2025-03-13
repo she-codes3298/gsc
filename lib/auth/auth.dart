@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../app/central/modules/dashboard/dashboard_page.dart'; // Central Dashboard
-import '../app/state/modules/dashboard/dashboard_page.dart'; // State Dashboard
-import '../app/modules/login/login_page.dart'; // Login Page
+import '../app/central/modules/dashboard/dashboard_page.dart'; 
+import '../app/state/modules/dashboard/dashboard_page.dart'; 
+import '../app/modules/login/login_page.dart'; 
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
