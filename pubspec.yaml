@@ -17,6 +17,10 @@ dependencies:
   google_sign_in: ^6.2.1   # Google Sign-In SDK
   cloud_firestore: ^4.15.5 # Firestore (if you're storing user details)
   firebase_analytics: ^10.10.5 # Google Analytics for Firebase
+  google_generative_ai: ^0.4.6
+  flutter_gemini: ^3.0.0
+  image_picker: ^1.1.2
+  dash_chat_2: ^0.0.21
 
 dev_dependencies:
   flutter_native_splash: ^2.3.3
