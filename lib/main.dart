@@ -34,8 +34,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      initialRoute: '/gov_dashboard', // ✅ Set the initial page
+      initialRoute: '/', // ✅ Set the initial page
       routes: {
+        '/': (context) => const LoginPage(),
         '/gov_dashboard': (context) => const CentralDashboardPage(),
         '/gov_community': (context) => CommunityPage(),
         '/gov_inventory': (context) => InventoryPage(),
