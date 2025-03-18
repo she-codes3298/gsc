@@ -24,12 +24,16 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
   }
 
   final List<String> _customPrompts = [
-    "What should I do during an earthquake?",
-    "How can I prepare for a flood?",
-    "What are the emergency contacts for a cyclone?",
-    "How do I use the SOS feature?",
-    "Where can I find refugee centers near me?",
-    "How do I update my medical records in the app?",
+    "How can we coordinate emergency response for an earthquake?",
+    "What steps should be taken to manage flood-affected areas?",
+    "How do we set up emergency shelters for cyclone victims?",
+    "What protocols should be followed for issuing an SOS alert?",
+    "How can we update the database of active refugee centers?",
+    "What are the best practices for maintaining medical records of displaced individuals?",
+    "How do we distribute essential supplies during a disaster?",
+    "What are the guidelines for deploying rescue teams?",
+    "How can we track real-time disaster reports from different regions?",
+    "How do we ensure proper communication between central and state emergency teams?",
   ];
 
   bool _showPrompts = true;
