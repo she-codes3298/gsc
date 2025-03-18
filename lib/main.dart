@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'firebase_options.dart';
 import 'app/modules/login/login_page.dart';
 import 'app/central/modules/dashboard/dashboard_page.dart';
@@ -19,6 +20,8 @@ void main() async {
   } catch (e) {
     print("Firebase initialization failed: $e");
   }
+
+  Gemini.init(apiKey: "AIzaSyADGh1jYjjOA5hNJVVFUzBwNZ-SVMYdqXc");
 
   runApp(const MyApp());
 }

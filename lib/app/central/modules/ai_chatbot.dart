@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gemini/flutter_gemini.dart'; // For Gemini API
-import 'package:dash_chat_2/dash_chat_2.dart'; // For chat UI
-import 'package:image_picker/image_picker.dart'; // For image upload
-import 'dart:convert'; // For base64 encoding
-import 'dart:io'; // For File operations
+import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'dart:io';
 
 class AIChatbotScreen extends StatefulWidget {
   @override
@@ -11,13 +11,18 @@ class AIChatbotScreen extends StatefulWidget {
 }
 
 class _AIChatbotScreenState extends State<AIChatbotScreen> {
-  final Gemini _gemini = Gemini.instance; // Initialize Gemini
-  final ChatUser _user = ChatUser(id: '1', firstName: 'User'); // Chat user
-  final ChatUser _bot = ChatUser(id: '2', firstName: 'E-sahyog'); // Chat bot
-  final List<ChatMessage> _messages = []; // List of chat messages
-  final ImagePicker _picker = ImagePicker(); // For image upload
+  late final Gemini _gemini;
+  final ChatUser _user = ChatUser(id: '1', firstName: 'User');
+  final ChatUser _bot = ChatUser(id: '2', firstName: 'E-sahyog');
+  final List<ChatMessage> _messages = [];
+  final ImagePicker _picker = ImagePicker();
 
-  // List of custom prompts
+  @override
+  void initState() {
+    super.initState();
+    _gemini = Gemini.instance;
+  }
+
   final List<String> _customPrompts = [
     "What should I do during an earthquake?",
     "How can I prepare for a flood?",
@@ -27,22 +32,17 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
     "How do I update my medical records in the app?",
   ];
 
-  bool _showPrompts = true; // Controls visibility of the prompt list
+  bool _showPrompts = true;
 
   void _sendMessage(ChatMessage message) async {
-    // Add user message to the chat
     setState(() {
       _messages.insert(0, message);
-      _showPrompts = false; // Hide prompts after sending a message
+      _showPrompts = false;
     });
 
-    // Send the message to Gemini API
     try {
-      print('Sending message: ${message.text}'); // Log the message
       final response = await _gemini.text(message.text);
       if (response != null) {
-        print('Received response: ${response.output}'); // Log the response
-        // Add bot response to the chat
         setState(() {
           _messages.insert(
             0,
@@ -55,8 +55,6 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
         });
       }
     } catch (e) {
-      print('Error: $e'); // Log the error
-      // Handle errors
       setState(() {
         _messages.insert(
           0,
@@ -71,14 +69,11 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
   }
 
   void _sendImage() async {
-    // Pick an image from the gallery
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      // Read the image file and encode it as base64
       final bytes = await File(image.path).readAsBytes();
       final base64Image = base64Encode(bytes);
 
-      // Add image message to the chat
       setState(() {
         _messages.insert(
           0,
@@ -96,15 +91,11 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
         );
       });
 
-      // Send the image to Gemini API
       try {
-        print('Sending image: ${image.path}'); // Log the image
         final response = await _gemini.text(
-          'Describe this image: $base64Image', // Send base64 image as a prompt
+          'Describe this image: $base64Image',
         );
         if (response != null) {
-          print('Received response: ${response.output}'); // Log the response
-          // Add bot response to the chat
           setState(() {
             _messages.insert(
               0,
@@ -117,8 +108,6 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
           });
         }
       } catch (e) {
-        print('Error: $e'); // Log the error
-        // Handle errors
         setState(() {
           _messages.insert(
             0,
@@ -137,53 +126,61 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('E-Sahyog'),
-        backgroundColor: Colors.blue[100],
+        title: Text('E-Sahyog', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
+            Navigator.pop(context);
           },
         ),
       ),
-      backgroundColor: Colors.blue[100],
+      backgroundColor: Colors.grey[900],
       body: Stack(
         children: [
           Column(
             children: [
-              // Chat interface
               Expanded(
                 child: DashChat(
                   currentUser: _user,
                   messages: _messages,
-                  onSend: (ChatMessage message) {
-                    _sendMessage(message); // Send text message
-                  },
+                  messageOptions: MessageOptions(
+                    containerColor: const Color.fromARGB(255, 66, 66, 66),
+                    textColor: Colors.white,
+                  ),
                   inputOptions: InputOptions(
+                    inputTextStyle: TextStyle(color: Colors.white),
+                    inputDecoration: InputDecoration(
+                      fillColor: Colors.grey[800],
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     trailing: [
                       IconButton(
-                        icon: Icon(Icons.image),
-                        onPressed: _sendImage, // Send image message
+                        icon: Icon(Icons.image, color: Colors.white),
+                        onPressed: _sendImage,
                       ),
                     ],
                   ),
+                  onSend: (ChatMessage message) {
+                    _sendMessage(message);
+                  },
                 ),
               ),
             ],
           ),
-          // Custom prompts overlay
           if (_showPrompts)
             Positioned(
-              bottom: 80, // Adjust position to be above the input box
+              bottom: 80,
               left: 0,
               right: 0,
               child: Container(
-                height: 100, // Adjust height as needed
+                height: 100,
                 decoration: BoxDecoration(
-                  color: Colors.blue[100], // Lightest blue background
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(10),
-                  ), // Fixed syntax
+                  color: Colors.black.withOpacity(0.8),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                 ),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -193,12 +190,10 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[80], // Button color
-                          foregroundColor: Colors.grey[900], // Text color
+                          backgroundColor: Colors.grey[700],
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              20,
-                            ), // Rounded corners
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           padding: EdgeInsets.symmetric(
                             horizontal: 16,
@@ -206,7 +201,6 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                           ),
                         ),
                         onPressed: () {
-                          // Automatically send the selected prompt
                           _sendMessage(
                             ChatMessage(
                               user: _user,
@@ -217,7 +211,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                         },
                         child: Text(
                           _customPrompts[index],
-                          style: TextStyle(fontSize: 14), // Fixed syntax
+                          style: TextStyle(fontSize: 14),
                         ),
                       ),
                     );
