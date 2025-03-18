@@ -24,16 +24,16 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
   }
 
   final List<String> _customPrompts = [
-    "How can we coordinate emergency response for an earthquake?",
-    "What steps should be taken to manage flood-affected areas?",
-    "How do we set up emergency shelters for cyclone victims?",
-    "What protocols should be followed for issuing an SOS alert?",
-    "How can we update the database of active refugee centers?",
-    "What are the best practices for maintaining medical records of displaced individuals?",
-    "How do we distribute essential supplies during a disaster?",
-    "What are the guidelines for deploying rescue teams?",
-    "How can we track real-time disaster reports from different regions?",
-    "How do we ensure proper communication between central and state emergency teams?",
+    "How to manage an earthquake response?",
+    "Steps to handle a flood?",
+    "How to set up shelters for cyclone victims?",
+    "What are the SOS alert protocols?",
+    "How to update refugee center data?",
+    "Best practices for medical records?",
+    "How to distribute relief supplies?",
+    "Guidelines for rescue team deployment?",
+    "Tracking real-time disaster updates?",
+    "How to improve emergency communication?",
   ];
 
   bool _showPrompts = true;
@@ -155,10 +155,19 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                   inputOptions: InputOptions(
                     inputTextStyle: TextStyle(color: Colors.white),
                     inputDecoration: InputDecoration(
-                      fillColor: Colors.grey[800],
+                      fillColor: Colors.black,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.grey, width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.grey, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.white, width: 2),
                       ),
                     ),
                     trailing: [
