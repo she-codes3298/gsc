@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../app/central/modules/dashboard/dashboard_page.dart';
-import '../app/central/modules/dashboard_page.dart';
+import '../app/state/modules/dashboard/dashboard_page.dart';
 import '../app/modules/login/login_page.dart';
 
 class AuthService {
