@@ -4,7 +4,8 @@ import '../../../auth/auth.dart'; // Import AuthService
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final AuthService _authService = AuthService(); // Create an instance of AuthService
+    final AuthService _authService =
+        AuthService(); // Create an instance of AuthService
 
     return Drawer(
       backgroundColor: Colors.black,
@@ -29,39 +30,56 @@ class AppDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.dashboard, color: Colors.white),
-            title: const Text(
-              "Dashboard",
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () => Navigator.pop(context),
+
+          // ✅ Dashboard Button
+          _buildDrawerItem(
+            context,
+            icon: Icons.dashboard,
+            label: "Dashboard",
+            route: '/gov_dashboard',
           ),
-          ListTile(
-            leading: const Icon(Icons.group, color: Colors.white),
-            title: const Text(
-              "Community",
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {},
+
+          // ✅ Community Button
+          _buildDrawerItem(
+            context,
+            icon: Icons.group,
+            label: "Community",
+            route: '/gov_community',
           ),
-          ListTile(
-            leading: const Icon(Icons.storage, color: Colors.white),
-            title: const Text(
-              "Inventory",
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {},
+
+          // ✅ Inventory Button
+          _buildDrawerItem(
+            context,
+            icon: Icons.storage,
+            label: "Inventory",
+            route: '/gov_inventory',
           ),
-          ListTile(
-            leading: const Icon(Icons.settings, color: Colors.white),
-            title: const Text(
-              "Settings",
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {},
+
+          // ✅ Settings Button
+          _buildDrawerItem(
+            context,
+            icon: Icons.settings,
+            label: "Settings",
+            route: '/gov_settings',
           ),
+
           const Divider(color: Colors.white30),
+
+          // ✅ E-Sahyog AI Chatbot Button
+          ListTile(
+            leading: Image.asset('assets/chatbot.png', width: 30, height: 30),
+            title: const Text(
+              "E-Sahyog AI",
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              _navigateTo(context, '/ai_chatbot');
+            },
+          ),
+
+          const Divider(color: Colors.white30),
+
+          // ✅ Logout Button
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text("Logout", style: TextStyle(color: Colors.red)),
@@ -72,5 +90,37 @@ class AppDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // ✅ Function to build a Drawer item
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String route,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(label, style: const TextStyle(color: Colors.white)),
+      onTap: () {
+        _navigateTo(context, route);
+      },
+    );
+  }
+
+  // ✅ FIX: Navigate correctly & close drawer properly
+  void _navigateTo(BuildContext context, String route) {
+    Navigator.pop(context); // Close the drawer
+
+    if (ModalRoute.of(context)?.settings.name != route) {
+      Navigator.popUntil(
+        context,
+        (route) => route.isFirst,
+      ); // Remove all previous routes
+      Navigator.pushReplacementNamed(
+        context,
+        route,
+      ); // Navigate to the selected page
+    }
   }
 }

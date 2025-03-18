@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'app/modules/login/login_page.dart';
-import 'app/central/modules/dashboard/dashboard_page.dart'; // Central Dashboard
+import 'app/central/modules/dashboard/dashboard_page.dart';
+import 'app/central/modules/community/community_page.dart';
+import 'app/central/modules/inventory/inventory_page.dart';
+import 'app/central/modules/settings/settings_page.dart';
+import 'app/central/modules/ai_chatbot.dart'; // ✅ Import Chatbot Page
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    print("Firebase initialized successfully"); // Debug print
+    print("Firebase initialized successfully");
   } catch (e) {
-    print("Firebase initialization failed: $e"); // Debug print
+    print("Firebase initialization failed: $e");
   }
+
   runApp(const MyApp());
 }
 
@@ -25,42 +31,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const SplashScreen(),
-    );
-  }
-}
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    print("SplashScreen initialized"); // Debug print
-    Future.delayed(const Duration(seconds: 3), () {
-      print("Navigating to LoginPage"); // Debug print
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-        ),
-      );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print("Building SplashScreen"); // Debug print
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Image.asset('assets/logo.png', width: 150),
-      ),
+      initialRoute: '/gov_dashboard', // ✅ Set the initial page
+      routes: {
+        '/gov_dashboard': (context) => const CentralDashboardPage(),
+        '/gov_community': (context) => CommunityPage(),
+        '/gov_inventory': (context) => InventoryPage(),
+        '/gov_settings': (context) => SettingsPage(),
+        '/ai_chatbot': (context) => AIChatbotScreen(), // ✅ E-Sahyog AI Chatbot
+      },
     );
   }
 }
