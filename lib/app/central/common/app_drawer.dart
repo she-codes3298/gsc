@@ -32,42 +32,53 @@ class AppDrawer extends StatelessWidget {
           ),
 
           // ✅ Dashboard Button
-          _buildDrawerItem(
-            context,
-            icon: Icons.dashboard,
-            label: "Dashboard",
-            route: '/gov_dashboard',
+          ListTile(
+            leading: Icon(Icons.dashboard, color: Colors.white30),
+            title: const Text(
+              "Dashboard",
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () => _navigateTo(context, '/gov_dashboard'),
           ),
 
           // ✅ Community Button
-          _buildDrawerItem(
-            context,
-            icon: Icons.group,
-            label: "Community",
-            route: '/gov_community',
+          ListTile(
+            leading: Icon(Icons.group, color: Colors.white30),
+            title: const Text(
+              "Community",
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () => _navigateTo(context, '/gov_community'),
           ),
 
           // ✅ Inventory Button
-          _buildDrawerItem(
-            context,
-            icon: Icons.storage,
-            label: "Inventory",
-            route: '/gov_inventory',
+          ListTile(
+            leading: Icon(Icons.storage, color: Colors.white30),
+            title: const Text(
+              "Inventory",
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () => _navigateTo(context, '/gov_inventory'),
           ),
 
           // ✅ Settings Button
-          _buildDrawerItem(
-            context,
-            icon: Icons.settings,
-            label: "Settings",
-            route: '/gov_settings',
+          ListTile(
+            leading: Icon(Icons.settings, color: Colors.white30),
+            title: const Text(
+              "Settings",
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () => _navigateTo(context, '/gov_settings'),
           ),
-
-          const Divider(color: Colors.white30),
 
           // ✅ E-Sahyog AI Chatbot Button
           ListTile(
-            leading: Image.asset('assets/chatbot.png', width: 30, height: 30),
+            leading: Image.asset(
+              'assets/chatbot.png',
+              width: 30,
+              height: 30,
+              color: Colors.white30,
+            ),
             title: const Text(
               "E-Sahyog AI",
               style: TextStyle(color: Colors.white),

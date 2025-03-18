@@ -89,7 +89,7 @@ class DashboardView extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/add_refugee_camp');
+                      Navigator.pushNamed(context, '/camp');
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
