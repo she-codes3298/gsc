@@ -82,6 +82,34 @@ class DashboardView extends StatelessWidget {
               ),
 
               const SizedBox(height: 20), // ✅ Adds spacing to prevent overflow
+              // ✅ Add Refugee Camp Button
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/add_refugee_camp');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: Colors.blueAccent, // ✅ Matches theme
+                      elevation: 5,
+                    ),
+                    child: const Text(
+                      "Add Refugee Camp",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
