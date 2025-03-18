@@ -96,7 +96,12 @@ class DashboardView extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      backgroundColor: Colors.blueAccent, // ✅ Matches theme
+                      backgroundColor: const Color.fromARGB(
+                        255,
+                        124,
+                        138,
+                        163,
+                      ), // ✅ Matches theme
                       elevation: 5,
                     ),
                     child: const Text(
