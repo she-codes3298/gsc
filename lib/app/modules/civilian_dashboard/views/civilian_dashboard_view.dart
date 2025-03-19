@@ -164,7 +164,7 @@ class CivilianDashboardView extends StatelessWidget {
       child: Row(
         children: [
           const Icon(Icons.cloud, size: 48, color: Colors.blue),
-          const SizedBox(width: 16),
+          const SizedBox(width: 25),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
