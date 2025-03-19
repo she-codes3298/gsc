@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:d_m/app/common/widgets/common_scaffold.dart'; // Adjust your import path
-import 'package:d_m/app/modules/ai_chatbot.dart'; // Import the chatbot screen
+import 'package:d_m/app/common/widgets/common_scaffold.dart';
+import 'package:d_m/app/modules/ai_chatbot.dart';
+import 'package:d_m/app/modules/community_history/views/community_page.dart';
 
 class CivilianDashboardView extends StatelessWidget {
   const CivilianDashboardView({Key? key}) : super(key: key);
 
-  // Dummy function to check if the user is in a risk-free zone
   bool isRiskFree() {
-    return DateTime.now().second % 2 == 0; // Example: Changes every second
+    return DateTime.now().second % 2 == 0;
   }
 
   @override
@@ -15,7 +15,6 @@ class CivilianDashboardView extends StatelessWidget {
     final Color accentColor = const Color(0xFF5F6898);
     final Color communityBackground = const Color(0xFFE3F2FD);
 
-    // Determine the risk status dynamically
     bool riskFree = isRiskFree();
     Color riskCardColor = riskFree ? Colors.green[100]! : Colors.red[100]!;
     String riskText = riskFree ? "You are in a Risk-Free Zone" : "You are in a High-Risk Zone!";
@@ -23,180 +22,38 @@ class CivilianDashboardView extends StatelessWidget {
 
     return CommonScaffold(
       title: 'Dashboard',
-      currentIndex: 0, // Home index
+      currentIndex: 0,
       body: Stack(
         children: [
           SafeArea(
             child: Column(
               children: [
-                // BUTTON TILES (Predictive AI and Learn)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildDashboardTile(
-                      context: context,
-                      title: 'PREDICTIVE AI',
-                      color: accentColor,
-                      routeName: '/predictive_ai',
-                    ),
-                    _buildDashboardTile(
-                      context: context,
-                      title: 'LEARN',
-                      color: accentColor,
-                      routeName: '/learn',
-                    ),
+                    _buildDashboardTile(context, 'PREDICTIVE AI', accentColor, '/predictive_ai'),
+                    _buildDashboardTile(context, 'LEARN', accentColor, '/learn'),
                   ],
                 ),
                 const SizedBox(height: 8),
-
-                // RISK STATUS SECTION
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: riskCardColor,
-                    borderRadius: BorderRadius.circular(8.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        riskFree ? Icons.check_circle : Icons.warning,
-                        color: riskTextColor,
-                        size: 32,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        riskText,
-                        style: TextStyle(
-                          color: riskTextColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // COMMUNITY SECTION
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: communityBackground,
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        )
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Community Post Header
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'NDRF',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              icon: const Icon(Icons.more_vert),
-                              onPressed: () {
-                                // TODO: Show post options
-                              },
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        // Community Post Content
-                        const Text(
-                          'This is a sample community post showing real-time updates on disaster management. Stay alert and follow the instructions provided.',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        // Reaction Bar
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildReactionIcon(icon: Icons.thumb_up_alt_outlined, label: 'Like'),
-                            _buildReactionIcon(icon: Icons.mode_comment_outlined, label: 'Comment'),
-                            _buildReactionIcon(icon: Icons.share_outlined, label: 'Share'),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        // History Button
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/community_history');
-                            },
-                            child: const Text('History'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // WEATHER CARD
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[100],
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.cloud, size: 48, color: Colors.blue),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Manipur, Imphal',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          Text('28° | Sunny'),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                _buildRiskStatus(riskCardColor, riskText, riskTextColor, riskFree),
+                _buildCommunitySection(context, communityBackground),
+                _buildWeatherCard(),
               ],
             ),
           ),
-
-          // Floating AI Chatbot Button
           Positioned(
-            bottom: 101, // Adjusted position
+            bottom: 101,
             right: 16,
-            child:FloatingActionButton(
+            child: FloatingActionButton(
               backgroundColor: accentColor,
               onPressed: () {
-                Navigator.pushNamed(context, '/ai_chatbot'); // Navigate to chatbot page
+                Navigator.pushNamed(context, '/ai_chatbot');
               },
               child: Image.asset(
                 'assets/images/chatbot.png',
-                width: 28, // Set the width
-                height: 28, // Set the height
+                width: 28,
+                height: 28,
               ),
             ),
           ),
@@ -205,13 +62,7 @@ class CivilianDashboardView extends StatelessWidget {
     );
   }
 
-  // Helper widget for dashboard tile
-  Widget _buildDashboardTile({
-    required BuildContext context,
-    required String title,
-    required Color color,
-    required String routeName,
-  }) {
+  Widget _buildDashboardTile(BuildContext context, String title, Color color, String routeName) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -220,10 +71,7 @@ class CivilianDashboardView extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.all(8.0),
           padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(8.0),
-          ),
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8.0)),
           child: Center(
             child: Text(
               title,
@@ -236,8 +84,100 @@ class CivilianDashboardView extends StatelessWidget {
     );
   }
 
-  // Helper widget for reaction icons
-  Widget _buildReactionIcon({required IconData icon, required String label}) {
+  Widget _buildRiskStatus(Color riskCardColor, String riskText, Color riskTextColor, bool riskFree) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: riskCardColor,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(riskFree ? Icons.check_circle : Icons.warning, color: riskTextColor, size: 32),
+          const SizedBox(width: 8),
+          Text(riskText, style: TextStyle(color: riskTextColor, fontWeight: FontWeight.bold, fontSize: 16)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommunitySection(BuildContext context, Color communityBackground) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(color: communityBackground, borderRadius: BorderRadius.circular(8.0)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(backgroundImage: NetworkImage('assets/images/flood.jpg')),
+                const SizedBox(width: 8),
+                const Text('Flood', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const Spacer(),
+                IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'We have set few refugee camp near apc area',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildReactionIcon(Icons.thumb_up_alt_outlined, 'Like'),
+                _buildReactionIcon(Icons.mode_comment_outlined, 'Comment'),
+                _buildReactionIcon(Icons.share_outlined, 'Share'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CommunityPage(),
+                    ),
+                  );
+
+                },
+                child: const Text('View Community'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeatherCard() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(color: Colors.blue[100], borderRadius: BorderRadius.circular(8.0)),
+      child: Row(
+        children: [
+          const Icon(Icons.cloud, size: 48, color: Colors.blue),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('Manipur, Imphal', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('28° | Sunny'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReactionIcon(IconData icon, String label) {
     return Row(
       children: [
         Icon(icon, size: 20, color: Colors.grey[600]),
