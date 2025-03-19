@@ -5,6 +5,8 @@ import '../../common/dashboard_card.dart';
 import '../community/community_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
+import 'disaster_details_page.dart';
+
 
 // ✅ Dashboard View (Now Fixed)
 class DashboardView extends StatelessWidget {
@@ -75,7 +77,18 @@ class DashboardView extends StatelessWidget {
                         title: cardData[index]["title"],
                         count: cardData[index]["count"],
                         icon: cardData[index]["icon"],
+                        onTap: index == 0 // Only make "Active Disasters" tappable
+                            ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DisasterDetailsPage(),
+                            ),
+                          );
+                        }
+                            : null, // Other cards remain non-tappable
                       );
+
                     },
                   );
                 },
