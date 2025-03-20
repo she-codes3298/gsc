@@ -30,18 +30,12 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
           snapshot.docs
               .map((doc) {
                 var data = doc.data() as Map<String, dynamic>;
-
-                // ✅ Check if 'location' exists and is GeoPoint
                 if (data['location'] is GeoPoint) {
                   GeoPoint location = data['location'];
-
                   return {
                     'id': doc.id,
                     'name': data['name'] ?? 'Unknown',
-                    'location': LatLng(
-                      location.latitude,
-                      location.longitude,
-                    ), // ✅ Corrected
+                    'location': LatLng(location.latitude, location.longitude),
                     'address': data['address'] ?? 'No Address Available',
                     'capacity': data['capacity'] ?? 0,
                     'current_occupancy': data['current_occupancy'] ?? 0,
@@ -55,8 +49,7 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
                   return null;
                 }
               })
-              .where((camp) => camp != null)
-              .cast<Map<String, dynamic>>()
+              .whereType<Map<String, dynamic>>()
               .toList();
 
       setState(() {
@@ -133,11 +126,10 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
     try {
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection('refugee_camps').get();
-
       List<Map<String, dynamic>> campData =
-          snapshot.docs.map((doc) {
-            return doc.data() as Map<String, dynamic>;
-          }).toList();
+          snapshot.docs
+              .map((doc) => doc.data() as Map<String, dynamic>)
+              .toList();
 
       await FirebaseFirestore.instance
           .collection('civilian_data')
@@ -146,7 +138,7 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Data sent to civilian !")));
+      ).showSnackBar(SnackBar(content: Text("Data sent to civilian!")));
     } catch (e) {
       print("Error updating civilian data: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -253,20 +245,13 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
                       placemarks.isNotEmpty
                           ? "${placemarks.first.street}, ${placemarks.first.locality}, ${placemarks.first.country}"
                           : "Unknown Address";
-
                   setState(() {
                     selectedLocation = position;
                     searchController.text = address;
                   });
-
                   showAddCampDialog();
                 } catch (e) {
                   print("Error fetching address: $e");
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Failed to get address. Try again."),
-                    ),
-                  );
                 }
               },
             ),
@@ -280,12 +265,28 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
               itemCount: refugeeCamps.length,
               itemBuilder: (context, index) {
                 final camp = refugeeCamps[index];
-                return ListTile(
-                  title: Text(camp['name']),
-                  subtitle: Text(camp['address']),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () => deleteCamp(camp['id']),
+                return Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    title: Text(
+                      camp['name'],
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Address: ${camp['address']}"),
+                        Text(
+                          "Capacity: ${camp['capacity']} | Occupied: ${camp['current_occupancy']}",
+                        ),
+                        Text("Resources: ${camp['resources']}"),
+                        Text("Contact: ${camp['contact']}"),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => deleteCamp(camp['id']),
+                    ),
                   ),
                 );
               },
