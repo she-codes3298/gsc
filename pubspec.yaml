@@ -23,6 +23,9 @@ dependencies:
   dash_chat_2: ^0.0.21
   image_picker: ^1.1.2
   flutter_svg: ^2.0.17
+  firebase_storage: ^12.4.4
+
+
 
 dev_dependencies:
   flutter_native_splash: ^2.3.3
