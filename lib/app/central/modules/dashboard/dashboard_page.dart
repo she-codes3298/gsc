@@ -49,6 +49,7 @@ class _DashboardViewState extends State<DashboardView> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -111,6 +112,44 @@ class _DashboardViewState extends State<DashboardView> {
               },
             ),
           ],
+
+              const SizedBox(height: 20), // ✅ Adds spacing to prevent overflow
+              // ✅ Add Refugee Camp Button
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/camp');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: const Color.fromARGB(
+                        255,
+                        124,
+                        138,
+                        163,
+                      ), // ✅ Matches theme
+                      elevation: 5,
+                    ),
+                    child: const Text(
+                      "Add Refugee Camp",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
         ),
       ),
     );
