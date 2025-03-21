@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
@@ -6,112 +5,81 @@ import '../../common/dashboard_card.dart';
 import '../community/community_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
-import 'disaster_details_page.dart';
-import 'package:http/http.dart' as http;
-
-class DashboardView extends StatefulWidget {
-  @override
-  _DashboardViewState createState() => _DashboardViewState();
-}
 
 // ✅ Dashboard View (Now Fixed)
-class _DashboardViewState extends State<DashboardView> {
-  String highRiskAreas = "Loading...";
-
-  @override
-  void initState() {
-    super.initState();
-    fetchDisasterData();
-  }
-
-  Future<void> fetchDisasterData() async {
-    final url = Uri.parse('https://my-python-app-wwb655aqwa-uc.a.run.app/');
-    try {
-      final response = await http.get(url);
-
-      if (!mounted) return; // ✅ Prevent setState() on unmounted widget
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          highRiskAreas = data['high_risk_areas'] ?? "No data available";
-        });
-      } else {
-        setState(() {
-          highRiskAreas = "Error fetching data";
-        });
-      }
-    } catch (e) {
-      if (!mounted) return; // ✅ Prevent crash
-      setState(() {
-        highRiskAreas = "Failed to load data";
-      });
-    }
-  }
-
-
+class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // ✅ Prevent unnecessary height expansion
-          children: [
-            GridView.builder(
-              shrinkWrap: true, // ✅ Ensures GridView takes only required space
-              physics: NeverScrollableScrollPhysics(), // ✅ Avoid nested scrolling issues
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 1.8,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: screenHeight, // ✅ Ensures content fills screen
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Overview",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                List<Map<String, dynamic>> cardData = [
-                  {
-                    "title": "Active Disasters",
-                    "count": highRiskAreas,
-                    "icon": Icons.warning,
-                    "link": "https://my-python-app-wwb655aqwa-uc.a.run.app/"
-                  },
-                  {
-                    "title": "Central Inventory",
-                    "count": "150 Items",
-                    "icon": Icons.storage,
-                  },
-                  {
-                    "title": "Ongoing SOS Alerts",
-                    "count": "12",
-                    "icon": Icons.sos,
-                  },
-                  {
-                    "title": "Rescue Teams Deployed",
-                    "count": "30",
-                    "icon": Icons.people,
-                  },
-                ];
-                return GestureDetector(
-                  onTap: index == 0
-                      ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DisasterDetailsPage(),
-                      ),
-                    );
-                  }
-                      : null,
-                  child: DashboardCard(
-                    title: cardData[index]["title"],
-                    count: cardData[index]["count"],
-                    icon: cardData[index]["icon"],
-                  ),
-                );
-              },
-            ),
-          ],
+              const SizedBox(height: 10),
+
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  int crossAxisCount = (screenWidth < 600) ? 1 : 2;
+
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(), // ✅ Fixes nested scroll issue
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: (screenWidth < 400) ? 2.5 : 1.8,
+                    ),
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      List<Map<String, dynamic>> cardData = [
+                        {
+                          "title": "Active Disasters",
+                          "count": "5",
+                          "icon": Icons.warning,
+                        },
+                        {
+                          "title": "Central Inventory",
+                          "count": "150 Items",
+                          "icon": Icons.storage,
+                        },
+                        {
+                          "title": "Ongoing SOS Alerts",
+                          "count": "12",
+                          "icon": Icons.sos,
+                        },
+                        {
+                          "title": "Rescue Teams Deployed",
+                          "count": "30",
+                          "icon": Icons.people,
+                        },
+                      ];
+                      return DashboardCard(
+                        title: cardData[index]["title"],
+                        count: cardData[index]["count"],
+                        icon: cardData[index]["icon"],
+                      );
+                    },
+                  );
+                },
+              ),
 
               const SizedBox(height: 20), // ✅ Adds spacing to prevent overflow
               // ✅ Add Refugee Camp Button
@@ -149,12 +117,11 @@ class _DashboardViewState extends State<DashboardView> {
               ),
             ],
           ),
-
         ),
       ),
     );
   }
-} // ✅ This was missing (Now Fixed)
+}
 
 // ✅ Main Dashboard Page
 class CentralDashboardPage extends StatefulWidget {
@@ -211,7 +178,8 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
             bottom: 90, // ✅ Adjusted position to avoid bottom nav bar
             right: 16,
             child: FloatingActionButton(
-              backgroundColor: Colors.white,
+              backgroundColor:
+                  Colors.white, // ✅ Change if `accentColor` is missing
               onPressed: () {
                 Navigator.pushNamed(context, '/ai_chatbot');
               },
