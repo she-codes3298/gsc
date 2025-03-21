@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // ✅ Import FirebaseAuth
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'firebase_options.dart';
 import 'app/modules/login/login_page.dart';
@@ -13,18 +14,35 @@ import 'app/central/modules/camps/camp_management_map.dart'; // ✅ Import Camp 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print("Firebase initialized successfully");
-  } catch (e) {
-    print("Firebase initialization failed: $e");
-  }
+  // ✅ Prevent multiple Firebase initializations
+  await initializeFirebase();
+
+  print("Firebase initialized successfully");
+
+  // Ensure user is authenticated
+  await ensureAuthenticated();
 
   Gemini.init(apiKey: "AIzaSyADGh1jYjjOA5hNJVVFUzBwNZ-SVMYdqXc");
 
   runApp(const MyApp());
+}
+
+Future<void> initializeFirebase() async {
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    print("Firebase already initialized: $e");
+  }
+}
+
+Future<void> ensureAuthenticated() async {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  if (auth.currentUser == null) {
+    await auth.signInAnonymously(); // Sign in the government app anonymously
+    print("Signed in anonymously as: ${auth.currentUser?.uid}");
+  }
 }
 
 class MyApp extends StatelessWidget {

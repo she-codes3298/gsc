@@ -1,1 +1,118 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"disastermanagement-90b30","appId":"1:756506665902:android:b6887c5e5d7a5373581e3f","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"disastermanagement-90b30","configurations":{"android":"1:756506665902:android:b6887c5e5d7a5373581e3f","ios":"1:756506665902:ios:f7366b1ad514936f581e3f","macos":"1:756506665902:ios:f7366b1ad514936f581e3f","web":"1:756506665902:web:25aa8fc452c70220581e3f","windows":"1:756506665902:web:b516465900583a87581e3f"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "disastermanagement-90b30",
+          "appId": "1:756506665902:android:b6887c5e5d7a5373581e3f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "disastermanagement-90b30",
+          "configurations": {
+            "android": "1:756506665902:android:b6887c5e5d7a5373581e3f",
+            "ios": "1:756506665902:ios:f7366b1ad514936f581e3f",
+            "macos": "1:756506665902:ios:f7366b1ad514936f581e3f",
+            "web": "1:756506665902:web:25aa8fc452c70220581e3f",
+            "windows": "1:756506665902:web:b516465900583a87581e3f"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "dataconnect": {
+      "dataDir": "dataconnect/.dataconnect/pgliteData",
+      "port": 9399
+    },
+    "apphosting": {
+      "port": 5002,
+      "rootDirectory": "./"
+    },
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "database": {
+      "port": 9000
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "pubsub": {
+      "port": 8085
+    },
+    "storage": {
+      "port": 9199
+    },
+    "eventarc": {
+      "port": 9299
+    },
+    "tasks": {
+      "port": 9499
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "source": "rupali_cb",
+      "codebase": "rupali_cb",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "remoteconfig": {
+    "template": "remoteconfig.template.json"
+  },
+  "extensions": {},
+  "database": {
+    "rules": "database.rules.json"
+  }
+}
