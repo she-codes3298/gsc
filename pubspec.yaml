@@ -1,0 +1,62 @@
+name: gsc
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  firebase_core: ^3.12.1  # Core Firebase SDK
+  firebase_auth: ^5.5.1   # Firebase Authentication
+  google_sign_in: ^6.2.1   # Google Sign-In SDK
+  cloud_firestore: ^5.6.5 # Firestore (if you're storing user details)
+  firebase_analytics: ^11.4.4 # Google Analytics for Firebase
+  get: ^4.7.2
+  provider: ^6.1.2
+  flutter_gemini: ^3.0.0
+  dash_chat_2: ^0.0.21
+  image_picker: ^1.1.2
+  flutter_svg: ^2.0.17
+  firebase_storage: ^12.4.4
+  firebase_messaging: ^15.2.4
+  flutter_local_notifications: ^17.2.2
+  geolocator: ^13.0.2
+
+
+
+
+dev_dependencies:
+  flutter_native_splash: ^2.3.3
+  flutter_launcher_icons: ^0.14.3
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/logo.png  # Ensure this file is inside the assets folder
+    - assets/chatbot.png
+
+flutter_native_splash:
+  color: "#000000"
+  image: assets/logo.png
+  android: true
+  ios: true
+  web: true
+  fullscreen: true
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/logo.png"
