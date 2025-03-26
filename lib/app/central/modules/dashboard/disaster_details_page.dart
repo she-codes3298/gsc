@@ -72,30 +72,28 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : hasError
-          ? const Center(
-          child: Text("Failed to load data", style: TextStyle(color: Colors.white)))
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: earthquakeData.length,
-          itemBuilder: (context, index) {
-            return _buildEarthquakeCard(earthquakeData[index]);
-          },
-        ),
-      ),
+              ? const Center(
+                  child: Text("Failed to load data", style: TextStyle(color: Colors.white)))
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ListView.builder(
+                    itemCount: earthquakeData.length,
+                    itemBuilder: (context, index) {
+                      return _buildEarthquakeCard(earthquakeData[index]);
+                    },
+                  ),
+                ),
     );
   }
 
   Widget _buildEarthquakeCard(Map<String, dynamic> quake) {
-    // Safely parse magnitude as a double
-    double magnitude = double.tryParse(quake["magnitude"]?.toString() ?? "") ?? 0.0;
-    Color zoneColor = _getZoneColor(magnitude);
+    Color zoneColor = _getZoneColor(quake["magnitude"]);
 
     return Card(
-      color: zoneColor.withOpacity(0.3),  // Slightly more visible background
+      color: zoneColor.withOpacity(0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(Icons.terrain, color: zoneColor, size: 30),
+        leading: Icon(Icons.terrain, color: zoneColor),
         title: Text(
           "${quake["city"]}, ${quake["state"]}",
           style: const TextStyle(color: Colors.white, fontSize: 18),
@@ -103,7 +101,7 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("🌍 Magnitude: $magnitude",
+            Text("🌍 Magnitude: ${quake["magnitude"]}",
                 style: const TextStyle(color: Colors.white70, fontSize: 14)),
             Text("⏰ Time: ${quake["time"]}",
                 style: const TextStyle(color: Colors.white70, fontSize: 14)),
@@ -113,16 +111,9 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
         ),
         trailing: IconButton(
           icon: const Icon(Icons.open_in_new, color: Colors.white),
-          onPressed: () async {
-            final url = Uri.parse("https://riseq.seismo.gov.in/riseq/earthquake");
-            if (await canLaunchUrl(url)) {
-              launchUrl(url);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Could not open the link")),
-              );
-            }
-          },
+          onPressed: () => launchUrl(
+            Uri.parse("https://riseq.seismo.gov.in/riseq/earthquake"),
+          ),
         ),
       ),
     );

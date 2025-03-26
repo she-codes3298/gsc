@@ -15,7 +15,7 @@
     },
     {
       "name": "archive",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/archive-4.0.5",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/archive-4.0.4",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -134,12 +134,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "dbus",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/dbus-0.7.11",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
       "name": "dio",
       "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/dio-5.8.0+1",
       "packageUri": "lib/",
@@ -248,24 +242,6 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "firebase_messaging",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
-      "name": "firebase_messaging_platform_interface",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/firebase_messaging_platform_interface-4.6.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
-      "name": "firebase_messaging_web",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/firebase_messaging_web-3.10.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
-    },
-    {
       "name": "firebase_storage",
       "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/firebase_storage-12.4.4",
       "packageUri": "lib/",
@@ -320,24 +296,6 @@
       "languageVersion": "3.5"
     },
     {
-      "name": "flutter_local_notifications",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/flutter_local_notifications-17.2.4",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
-      "name": "flutter_local_notifications_linux",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-4.0.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
-      "name": "flutter_local_notifications_platform_interface",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-7.2.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
       "name": "flutter_markdown",
       "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/flutter_markdown-0.7.6+2",
       "packageUri": "lib/",
@@ -380,6 +338,30 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "geocoding",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geocoding-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "geocoding_android",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geocoding_android-3.3.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "geocoding_ios",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geocoding_ios-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "geocoding_platform_interface",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geocoding_platform_interface-3.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "geolocator",
       "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geolocator-13.0.3",
       "packageUri": "lib/",
@@ -393,13 +375,13 @@
     },
     {
       "name": "geolocator_apple",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geolocator_apple-2.3.13",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geolocator_apple-2.3.12",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "geolocator_platform_interface",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geolocator_platform_interface-4.2.6",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geolocator_platform_interface-4.2.5",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -411,7 +393,7 @@
     },
     {
       "name": "geolocator_windows",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geolocator_windows-0.2.5",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/geolocator_windows-0.2.4",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -426,6 +408,48 @@
       "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.3",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "google_maps",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_maps-8.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "google_maps_flutter",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_maps_flutter-2.11.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "google_maps_flutter_android",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_maps_flutter_android-2.15.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "google_maps_flutter_ios",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_maps_flutter_ios-2.14.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "google_maps_flutter_platform_interface",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_maps_flutter_platform_interface-2.11.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "google_maps_flutter_web",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_maps_flutter_web-0.5.12",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "google_places_flutter",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/google_places_flutter-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "google_sign_in",
@@ -477,7 +501,7 @@
     },
     {
       "name": "image",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/image-4.5.4",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/image-4.5.3",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -687,7 +711,13 @@
     },
     {
       "name": "rxdart",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/rxdart-0.28.0",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/rxdart-0.27.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "sanitize_html",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/sanitize_html-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -752,6 +782,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "stream_transform",
+      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/stream_transform-2.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "string_scanner",
       "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/string_scanner-1.4.1",
       "packageUri": "lib/",
@@ -774,12 +810,6 @@
       "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/test_api-0.7.4",
       "packageUri": "lib/",
       "languageVersion": "3.5"
-    },
-    {
-      "name": "timezone",
-      "rootUri": "file:///home/rupali/.pub-cache/hosted/pub.dev/timezone-0.9.4",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
     },
     {
       "name": "typed_data",
@@ -938,7 +968,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-03-26T14:06:55.382614Z",
+  "generated": "2025-03-26T16:44:40.782028Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///home/rupali/development/flutter",

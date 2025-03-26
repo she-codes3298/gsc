@@ -9,6 +9,7 @@ import 'app/central/modules/community/community_page.dart';
 import 'app/central/modules/inventory/inventory_page.dart';
 import 'app/central/modules/settings/settings_page.dart';
 import 'app/central/modules/ai_chatbot.dart'; // ✅ Import Chatbot Page
+import 'app/central/modules/camps/camp_management_map.dart'; // ✅ Import Camp Management Page
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
         '/gov_inventory': (context) => InventoryPage(),
         '/gov_settings': (context) => SettingsPage(),
         '/ai_chatbot': (context) => AIChatbotScreen(), // ✅ E-Sahyog AI Chatbot
+        '/camp': (context) => RefugeeCampPage(),
       },
     );
   }

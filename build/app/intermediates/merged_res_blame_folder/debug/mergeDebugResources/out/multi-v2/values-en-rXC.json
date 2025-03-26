@@ -1,10 +1,20 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.gsc.app-mergeDebugResources-37:/values-en-rXC/values-en-rXC.xml",
+            "outputFile": "com.example.gsc.app-mergeDebugResources-36:/values-en-rXC/values-en-rXC.xml",
             "map": [
                 {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/da2864105526cbbeb90fd7c4bf2f17fc/transformed/core-1.13.1/res/values-en-rXC/values-en-rXC.xml",
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/cd81861c5dc8f1218a896d19577c23ed/transformed/jetified-credentials-1.2.0-rc01/res/values-en-rXC/values-en-rXC.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,270",
+                        "endColumns": "214,215",
+                        "endOffsets": "265,481"
+                    }
+                },
+                {
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/fea5566f5651ce5cd84dbe700ef3443f/transformed/core-1.13.1/res/values-en-rXC/values-en-rXC.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +31,7 @@
                     }
                 },
                 {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/6f7dfdf3462571bda456a7c2ed80fcd6/transformed/browser-1.8.0/res/values-en-rXC/values-en-rXC.xml",
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/93f78c0bd0053ae334d15b058293af01/transformed/browser-1.8.0/res/values-en-rXC/values-en-rXC.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -35,16 +45,6 @@
                         "startOffsets": "1913,2113,2312,2523",
                         "endColumns": "199,198,210,201",
                         "endOffsets": "2108,2307,2518,2720"
-                    }
-                },
-                {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/2e5c204903f0c2eba59e81d24719646c/transformed/jetified-credentials-1.2.0-rc01/res/values-en-rXC/values-en-rXC.xml",
-                    "from": {
-                        "startLines": "2,3",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,270",
-                        "endColumns": "214,215",
-                        "endOffsets": "265,481"
                     }
                 }
             ]

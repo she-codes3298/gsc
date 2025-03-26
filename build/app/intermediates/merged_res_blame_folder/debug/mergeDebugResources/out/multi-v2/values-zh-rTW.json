@@ -1,71 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.gsc.app-mergeDebugResources-37:/values-zh-rTW/values-zh-rTW.xml",
+            "outputFile": "com.example.gsc.app-mergeDebugResources-36:/values-zh-rTW/values-zh-rTW.xml",
             "map": [
                 {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/7eac35ebbb73eb19d95513167dcac564/transformed/jetified-play-services-basement-18.5.0/res/values-zh-rTW/values.xml",
-                    "from": {
-                        "startLines": "4",
-                        "startColumns": "0",
-                        "startOffsets": "199",
-                        "endColumns": "98",
-                        "endOffsets": "297"
-                    },
-                    "to": {
-                        "startLines": "19",
-                        "startColumns": "4",
-                        "startOffsets": "1797",
-                        "endColumns": "102",
-                        "endOffsets": "1895"
-                    }
-                },
-                {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/2e5c204903f0c2eba59e81d24719646c/transformed/jetified-credentials-1.2.0-rc01/res/values-zh-rTW/values-zh-rTW.xml",
-                    "from": {
-                        "startLines": "2,3",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,161",
-                        "endColumns": "105,110",
-                        "endOffsets": "156,267"
-                    }
-                },
-                {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/6f7dfdf3462571bda456a7c2ed80fcd6/transformed/browser-1.8.0/res/values-zh-rTW/values-zh-rTW.xml",
-                    "from": {
-                        "startLines": "2,3,4,5",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "55,139,231,332",
-                        "endColumns": "83,91,100,92",
-                        "endOffsets": "134,226,327,420"
-                    },
-                    "to": {
-                        "startLines": "29,39,40,41",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "2752,3395,3487,3588",
-                        "endColumns": "83,91,100,92",
-                        "endOffsets": "2831,3482,3583,3676"
-                    }
-                },
-                {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/da2864105526cbbeb90fd7c4bf2f17fc/transformed/core-1.13.1/res/values-zh-rTW/values-zh-rTW.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,147,246,340,434,527,620,716",
-                        "endColumns": "91,98,93,93,92,92,95,100",
-                        "endOffsets": "142,241,335,429,522,615,711,812"
-                    },
-                    "to": {
-                        "startLines": "4,5,6,7,8,9,10,42",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "272,364,463,557,651,744,837,3681",
-                        "endColumns": "91,98,93,93,92,92,95,100",
-                        "endOffsets": "359,458,552,646,739,832,928,3777"
-                    }
-                },
-                {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/1bb1a13975ace14e60f78d727797a86e/transformed/jetified-media3-exoplayer-1.4.1/res/values-zh-rTW/values-zh-rTW.xml",
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/2f878dd86e24cf1f82a812f938312e49/transformed/jetified-media3-exoplayer-1.4.1/res/values-zh-rTW/values-zh-rTW.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
                         "startColumns": "4,4,4,4,4,4,4,4,4",
@@ -82,7 +21,34 @@
                     }
                 },
                 {
-                    "source": "/home/rupali/.gradle/caches/8.9/transforms/bab937129b0c6e8930af924f2a4547dc/transformed/jetified-play-services-base-18.5.0/res/values-zh-rTW/values.xml",
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/cd81861c5dc8f1218a896d19577c23ed/transformed/jetified-credentials-1.2.0-rc01/res/values-zh-rTW/values-zh-rTW.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,161",
+                        "endColumns": "105,110",
+                        "endOffsets": "156,267"
+                    }
+                },
+                {
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/93f78c0bd0053ae334d15b058293af01/transformed/browser-1.8.0/res/values-zh-rTW/values-zh-rTW.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,139,231,332",
+                        "endColumns": "83,91,100,92",
+                        "endOffsets": "134,226,327,420"
+                    },
+                    "to": {
+                        "startLines": "29,39,40,41",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "2752,3395,3487,3588",
+                        "endColumns": "83,91,100,92",
+                        "endOffsets": "2831,3482,3583,3676"
+                    }
+                },
+                {
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/8417f0ee0d121e4396e4f4c508b334cc/transformed/jetified-play-services-base-18.5.0/res/values-zh-rTW/values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -96,6 +62,40 @@
                         "startOffsets": "933,1034,1162,1277,1379,1486,1602,1702,1900,2010,2111,2240,2355,2457,2565,2621,2678",
                         "endColumns": "100,127,114,101,106,115,99,94,109,100,128,114,101,107,55,56,73",
                         "endOffsets": "1029,1157,1272,1374,1481,1597,1697,1792,2005,2106,2235,2350,2452,2560,2616,2673,2747"
+                    }
+                },
+                {
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/a9d9c607c333a2df1085d54e3d3c7604/transformed/jetified-play-services-basement-18.5.0/res/values-zh-rTW/values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "199",
+                        "endColumns": "98",
+                        "endOffsets": "297"
+                    },
+                    "to": {
+                        "startLines": "19",
+                        "startColumns": "4",
+                        "startOffsets": "1797",
+                        "endColumns": "102",
+                        "endOffsets": "1895"
+                    }
+                },
+                {
+                    "source": "/home/rupali/.gradle/caches/8.10.2/transforms/fea5566f5651ce5cd84dbe700ef3443f/transformed/core-1.13.1/res/values-zh-rTW/values-zh-rTW.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,147,246,340,434,527,620,716",
+                        "endColumns": "91,98,93,93,92,92,95,100",
+                        "endOffsets": "142,241,335,429,522,615,711,812"
+                    },
+                    "to": {
+                        "startLines": "4,5,6,7,8,9,10,42",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "272,364,463,557,651,744,837,3681",
+                        "endColumns": "91,98,93,93,92,92,95,100",
+                        "endOffsets": "359,458,552,646,739,832,928,3777"
                     }
                 }
             ]

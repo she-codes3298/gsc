@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
@@ -9,19 +7,15 @@ import '../community/community_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
-
-import 'earthquake_details_page.dart';
-import 'flood_details_page.dart';
-import 'cyclone_details_page.dart';
+import 'package:http/http.dart' as http;
 
 class DashboardView extends StatefulWidget {
   @override
   _DashboardViewState createState() => _DashboardViewState();
 }
 
-class _DashboardViewState extends State<DashboardView>{
-  String activeDisaster = "Loading...";
-  String activeDisasterType = ""; // To track which disaster is active
+class _DashboardViewState extends State<DashboardView> {
+  String highRiskAreas = "Loading...";
 
   @override
   void initState() {
@@ -30,114 +24,29 @@ class _DashboardViewState extends State<DashboardView>{
   }
 
   Future<void> fetchDisasterData() async {
-  final urls = {
-    "Earthquake": 'https://earthquake-app-wwb655aqwa-el.a.run.app',
-    "Cyclone": 'https://cyclone-app-vrdkju5xka-el.a.run.app',
-  };
-
-  try {
-    for (var entry in urls.entries) {
-      final response = await http.get(Uri.parse(entry.value));
+    final url = Uri.parse('https://my-python-app-wwb655aqwa-uc.a.run.app/');
+    try {
+      final response = await http.get(url);
 
       if (!mounted) return;
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        if (entry.key == "Earthquake" && data.containsKey("high_risk_cities") && data["high_risk_cities"].isNotEmpty) {
-          setState(() {
-            activeDisaster = "Earthquake";
-            activeDisasterType = "Earthquake";
-          });
-          return; // Stop checking further if an active disaster is found
-        }
-
-        if (entry.key == "Cyclone" && data.containsKey("current_data") && data["current_data"]["status"] != "No active cyclones detected") {
-          setState(() {
-            activeDisaster = "Cyclone";
-            activeDisasterType = "Cyclone";
-          });
-          return;
-        }
-      }
-    }
-
-    // If no active disasters found
-    setState(() {
-      activeDisaster = "No active disasters";
-      activeDisasterType = "";
-    });
-
-  } catch (e) {
-    if (!mounted) return;
-    setState(() {
-      activeDisaster = "Failed to load data";
-      activeDisasterType = "";
-    });
-  }
-}
-
-
-  void navigateToDisasterPage() {
-    if (activeDisasterType == "Earthquake") {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => DisasterDetailsPage()),
-      );
-    }  else if (activeDisasterType == "Cyclone") {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CycloneDetailsPage()),
-      );
-    }
-  }
-  Future<void> sendDisasterAlert(String city) async {
-    final String apiUrl = "http://127.0.0.1:8000/send-disaster-alert/";
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'city': city,
-          'title': "🚨 Earthquake Alert!",
-          'body': "An earthquake risk is detected in $city. Stay alert!",
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        _showAlertDialog("Success", "Notification sent successfully!");
+        setState(() {
+          highRiskAreas = data['high_risk_areas'] ?? "No data available";
+        });
       } else {
-        _showAlertDialog("Failed", "Error: ${response.body}");
+        setState(() {
+          highRiskAreas = "Error fetching data";
+        });
       }
     } catch (e) {
-      _showAlertDialog("Error", "Exception: $e");
+      if (!mounted) return;
+      setState(() {
+        highRiskAreas = "Failed to load data";
+      });
     }
   }
-
-  void _showAlertDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -161,8 +70,9 @@ class _DashboardViewState extends State<DashboardView>{
                 List<Map<String, dynamic>> cardData = [
                   {
                     "title": "Active Disasters",
-                    "count": activeDisaster,
+                    "count": highRiskAreas,
                     "icon": Icons.warning,
+                    "link": "https://my-python-app-wwb655aqwa-uc.a.run.app/"
                   },
                   {
                     "title": "Central Inventory",
@@ -180,10 +90,16 @@ class _DashboardViewState extends State<DashboardView>{
                     "icon": Icons.people,
                   },
                 ];
-
                 return GestureDetector(
-                  onTap: index == 0 && activeDisasterType.isNotEmpty
-                      ? navigateToDisasterPage
+                  onTap: index == 0
+                      ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DisasterDetailsPage(),
+                      ),
+                    );
+                  }
                       : null,
                   child: DashboardCard(
                     title: cardData[index]["title"],
@@ -193,6 +109,39 @@ class _DashboardViewState extends State<DashboardView>{
                 );
               },
             ),
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/camp');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: const Color.fromARGB(
+                      255,
+                      124,
+                      138,
+                      163,
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text(
+                    "Add Refugee Camp",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -200,7 +149,6 @@ class _DashboardViewState extends State<DashboardView>{
   }
 }
 
-// ✅ Main Dashboard Page
 class CentralDashboardPage extends StatefulWidget {
   const CentralDashboardPage({super.key});
 
@@ -212,7 +160,7 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    DashboardView(), // ✅ Dashboard correctly placed
+    DashboardView(),
     CommunityPage(),
     InventoryPage(),
     SettingsPage(),
@@ -249,10 +197,9 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
       drawer: AppDrawer(),
       body: Stack(
         children: [
-          _pages[_selectedIndex], // ✅ Dynamic content rendering
-          // ✅ Floating AI Chatbot Button (Properly Placed)
+          _pages[_selectedIndex],
           Positioned(
-            bottom: 90, // ✅ Adjusted position to avoid bottom nav bar
+            bottom: 90,
             right: 16,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
