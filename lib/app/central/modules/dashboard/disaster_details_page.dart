@@ -26,7 +26,7 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
   Future<void> fetchEarthquakeData() async {
     try {
       final response = await http.get(
-        Uri.parse("https://earthquake-app-wwb655aqwa-el.a.run.app/"),
+        Uri.parse("https://my-python-app-wwb655aqwa-uc.a.run.app/"),
       );
 
       if (response.statusCode == 200) {
@@ -38,8 +38,7 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
             "city": quake["city"] ?? "Unknown",
             "state": quake["state"] ?? "Unknown",
             "magnitude": quake["magnitude"] ?? "N/A",
-            "time": quake["time"] ?? "N/A",  // Extracting time
-            "depth": quake["depth"] ?? "N/A" // Extracting depth
+
           };
         }).toList();
 

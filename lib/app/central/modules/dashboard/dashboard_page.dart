@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
@@ -7,7 +8,9 @@ import '../community/community_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
-import 'package:http/http.dart' as http;
+import 'flood_details_page.dart';
+//import 'earthquake_details_page.dart';
+//import 'cyclone_details_page.dart';
 
 class DashboardView extends StatefulWidget {
   @override
@@ -15,7 +18,8 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
-  String highRiskAreas = "Loading...";
+  String activeDisaster = "Loading...";
+  String activeDisasterType = ""; // Stores the type of active disaster
 
   @override
   void initState() {
@@ -24,28 +28,94 @@ class _DashboardViewState extends State<DashboardView> {
   }
 
   Future<void> fetchDisasterData() async {
-    final url = Uri.parse('https://my-python-app-wwb655aqwa-uc.a.run.app/');
+    final urls = {
+      "Earthquake": 'https://my-python-app-wwb655aqwa-uc.a.run.app/',
+      "Flood":'https://water-level-model-bsbjxt7qdq-el.a.run.app/flood-assessments',
+      "Cyclone": 'https://cyclone-app-vrdkju5xka-el.a.run.app',
+    };
+
     try {
-      final response = await http.get(url);
+      for (var entry in urls.entries) {
+        final response = await http.get(Uri.parse(entry.value));
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          highRiskAreas = data['high_risk_areas'] ?? "No data available";
-        });
-      } else {
-        setState(() {
-          highRiskAreas = "Error fetching data";
-        });
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          if (entry.key == "Earthquake" &&
+              data.containsKey("high_risk_cities") &&
+              data["high_risk_cities"].isNotEmpty) {
+            setState(() {
+              activeDisaster = "Earthquake";
+              activeDisasterType = "Earthquake";
+            });
+            return; // Stop further checks if an active disaster is found
+          }
+
+          if (entry.key == "Flood" &&
+              data.containsKey("high_risk_states") &&
+              data["high_risk_states"].isNotEmpty) {
+            setState(() {
+              activeDisaster = "Flood";
+              activeDisasterType = "Flood";
+            });
+            return; // Stop further checks if an active disaster is found
+          }
+
+         // if (entry.key == "Earthquake" &&
+           //   data.containsKey("high_risk_cities") &&
+             // data["high_risk_cities"].isNotEmpty) {
+            //setState(() {
+              //activeDisaster = "Earthquake";
+              //activeDisasterType = "Earthquake";
+            //});
+            //return; // Stop further checks if an active disaster is found
+          //}
+
+          if (entry.key == "Cyclone" &&
+              data.containsKey("current_data") &&
+              data["current_data"]["status"] != "No active cyclones detected") {
+            setState(() {
+              activeDisaster = "Cyclone";
+              activeDisasterType = "Cyclone";
+            });
+            return;
+          }
+        }
       }
+
+      // If no active disasters found
+      setState(() {
+        activeDisaster = "No active disasters";
+        activeDisasterType = "";
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        highRiskAreas = "Failed to load data";
+        activeDisaster = "Failed to load data";
+        activeDisasterType = "";
       });
     }
+  }
+
+  void navigateToDisasterPage() {
+    if (activeDisasterType == "Earthquake") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DisasterDetailsPage()),
+      );
+    }
+    else if  (activeDisasterType == "Flood") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FloodDetailsPage()),
+      );
+    }//else if (activeDisasterType == "Cyclone") {
+      //Navigator.push(
+       // context,
+        //MaterialPageRoute(builder: (context) => CycloneDetailsPage()),
+      //);
+    //}
   }
 
   @override
@@ -70,9 +140,8 @@ class _DashboardViewState extends State<DashboardView> {
                 List<Map<String, dynamic>> cardData = [
                   {
                     "title": "Active Disasters",
-                    "count": highRiskAreas,
+                    "count": activeDisaster,
                     "icon": Icons.warning,
-                    "link": "https://my-python-app-wwb655aqwa-uc.a.run.app/"
                   },
                   {
                     "title": "Central Inventory",
@@ -90,17 +159,11 @@ class _DashboardViewState extends State<DashboardView> {
                     "icon": Icons.people,
                   },
                 ];
+
                 return GestureDetector(
-                  onTap: index == 0
-                      ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DisasterDetailsPage(),
-                      ),
-                    );
-                  }
-                      : null,
+                  onTap: index == 0 && activeDisasterType.isNotEmpty
+                      ? navigateToDisasterPage
+                      : null, // Only allow tap if disaster is active
                   child: DashboardCard(
                     title: cardData[index]["title"],
                     count: cardData[index]["count"],
@@ -109,39 +172,6 @@ class _DashboardViewState extends State<DashboardView> {
                 );
               },
             ),
-            const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/camp');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    backgroundColor: const Color.fromARGB(
-                      255,
-                      124,
-                      138,
-                      163,
-                    ),
-                    elevation: 5,
-                  ),
-                  child: const Text(
-                    "Add Refugee Camp",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -149,6 +179,7 @@ class _DashboardViewState extends State<DashboardView> {
   }
 }
 
+// ✅ Central Dashboard Page
 class CentralDashboardPage extends StatefulWidget {
   const CentralDashboardPage({super.key});
 
@@ -197,9 +228,10 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
       drawer: AppDrawer(),
       body: Stack(
         children: [
-          _pages[_selectedIndex],
+          _pages[_selectedIndex], // ✅ Displays selected page
+          // ✅ Floating AI Chatbot Button
           Positioned(
-            bottom: 90,
+            bottom: 90, // ✅ Adjusted position to avoid bottom nav bar
             right: 16,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
