@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class CommunityPage extends StatefulWidget {
+  const CommunityPage({super.key});
+
   @override
   _CommunityPageState createState() => _CommunityPageState();
 }
@@ -46,8 +48,8 @@ class _CommunityPageState extends State<CommunityPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddPostDialog(context),
-        child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -179,7 +181,7 @@ class _CommunityPageState extends State<CommunityPage> {
 
 class PostCard extends StatelessWidget {
   final QueryDocumentSnapshot post;
-  const PostCard({Key? key, required this.post}) : super(key: key);
+  const PostCard({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +240,7 @@ class PostCard extends StatelessWidget {
 
 class CommentSection extends StatelessWidget {
   final String postId;
-  const CommentSection({Key? key, required this.postId}) : super(key: key);
+  const CommentSection({super.key, required this.postId});
 
   @override
   Widget build(BuildContext context) {

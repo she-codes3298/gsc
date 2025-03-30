@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geocoding/geocoding.dart';
 
 class RefugeeCampPage extends StatefulWidget {
+  const RefugeeCampPage({super.key});
+
   @override
   _RefugeeCampPageState createState() => _RefugeeCampPageState();
 }
