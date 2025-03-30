@@ -9,6 +9,8 @@ import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
 import 'flood_details_page.dart';
+import '../inventory/inventory_page.dart';
+
 //import 'earthquake_details_page.dart';
 //import 'cyclone_details_page.dart';
 
@@ -30,7 +32,7 @@ class _DashboardViewState extends State<DashboardView> {
   Future<void> fetchDisasterData() async {
     final urls = {
       "Earthquake": 'https://my-python-app-wwb655aqwa-uc.a.run.app/',
-      "Flood":'https://water-level-model-bsbjxt7qdq-el.a.run.app/flood-assessments',
+      "Flood": 'https://water-level-model-bsbjxt7qdq-el.a.run.app/flood-assessments',
       "Cyclone": 'https://cyclone-app-vrdkju5xka-el.a.run.app',
     };
 
@@ -49,7 +51,7 @@ class _DashboardViewState extends State<DashboardView> {
               activeDisaster = "Earthquake";
               activeDisasterType = "Earthquake";
             });
-            return; // Stop further checks if an active disaster is found
+            return;
           }
 
           if (entry.key == "Flood" &&
@@ -59,18 +61,8 @@ class _DashboardViewState extends State<DashboardView> {
               activeDisaster = "Flood";
               activeDisasterType = "Flood";
             });
-            return; // Stop further checks if an active disaster is found
+            return;
           }
-
-         // if (entry.key == "Earthquake" &&
-           //   data.containsKey("high_risk_cities") &&
-             // data["high_risk_cities"].isNotEmpty) {
-            //setState(() {
-              //activeDisaster = "Earthquake";
-              //activeDisasterType = "Earthquake";
-            //});
-            //return; // Stop further checks if an active disaster is found
-          //}
 
           if (entry.key == "Cyclone" &&
               data.containsKey("current_data") &&
@@ -105,17 +97,19 @@ class _DashboardViewState extends State<DashboardView> {
         MaterialPageRoute(builder: (context) => DisasterDetailsPage()),
       );
     }
-    else if  (activeDisasterType == "Flood") {
+    else if (activeDisasterType == "Flood") {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => FloodDetailsPage()),
       );
-    }//else if (activeDisasterType == "Cyclone") {
-      //Navigator.push(
-       // context,
-        //MaterialPageRoute(builder: (context) => CycloneDetailsPage()),
-      //);
-    //}
+    }
+    // Uncomment when cyclone page is ready
+    // else if (activeDisasterType == "Cyclone") {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => CycloneDetailsPage()),
+    //   );
+    // }
   }
 
   @override
@@ -142,35 +136,85 @@ class _DashboardViewState extends State<DashboardView> {
                     "title": "Active Disasters",
                     "count": activeDisaster,
                     "icon": Icons.warning,
+                    "onTap": index == 0 && activeDisasterType.isNotEmpty
+                        ? navigateToDisasterPage
+                        : null,
                   },
                   {
                     "title": "Central Inventory",
                     "count": "150 Items",
                     "icon": Icons.storage,
+                    "onTap": () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => InventoryPage()),
+                      );
+                    },
                   },
                   {
                     "title": "Ongoing SOS Alerts",
                     "count": "12",
                     "icon": Icons.sos,
+                    "onTap": null, // Keep disabled for now
                   },
                   {
                     "title": "Rescue Teams Deployed",
                     "count": "30",
                     "icon": Icons.people,
+                    "onTap": null, // Keep disabled for now
                   },
                 ];
 
                 return GestureDetector(
-                  onTap: index == 0 && activeDisasterType.isNotEmpty
-                      ? navigateToDisasterPage
-                      : null, // Only allow tap if disaster is active
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => InventoryPage()),
+                    );
+                  },
                   child: DashboardCard(
                     title: cardData[index]["title"],
                     count: cardData[index]["count"],
                     icon: cardData[index]["icon"],
                   ),
                 );
+
               },
+            ),
+
+            const SizedBox(height: 20),
+            // Add Refugee Camp Button
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/camp');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: const Color.fromARGB(
+                      255,
+                      124,
+                      138,
+                      163,
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text(
+                    "Add Refugee Camp",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -179,7 +223,6 @@ class _DashboardViewState extends State<DashboardView> {
   }
 }
 
-// ✅ Central Dashboard Page
 class CentralDashboardPage extends StatefulWidget {
   const CentralDashboardPage({super.key});
 
@@ -228,10 +271,10 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
       drawer: AppDrawer(),
       body: Stack(
         children: [
-          _pages[_selectedIndex], // ✅ Displays selected page
-          // ✅ Floating AI Chatbot Button
+          _pages[_selectedIndex],
+          // Floating AI Chatbot Button
           Positioned(
-            bottom: 90, // ✅ Adjusted position to avoid bottom nav bar
+            bottom: 90,
             right: 16,
             child: FloatingActionButton(
               backgroundColor: Colors.white,

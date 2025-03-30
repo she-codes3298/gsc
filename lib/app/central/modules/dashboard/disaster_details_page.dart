@@ -71,17 +71,17 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : hasError
-              ? const Center(
-                  child: Text("Failed to load data", style: TextStyle(color: Colors.white)))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView.builder(
-                    itemCount: earthquakeData.length,
-                    itemBuilder: (context, index) {
-                      return _buildEarthquakeCard(earthquakeData[index]);
-                    },
-                  ),
-                ),
+          ? const Center(
+          child: Text("Failed to load data", style: TextStyle(color: Colors.white)))
+          : Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: earthquakeData.length,
+          itemBuilder: (context, index) {
+            return _buildEarthquakeCard(earthquakeData[index]);
+          },
+        ),
+      ),
     );
   }
 
