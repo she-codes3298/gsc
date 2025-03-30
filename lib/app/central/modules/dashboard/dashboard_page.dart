@@ -8,6 +8,8 @@ import '../settings/settings_page.dart';
 
 // ✅ Dashboard View (Now Fixed)
 class DashboardView extends StatelessWidget {
+  const DashboardView({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -82,7 +84,39 @@ class DashboardView extends StatelessWidget {
               ),
 
               const SizedBox(height: 20), // ✅ Adds spacing to prevent overflow
-              // ✅ Add Refugee Camp Button
+
+              // ✅ NEW BUTTON: View Active SOS Alerts
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/sos_alerts'); // ✅ Navigates to SOS Alerts Page
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: Colors.red, // 🔴 SOS Button Color
+                      elevation: 5,
+                    ),
+                    child: const Text(
+                      "View Active SOS Alerts",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10), // ✅ Space between buttons
+
+              // ✅ Existing Button: Add Refugee Camp (UNCHANGED)
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
