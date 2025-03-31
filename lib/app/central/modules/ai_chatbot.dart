@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'dart:io';
 
 class AIChatbotScreen extends StatefulWidget {
+  const AIChatbotScreen({super.key});
+
   @override
   _AIChatbotScreenState createState() => _AIChatbotScreenState();
 }
