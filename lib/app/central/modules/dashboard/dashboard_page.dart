@@ -9,12 +9,10 @@ import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
 import 'flood_details_page.dart';
-import '../inventory/inventory_page.dart';
-
-//import 'earthquake_details_page.dart';
-//import 'cyclone_details_page.dart';
 
 class DashboardView extends StatefulWidget {
+  const DashboardView({Key? key}) : super(key: key);
+
   @override
   _DashboardViewState createState() => _DashboardViewState();
 }
@@ -114,128 +112,13 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 1.8,
-              ),
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                List<Map<String, dynamic>> cardData = [
-                  {
-                    "title": "Active Disasters",
-                    "count": activeDisaster,
-                    "icon": Icons.warning,
-                    "onTap": index == 0 && activeDisasterType.isNotEmpty
-                        ? navigateToDisasterPage
-                        : null,
-                  },
-                  {
-                    "title": "Central Inventory",
-                    "count": "150 Items",
-                    "icon": Icons.storage,
-                    "onTap": () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => InventoryPage()),
-                      );
-                    },
-                  },
-                  {
-                    "title": "Ongoing SOS Alerts",
-                    "count": "12",
-                    "icon": Icons.sos,
-                    "onTap": null, // Keep disabled for now
-                  },
-                  {
-                    "title": "Rescue Teams Deployed",
-                    "count": "30",
-                    "icon": Icons.people,
-                    "onTap": null, // Keep disabled for now
-                  },
-                ];
-
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => InventoryPage()),
-                    );
-                  },
-                  child: DashboardCard(
-                    title: cardData[index]["title"],
-                    count: cardData[index]["count"],
-                    icon: cardData[index]["icon"],
-                  ),
-                );
-
-              },
-            ),
-
-            const SizedBox(height: 20),
-            // Add Refugee Camp Button
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/camp');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    backgroundColor: const Color.fromARGB(
-                      255,
-                      124,
-                      138,
-                      163,
-                    ),
-                    elevation: 5,
-                  ),
-                  child: const Text(
-                    "Add Refugee Camp",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ✅ Dashboard View (Now Fixed)
-class DashboardView extends StatelessWidget {
-  const DashboardView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: screenHeight, // ✅ Ensures content fills screen
+          minHeight: screenHeight, // Ensures content fills screen
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -258,8 +141,7 @@ class DashboardView extends StatelessWidget {
 
                   return GridView.builder(
                     shrinkWrap: true,
-                    physics:
-                        const NeverScrollableScrollPhysics(), // ✅ Fixes nested scroll issue
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
                       crossAxisSpacing: 10,
@@ -271,52 +153,77 @@ class DashboardView extends StatelessWidget {
                       List<Map<String, dynamic>> cardData = [
                         {
                           "title": "Active Disasters",
-                          "count": "5",
+                          "count": activeDisaster,
                           "icon": Icons.warning,
+                          "onTap": index == 0 && activeDisasterType.isNotEmpty
+                              ? navigateToDisasterPage
+                              : null,
                         },
                         {
                           "title": "Central Inventory",
                           "count": "150 Items",
                           "icon": Icons.storage,
+                          "onTap": () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => InventoryPage()),
+                            );
+                          },
                         },
                         {
                           "title": "Ongoing SOS Alerts",
                           "count": "12",
                           "icon": Icons.sos,
+                          "onTap": () {
+                            Navigator.pushNamed(context, '/sos_alerts');
+                          },
                         },
                         {
                           "title": "Rescue Teams Deployed",
                           "count": "30",
                           "icon": Icons.people,
+                          "onTap": null, // Keep disabled for now
+                        },
+                        {
+                          "title": "Add Refugee Camp",
+                          "icon": Icons.add_location,
+                          "count": "5",
+                          "onTap": () {
+                      Navigator.pushNamed(context, '/camp');
+                    },
                         },
                       ];
-                      return DashboardCard(
-                        title: cardData[index]["title"],
-                        count: cardData[index]["count"],
-                        icon: cardData[index]["icon"],
+
+                      return GestureDetector(
+                        onTap: cardData[index]["onTap"],
+                        child: DashboardCard(
+                          title: cardData[index]["title"],
+                          count: cardData[index]["count"],
+                          icon: cardData[index]["icon"],
+                        ),
                       );
                     },
                   );
                 },
               ),
 
-              const SizedBox(height: 20), // ✅ Adds spacing to prevent overflow
+              const SizedBox(height: 20),
 
-              // ✅ NEW BUTTON: View Active SOS Alerts
+              // SOS Alerts Button
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/sos_alerts'); // ✅ Navigates to SOS Alerts Page
+                      Navigator.pushNamed(context, '/sos_alerts');
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      backgroundColor: Colors.red, // 🔴 SOS Button Color
+                      backgroundColor: Colors.red,
                       elevation: 5,
                     ),
                     child: const Text(
@@ -331,9 +238,9 @@ class DashboardView extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 10), // ✅ Space between buttons
+              const SizedBox(height: 10),
 
-              // ✅ Existing Button: Add Refugee Camp (UNCHANGED)
+              // Add Refugee Camp Button
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
@@ -352,7 +259,7 @@ class DashboardView extends StatelessWidget {
                         124,
                         138,
                         163,
-                      ), // ✅ Matches theme
+                      ),
                       elevation: 5,
                     ),
                     child: const Text(
@@ -374,9 +281,9 @@ class DashboardView extends StatelessWidget {
   }
 }
 
-// ✅ Main Dashboard Page
+// Main Dashboard Page
 class CentralDashboardPage extends StatefulWidget {
-  const CentralDashboardPage({super.key});
+  const CentralDashboardPage({Key? key}) : super(key: key);
 
   @override
   State<CentralDashboardPage> createState() => _CentralDashboardPageState();
@@ -386,10 +293,10 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    DashboardView(), // ✅ Dashboard correctly placed
-    CommunityPage(),
-    InventoryPage(),
-    SettingsPage(),
+    const DashboardView(),
+     CommunityPage(),
+    const InventoryPage(),
+    const SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -420,20 +327,15 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
           ),
         ],
       ),
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       body: Stack(
         children: [
-
-
-          _pages[_selectedIndex], // ✅ Dynamic content rendering
-          // ✅ Floating AI Chatbot Button (Properly Placed)
+          _pages[_selectedIndex],
           Positioned(
-            bottom: 90, // ✅ Adjusted position to avoid bottom nav bar
+            bottom: 90,
             right: 16,
             child: FloatingActionButton(
-              backgroundColor:
-                  Colors.white, // ✅ Change if `accentColor` is missing
-
+              backgroundColor: Colors.white,
               onPressed: () {
                 Navigator.pushNamed(context, '/ai_chatbot');
               },
