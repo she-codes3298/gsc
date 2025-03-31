@@ -6,14 +6,13 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class CommunityPage extends StatefulWidget {
-  const CommunityPage({super.key});
-
   @override
   _CommunityPageState createState() => _CommunityPageState();
 }
 
 class _CommunityPageState extends State<CommunityPage> {
   File? image;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -22,34 +21,31 @@ class _CommunityPageState extends State<CommunityPage> {
         title: Text("Community Announcements"),
         backgroundColor: Colors.blueAccent,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Posts')
-                  .orderBy('timestamp', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    var post = snapshot.data!.docs[index];
-                    return PostCard(post: post);
-                  },
-                );
-              },
-            ),
-          ),
-        ],
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('Posts')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text("No posts available"));
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var post = snapshot.data!.docs[index];
+              return PostCard(post: post);
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddPostDialog(context),
-        backgroundColor: Colors.blueAccent,
         child: Icon(Icons.add),
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }
@@ -61,14 +57,10 @@ class _CommunityPageState extends State<CommunityPage> {
     Future<void> pickImage() async {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
       if (pickedFile != null) {
         setState(() {
           image = File(pickedFile.path);
         });
-        print("Image selected: ${image!.path}"); // Debug print
-      } else {
-        print("No image selected"); // Debug print
       }
     }
 
@@ -92,13 +84,11 @@ class _CommunityPageState extends State<CommunityPage> {
                       decoration: InputDecoration(hintText: "Content"),
                     ),
                     SizedBox(height: 16),
-                    image != null
-                        ? Image.file(image!, height: 100)
-                        : Text("No image selected"),
+                    image != null ? Image.file(image!, height: 100) : Text("No image selected"),
                     TextButton(
                       onPressed: () async {
                         await pickImage();
-                        setState(() {}); // Update UI
+                        setState(() {});
                       },
                       child: Text("Select Image"),
                     ),
@@ -109,7 +99,7 @@ class _CommunityPageState extends State<CommunityPage> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      image = null; // Clear image
+                      image = null;
                     });
                     Navigator.pop(context);
                   },
@@ -119,17 +109,11 @@ class _CommunityPageState extends State<CommunityPage> {
                   onPressed: () async {
                     String? imageUrl;
                     if (image != null) {
-                      print("Uploading image..."); // Debug print
                       imageUrl = await _uploadImage(image!);
-                      print("Image URL after upload: $imageUrl"); // Debug print
                     }
-                    _addPost(
-                      titleController.text,
-                      contentController.text,
-                      imageUrl,
-                    );
+                    _addPost(titleController.text, contentController.text, imageUrl);
                     setState(() {
-                      image = null; // Reset image after posting
+                      image = null;
                     });
                     if (mounted) {
                       Navigator.pop(context);
@@ -145,47 +129,40 @@ class _CommunityPageState extends State<CommunityPage> {
     );
   }
 
-  Future<String> _uploadImage(File image) async {
+  Future<String?> _uploadImage(File image) async {
     try {
-      print("Starting image upload..."); // Debug print
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference storageReference =
-      FirebaseStorage.instance.ref().child('posts/$fileName.jpg');
+      Reference storageReference = FirebaseStorage.instance.ref().child('Posts/$fileName.jpg');
       UploadTask uploadTask = storageReference.putFile(image);
       TaskSnapshot taskSnapshot = await uploadTask;
-      String downloadURL = await taskSnapshot.ref.getDownloadURL();
-      print("Image uploaded. URL: $downloadURL"); // Debug print
-      return downloadURL;
+      return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
-      debugPrint("Error uploading image: $e"); // Debug print
-      return "";
+      debugPrint("Error uploading image: $e");
+      return null; // Return null instead of an empty string
     }
   }
 
   void _addPost(String title, String content, String? imageUrl) {
-    print("Adding post with title: $title, content: $content, imageUrl: $imageUrl"); // Debug print
     FirebaseFirestore.instance.collection('Posts').add({
       'title': title,
       'content': content,
-      'postedBy': FirebaseAuth.instance.currentUser!.email,
-      'timestamp': DateTime.now(),
+      'postedBy': _auth.currentUser?.email ?? "Unknown",
+      'author': _auth.currentUser?.displayName ?? "Unknown", // Author field added
+      'timestamp': FieldValue.serverTimestamp(),
       'likes': 0,
       'imageUrl': imageUrl ?? "",
-    }).then((_) {
-      print("Post added successfully"); // Debug print
-    }).catchError((error) {
-      print("Failed to add post: $error"); // Debug print
     });
   }
 }
 
 class PostCard extends StatelessWidget {
   final QueryDocumentSnapshot post;
-  const PostCard({super.key, required this.post});
+  const PostCard({Key? key, required this.post}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final isGovernmentUser = FirebaseAuth.instance.currentUser?.email?.endsWith("@gov.in") ?? false;
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final isGovernmentUser = _auth.currentUser?.email?.endsWith("@gmail.com") ?? false;
 
     return Card(
       margin: EdgeInsets.all(8),
@@ -201,16 +178,14 @@ class PostCard extends StatelessWidget {
                 if (isGovernmentUser)
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deletePost(post.id),
+                    onPressed: () => _deletePost(post.id, post['imageUrl']),
                   ),
               ],
             ),
             SizedBox(height: 8),
             Text(post['content']),
-            SizedBox(height: 8),
-            if ((post.data() as Map<String, dynamic>).containsKey('imageUrl') && post['imageUrl'] != null && post['imageUrl'].isNotEmpty)
+            if (post['imageUrl'] != null && post['imageUrl'].isNotEmpty)
               Image.network(post['imageUrl'], height: 150, width: double.infinity, fit: BoxFit.cover),
-            SizedBox(height: 8),
             Row(
               children: [
                 IconButton(
@@ -220,7 +195,6 @@ class PostCard extends StatelessWidget {
                 Text(post['likes'].toString()),
               ],
             ),
-            CommentSection(postId: post.id),
           ],
         ),
       ),
@@ -233,53 +207,16 @@ class PostCard extends StatelessWidget {
     });
   }
 
-  void _deletePost(String postId) {
-    FirebaseFirestore.instance.collection('Posts').doc(postId).delete();
-  }
-}
+  void _deletePost(String postId, String imageUrl) async {
+    try {
+      await FirebaseFirestore.instance.collection('Posts').doc(postId).delete();
 
-class CommentSection extends StatelessWidget {
-  final String postId;
-  const CommentSection({super.key, required this.postId});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('Posts')
-          .doc(postId)
-          .collection('Comments')
-          .orderBy('timestamp', descending: true)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return SizedBox();
-        return Column(
-          children: [
-            ...snapshot.data!.docs.map((comment) {
-              return ListTile(
-                title: Text(comment['commentText']),
-                subtitle: Text(comment['commentedBy']),
-              );
-            }),
-            TextField(
-              onSubmitted: (text) => _addComment(postId, text),
-              decoration: InputDecoration(hintText: 'Add a comment...'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _addComment(String postId, String text) {
-    FirebaseFirestore.instance
-        .collection('Posts')
-        .doc(postId)
-        .collection('Comments')
-        .add({
-      'commentText': text,
-      'commentedBy': FirebaseAuth.instance.currentUser!.email,
-      'timestamp': DateTime.now(),
-    });
+      // Delete image from Firebase Storage if it exists
+      if (imageUrl.isNotEmpty) {
+        await FirebaseStorage.instance.refFromURL(imageUrl).delete();
+      }
+    } catch (e) {
+      debugPrint("Error deleting post: $e");
+    }
   }
 }
