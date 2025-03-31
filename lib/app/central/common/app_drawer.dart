@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../auth/auth.dart'; // Import AuthService
 
 class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final AuthService _authService =
+    final AuthService authService =
         AuthService(); // Create an instance of AuthService
 
     return Drawer(
@@ -95,7 +97,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text("Logout", style: TextStyle(color: Colors.red)),
             onTap: () {
-              _authService.signOut(context); // Call signOut method
+              authService.signOut(context); // Call signOut method
             },
           ),
         ],
