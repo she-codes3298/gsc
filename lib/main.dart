@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'firebase_options.dart';
 import 'app/modules/login/login_page.dart';
@@ -13,17 +14,16 @@ import 'app/central/modules/inventory/inventory_page.dart';
 import 'app/central/modules/settings/settings_page.dart';
 import 'app/central/modules/ai_chatbot.dart';
 import 'app/central/modules/camps/camp_management_map.dart';
-import 'package:gsc/app/modules/sos_alerts/sos_alerts_page.dart';
+import 'app/modules/sos_alerts/sos_alerts_page.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// 🔔 Global instance for local notifications
+/// 🔔 Global instance for local notifications
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await initializeFirebase();
   await ensureAuthenticated();
 
@@ -123,6 +123,12 @@ void setupFirebaseMessaging() async {
 
   // 🔥 Background message handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // 🔥 Store FCM Token in Firestore & handle refresh
+  storeFCMToken();
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+    storeFCMToken(newToken);
+  });
 }
 
 /// 🔔 **Setup Local Notifications**
@@ -169,4 +175,20 @@ void _showLocalNotification(RemoteNotification notification) async {
 /// 📩 **Handle Background Messages**
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("📢 Background Notification: ${message.notification?.title}");
+}
+
+/// 📡 **Store FCM Token in Firestore**
+void storeFCMToken([String? newToken]) async {
+  try {
+    String? token = newToken ?? await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      await FirebaseFirestore.instance
+          .collection('FCM_TOKENS')
+          .doc('gsc_app')
+          .set({'token': token, 'timestamp': FieldValue.serverTimestamp()});
+      print("✅ FCM Token Stored: $token");
+    }
+  } catch (e) {
+    print("❌ Error storing FCM Token: $e");
+  }
 }

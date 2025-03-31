@@ -177,7 +177,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.21"
-
   dbus:
     dependency: transitive
     description:
@@ -186,7 +185,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
-
   dio:
     dependency: transitive
     description:
@@ -331,7 +329,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.21.1"
-
   firebase_messaging:
     dependency: "direct main"
     description:
@@ -356,7 +353,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.10.4"
-
   firebase_storage:
     dependency: "direct main"
     description:
@@ -378,8 +374,6 @@ packages:
     description:
       name: firebase_storage_web
       sha256: e169fc825cbd91c70d73f75b7e8be9ada272b4297184f779ca124b42945828fe
-
-
       url: "https://pub.dev"
     source: hosted
     version: "3.10.11"
@@ -390,7 +384,6 @@ packages:
       sha256: b6dc7065e46c974bc7c5f143080a6764ec7a4be6da1285ececdc37be96de53be
       url: "https://pub.dev"
     source: hosted
-
     version: "1.1.1"
   flutter:
     dependency: "direct main"
@@ -429,7 +422,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
-
   flutter_local_notifications:
     dependency: "direct main"
     description:
@@ -462,7 +454,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-
   flutter_markdown:
     dependency: transitive
     description:
@@ -495,7 +486,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.27"
-
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -504,7 +494,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
-
   flutter_svg:
     dependency: "direct main"
     description:
@@ -575,22 +564,18 @@ packages:
     dependency: transitive
     description:
       name: geolocator_apple
-
       sha256: dbdd8789d5aaf14cf69f74d4925ad1336b4433a6efdf2fce91e8955dc921bf22
       url: "https://pub.dev"
     source: hosted
     version: "2.3.13"
-
   geolocator_platform_interface:
     dependency: transitive
     description:
       name: geolocator_platform_interface
-
       sha256: "30cb64f0b9adcc0fb36f628b4ebf4f731a2961a0ebd849f4b56200205056fe67"
       url: "https://pub.dev"
     source: hosted
     version: "4.2.6"
-
   geolocator_web:
     dependency: transitive
     description:
@@ -603,12 +588,10 @@ packages:
     dependency: transitive
     description:
       name: geolocator_windows
-
       sha256: "175435404d20278ffd220de83c2ca293b73db95eafbdc8131fe8609be1421eb6"
       url: "https://pub.dev"
     source: hosted
     version: "0.2.5"
-
   get:
     dependency: "direct main"
     description:
@@ -760,16 +743,6 @@ packages:
       sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
       url: "https://pub.dev"
     source: hosted
-
-    version: "4.5.3"
-  image_picker:
-    dependency: "direct main"
-    description:
-      name: image_picker
-      sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
-      url: "https://pub.dev"
-    source: hosted
-
     version: "1.1.2"
   image_picker_android:
     dependency: transitive
@@ -1031,7 +1004,6 @@ packages:
     dependency: "direct main"
     description:
       name: provider
-
       sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
       url: "https://pub.dev"
     source: hosted
@@ -1044,12 +1016,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
-
-      sha256: "489024f942069c2920c844ee18bb3d467c69e48955a4f32d1677f71be103e310"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.4"
-
   rxdart:
     dependency: transitive
     description:
@@ -1323,12 +1289,10 @@ packages:
     dependency: transitive
     description:
       name: video_player
-
       sha256: "7d78f0cfaddc8c19d4cb2d3bebe1bfef11f2103b0a03e5398b303a1bf65eeb14"
       url: "https://pub.dev"
     source: hosted
     version: "2.9.5"
-
   video_player_android:
     dependency: transitive
     description:
