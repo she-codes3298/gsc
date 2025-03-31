@@ -5,6 +5,11 @@
 	    <key>GMSApiKey</key>
         <string>AIzaSyC-cPItwXPyLDsgs5NEKo875XEaDxxmLJY</string>
 
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>App needs location access to show inventory locations.</string>
+
+
+
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
