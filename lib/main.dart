@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'app/central/modules/Teams/deployed.dart';
 import 'firebase_options.dart';
 import 'app/modules/login/login_page.dart';
 import 'app/central/modules/dashboard/dashboard_page.dart';
@@ -78,6 +78,7 @@ class MyApp extends StatelessWidget {
         '/gov_settings': (context) => SettingsPage(),
         '/ai_chatbot': (context) => AIChatbotScreen(),
         '/camp': (context) => RefugeeCampPage(),
+        '/deployed_teams': (context) => TeamsPage(),
       },
     );
   }
@@ -153,16 +154,17 @@ void setupLocalNotifications() {
 void _showLocalNotification(RemoteNotification notification) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-    'sos_channel',
-    'SOS Alerts',
-    channelDescription: 'Emergency SOS notifications',
-    importance: Importance.max,
-    priority: Priority.high,
-    showWhen: false,
-  );
+        'sos_channel',
+        'SOS Alerts',
+        channelDescription: 'Emergency SOS notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: false,
+      );
 
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+  );
 
   await flutterLocalNotificationsPlugin.show(
     0,
