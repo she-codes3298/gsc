@@ -44,7 +44,8 @@ class DefaultFirebaseOptions {
     apiKey: 'YOUR_API_KEY',
     appId: 'YOUR_APP_ID',
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
+    projectId: 'ecgtest',
+    databaseURL: 'https://ecgtest.firebaseio.com/', // Make sure this is correct
     storageBucket: 'YOUR_STORAGE_BUCKET',
   );
 

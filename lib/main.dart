@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'app/central/modules/Teams/teams_page.dart';
 import 'firebase_options.dart';
 import 'app/modules/login/login_page.dart';
 import 'app/central/modules/dashboard/dashboard_page.dart';
@@ -15,6 +15,7 @@ import 'app/central/modules/settings/settings_page.dart';
 import 'app/central/modules/ai_chatbot.dart';
 import 'app/central/modules/camps/camp_management_map.dart';
 import 'app/modules/sos_alerts/sos_alerts_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -36,11 +37,21 @@ void main() async {
   setupFirebaseMessaging();
 }
 
+// Global variable to store the correct database instance
+late FirebaseDatabase firebaseDatabase;
+
 Future<void> initializeFirebase() async {
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    // Assign the correct database instance to the global variable
+    firebaseDatabase = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL: "https://ecgtest.firebaseio.com/",
+    );
+
     print("✅ Firebase initialized successfully");
   } catch (e) {
     print("❌ Firebase initialization failed: $e");
@@ -78,6 +89,7 @@ class MyApp extends StatelessWidget {
         '/gov_settings': (context) => SettingsPage(),
         '/ai_chatbot': (context) => AIChatbotScreen(),
         '/camp': (context) => RefugeeCampPage(),
+        '/deployed_teams': (context) => TeamsPage(),
       },
     );
   }
@@ -153,16 +165,17 @@ void setupLocalNotifications() {
 void _showLocalNotification(RemoteNotification notification) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-    'sos_channel',
-    'SOS Alerts',
-    channelDescription: 'Emergency SOS notifications',
-    importance: Importance.max,
-    priority: Priority.high,
-    showWhen: false,
-  );
+        'sos_channel',
+        'SOS Alerts',
+        channelDescription: 'Emergency SOS notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: false,
+      );
 
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+  );
 
   await flutterLocalNotificationsPlugin.show(
     0,
