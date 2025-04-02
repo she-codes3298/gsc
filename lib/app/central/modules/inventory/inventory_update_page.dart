@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class InventoryUpdatePage extends StatefulWidget {
   final String itemId; // Item's Firestore document ID
@@ -55,18 +57,18 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
       }
 
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Item updated successfully!")));
+          .showSnackBar(SnackBar(content: TranslatableText("Item updated successfully!")));
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error updating item: $e")));
+          .showSnackBar(SnackBar(content: TranslatableText("Error updating item: $e")));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Update Inventory Item")),
+      appBar: AppBar(title: TranslatableText("Update Inventory Item")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -83,7 +85,7 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: updateItem,
-              child: Text("Update Item"),
+              child: TranslatableText("Update Item"),
             ),
           ],
         ),

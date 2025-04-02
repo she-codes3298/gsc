@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:gsc/app/central/common/translatable_text.dart';
 
 class AIChatbotScreen extends StatefulWidget {
   const AIChatbotScreen({super.key});
@@ -13,17 +14,11 @@ class AIChatbotScreen extends StatefulWidget {
 }
 
 class _AIChatbotScreenState extends State<AIChatbotScreen> {
-  late final Gemini _gemini;
   final ChatUser _user = ChatUser(id: '1', firstName: 'User');
   final ChatUser _bot = ChatUser(id: '2', firstName: 'E-sahyog');
   final List<ChatMessage> _messages = [];
   final ImagePicker _picker = ImagePicker();
-
-  @override
-  void initState() {
-    super.initState();
-    _gemini = Gemini.instance;
-  }
+  bool _isTyping = false;
 
   final List<String> _customPrompts = [
     "How to manage an earthquake response?",
@@ -44,87 +39,90 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
     setState(() {
       _messages.insert(0, message);
       _showPrompts = false;
+      _isTyping = true;
     });
 
     try {
-      final response = await _gemini.text(message.text);
-      if (response != null) {
-        setState(() {
-          _messages.insert(
-            0,
-            ChatMessage(
-              user: _bot,
-              text: response.output!,
-              createdAt: DateTime.now(),
-            ),
-          );
-        });
-      }
+      final response = await Gemini.instance.text(message.text);
+      setState(() {
+        _messages.insert(
+          0,
+          ChatMessage(
+            user: _bot,
+            text: response?.output ?? 'No response received',
+            createdAt: DateTime.now(),
+          ),
+        );
+        _isTyping = false;
+      });
     } catch (e) {
       setState(() {
         _messages.insert(
           0,
           ChatMessage(
             user: _bot,
-            text: 'Error: Failed to fetch response.',
+            text: 'Error: ${e.toString()}',
             createdAt: DateTime.now(),
           ),
         );
+        _isTyping = false;
       });
     }
   }
 
-  void _sendImage() async {
+  Future<void> _sendImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      final bytes = await File(image.path).readAsBytes();
-      final base64Image = base64Encode(bytes);
+    if (image == null) return;
+
+    final bytes = await File(image.path).readAsBytes();
+
+    setState(() {
+      _messages.insert(
+        0,
+        ChatMessage(
+          user: _user,
+          createdAt: DateTime.now(),
+          medias: [
+            ChatMedia(
+              url: image.path,
+              fileName: "image.jpg",
+              type: MediaType.image,
+            ),
+          ],
+        ),
+      );
+      _isTyping = true;
+    });
+
+    try {
+      final response = await Gemini.instance.textAndImage(
+        text: "Describe this image in detail",
+        images: [bytes], // Changed from File to Uint8List
+      );
 
       setState(() {
         _messages.insert(
           0,
           ChatMessage(
-            user: _user,
+            user: _bot,
+            text: response?.output ?? 'No description available',
             createdAt: DateTime.now(),
-            medias: [
-              ChatMedia(
-                url: image.path,
-                fileName: "image.jpg",
-                type: MediaType.image,
-              ),
-            ],
           ),
         );
+        _isTyping = false;
       });
-
-      try {
-        final response = await _gemini.text(
-          'Describe this image: $base64Image',
+    } catch (e) {
+      setState(() {
+        _messages.insert(
+          0,
+          ChatMessage(
+            user: _bot,
+            text: 'Error processing image: ${e.toString()}',
+            createdAt: DateTime.now(),
+          ),
         );
-        if (response != null) {
-          setState(() {
-            _messages.insert(
-              0,
-              ChatMessage(
-                user: _bot,
-                text: response.output!,
-                createdAt: DateTime.now(),
-              ),
-            );
-          });
-        }
-      } catch (e) {
-        setState(() {
-          _messages.insert(
-            0,
-            ChatMessage(
-              user: _bot,
-              text: 'Error: Failed to process image.',
-              createdAt: DateTime.now(),
-            ),
-          );
-        });
-      }
+        _isTyping = false;
+      });
     }
   }
 
@@ -132,59 +130,54 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('E-Sahyog', style: TextStyle(color: Colors.white)),
+        title: const Text('E-Sahyog', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       backgroundColor: Colors.grey[900],
       body: Stack(
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: DashChat(
-                  currentUser: _user,
-                  messages: _messages,
-                  messageOptions: MessageOptions(
-                    containerColor: const Color.fromARGB(255, 66, 66, 66),
-                    textColor: Colors.white,
-                  ),
-                  inputOptions: InputOptions(
-                    inputTextStyle: TextStyle(color: Colors.white),
-                    inputDecoration: InputDecoration(
-                      fillColor: Colors.black,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey, width: 2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    ),
-                    trailing: [
-                      IconButton(
-                        icon: Icon(Icons.image, color: Colors.white),
-                        onPressed: _sendImage,
-                      ),
-                    ],
-                  ),
-                  onSend: (ChatMessage message) {
-                    _sendMessage(message);
-                  },
+          DashChat(
+            currentUser: _user,
+            messages: _messages,
+            typingUsers: _isTyping ? [_bot] : [],
+            messageOptions: MessageOptions(
+              containerColor: const Color.fromARGB(255, 66, 66, 66),
+              textColor: Colors.white,
+              currentUserContainerColor: Colors.blue,
+            ),
+            inputOptions: InputOptions(
+              inputTextStyle: const TextStyle(color: Colors.white),
+              inputDecoration: InputDecoration(
+                fillColor: Colors.black,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.grey, width: 2),
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.grey, width: 2),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.white, width: 2),
+                ),
+                hintText: 'Type your message...',
+                hintStyle: const TextStyle(color: Colors.grey),
               ),
-            ],
+              trailing: [
+                IconButton(
+                  icon: const Icon(Icons.image, color: Colors.white),
+                  onPressed: _sendImage,
+                ),
+              ],
+              alwaysShowSend: true,
+            ),
+            onSend: _sendMessage,
           ),
           if (_showPrompts)
             Positioned(
@@ -195,7 +188,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                 height: 100,
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.8),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
                 ),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -210,7 +203,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 8,
                           ),
@@ -226,7 +219,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                         },
                         child: Text(
                           _customPrompts[index],
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                     );

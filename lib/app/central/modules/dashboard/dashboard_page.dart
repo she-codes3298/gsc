@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
 import '../../common/dashboard_card.dart';
+import '../../common/translatable_text.dart';  // Import the TranslatableText widget
+import '../../common/language_selection_dialog.dart';  // Import the language dialog
 import '../community/community_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
@@ -313,10 +315,14 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
         backgroundColor: Colors.black,
         title: const Text("Central Government Dashboard"),
         actions: [
-          IconButton(
+           IconButton(
             icon: const Icon(Icons.language, color: Colors.white),
             onPressed: () {
-              // TODO: Implement Language Change Feature
+              // Implement Language Change Feature
+              showDialog(
+                context: context,
+                builder: (context) => const LanguageSelectionDialog(),
+              );
             },
           ),
           IconButton(

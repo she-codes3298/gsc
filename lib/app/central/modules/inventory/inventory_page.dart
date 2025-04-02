@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'inventory_request_page.dart';
 import 'inventory_update_page.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class InventoryPage extends StatelessWidget {
   const InventoryPage({super.key});
@@ -9,7 +11,7 @@ class InventoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Central Inventory"),
+        title: const TranslatableText("Central Inventory"),
         backgroundColor: Colors.blueGrey,
       ),
       body: Padding(
@@ -21,15 +23,15 @@ class InventoryPage extends StatelessWidget {
             Card(
               color: Colors.blueGrey[100],
               child: const ListTile(
-                title: Text("Total Items in Stock", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: Text("150 Items"), // Dummy data for now
+                title: TranslatableText("Total Items in Stock", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                subtitle: TranslatableText("150 Items"), // Dummy data for now
                 leading: Icon(Icons.storage, color: Colors.blueGrey),
               ),
             ),
             const SizedBox(height: 20),
 
             // Quick Actions Section
-            const Text("Quick Actions", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const TranslatableText("Quick Actions", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
 
             GridView.count(
@@ -96,7 +98,7 @@ class InventoryPage extends StatelessWidget {
             children: [
               Icon(icon, size: 40, color: Colors.white),
               const SizedBox(height: 8),
-              Text(
+              TranslatableText(
                 title,
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),

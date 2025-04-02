@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class InventoryService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

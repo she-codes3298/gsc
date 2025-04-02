@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
 
 class DashboardCard extends StatelessWidget {
   final String title;
@@ -30,13 +31,13 @@ class DashboardCard extends StatelessWidget {
         children: [
           Icon(icon, size: 30, color: Colors.red),
           SizedBox(height: 8),
-          Text(
+          TranslatableText(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 5),
-          Text(
+          TranslatableText(
             count,
             style: TextStyle(fontSize: 16, color: Colors.black),
           ),

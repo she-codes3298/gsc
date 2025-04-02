@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
