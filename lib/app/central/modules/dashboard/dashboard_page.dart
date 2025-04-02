@@ -5,6 +5,7 @@ import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
 import '../../common/dashboard_card.dart';
 import '../community/community_page.dart';
+import '../Teams/deployed.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
@@ -179,14 +180,16 @@ class _DashboardViewState extends State<DashboardView> {
                     },
                     {
                       "title": "Rescue Teams Deployed",
-                      "count": "30",
+                      "count": "5",
                       "icon": Icons.groups_rounded,
-                      "onTap": null, // Disabled for now
+                      "onTap": () {
+                        Navigator.pushNamed(context, '/sos_alerts');
+                      },
                     },
                     {
                       "title": "Add Refugee Camp",
                       "icon": Icons.add_location_alt,
-                      "count": "5",
+                      "count": "4",
                       "onTap": () {
                         Navigator.pushNamed(context, '/camp');
                       },
