@@ -183,7 +183,7 @@ class _DashboardViewState extends State<DashboardView> {
                       "count": "5",
                       "icon": Icons.groups_rounded,
                       "onTap": () {
-                        Navigator.pushNamed(context, '/sos_alerts');
+                        Navigator.pushNamed(context, '/deployed_teams');
                       },
                     },
                     {
