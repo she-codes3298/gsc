@@ -18,6 +18,7 @@ dependencies:
   cloud_firestore: ^5.6.5 # Firestore (if you're storing user details)
   firebase_analytics: ^11.4.4 # Google Analytics for Firebase
   get: ^4.7.2
+  firebase_database: ^11.3.5
 
   firebase_messaging: ^15.2.4
   flutter_local_notifications: ^19.0.0
