@@ -1,9 +1,7 @@
-// lib/app/central/modules/Teams/team_details_page.dart
-
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_map/flutter_map.dart'; // You'll need to add this dependency
-import 'package:latlong2/latlong.dart'; // And this one too
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class TeamDetailsPage extends StatelessWidget {
   final String teamId;
@@ -19,38 +17,34 @@ class TeamDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(teamName)),
-      body: StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<DatabaseEvent>(
         stream:
-            FirebaseFirestore.instance
-                .collection('deployed_teams')
-                .doc(teamId)
-                .collection('members')
-                .snapshots(),
+            FirebaseDatabase.instance
+                .ref('deployed_teams/$teamId/members')
+                .onValue,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.snapshot.children.isEmpty) {
             return const Center(child: Text("No team members found."));
           }
 
-          var members = snapshot.data!.docs;
+          var members = snapshot.data!.snapshot.children;
 
           return ListView.builder(
             itemCount: members.length,
             itemBuilder: (context, index) {
-              var member = members[index].data() as Map<String, dynamic>;
-              // To simulate real-time ECG changes
+              var member =
+                  members.elementAt(index).value as Map<dynamic, dynamic>;
               String ecg = member["ECG"];
               if (ecg.contains("BPM")) {
                 int bpm = int.parse(ecg.split(" ")[0]);
-                // Simulate slight changes (+/- 3 BPM)
                 bpm += (DateTime.now().millisecondsSinceEpoch % 7) - 3;
                 ecg = "$bpm BPM";
               }
 
-              // Status color indicator
               Color statusColor;
               switch (member["status"]) {
                 case "Active":
@@ -114,10 +108,7 @@ class TeamDetailsPage extends StatelessWidget {
 
   Widget _buildMemberLocationMap(double lat, double long, String memberName) {
     return FlutterMap(
-      options: MapOptions(
-        initialCenter: LatLng(lat, long), // Corrected from 'center'
-        initialZoom: 13.0,
-      ),
+      options: MapOptions(initialCenter: LatLng(lat, long), initialZoom: 13.0),
       children: [
         TileLayer(
           urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -126,15 +117,10 @@ class TeamDetailsPage extends StatelessWidget {
         MarkerLayer(
           markers: [
             Marker(
-              point: LatLng(lat, long), // Corrected from 'point'
+              point: LatLng(lat, long),
               width: 80,
               height: 80,
-              child: const Icon(
-                // Corrected from 'builder'
-                Icons.location_on,
-                color: Colors.red,
-                size: 30,
-              ),
+              child: const Icon(Icons.location_on, color: Colors.red, size: 30),
             ),
           ],
         ),
@@ -201,18 +187,15 @@ class TeamDetailsPage extends StatelessWidget {
 
   void _addNewMember(String name, String status) async {
     try {
-      // Generate random location nearby the existing team members
-      // This is just for demo purposes
       double randomLat =
           28.7041 + (DateTime.now().millisecondsSinceEpoch % 100) / 10000;
       double randomLong =
           77.1025 + (DateTime.now().millisecondsSinceEpoch % 100) / 10000;
 
-      await FirebaseFirestore.instance
-          .collection('deployed_teams')
-          .doc(teamId)
-          .collection('members')
-          .add({
+      await FirebaseDatabase.instance
+          .ref('deployed_teams/$teamId/members')
+          .push()
+          .set({
             'name': name,
             'ECG': '${70 + (DateTime.now().millisecondsSinceEpoch % 20)} BPM',
             'location': {'lat': randomLat, 'long': randomLong},
