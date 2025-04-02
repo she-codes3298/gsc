@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:provider/provider.dart';
 
-
 import 'app/central/modules/Teams/teams_page.dart';
 
 import 'firebase_options.dart';
@@ -25,14 +24,11 @@ import 'providers/language_provider.dart';
 
 import 'package:firebase_database/firebase_database.dart';
 
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// 🔔 Global instance for local notifications
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-
-FlutterLocalNotificationsPlugin();
-
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +38,6 @@ void main() async {
   // ✅ Initialize Gemini AI (Only once)
 
   Gemini.init(apiKey: "AIzaSyADGh1jYjjOA5hNJVVFUzBwNZ-SVMYdqXc");
-
 
   runApp(const MyApp());
 
@@ -59,13 +54,11 @@ Future<void> initializeFirebase() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-
     // Assign the correct database instance to the global variable
     firebaseDatabase = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL: "https://ecgtest.firebaseio.com/",
     );
-
 
     print("✅ Firebase initialized successfully");
   } catch (e) {
@@ -90,11 +83,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => LanguageProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => LanguageProvider())],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark(),
@@ -109,9 +99,9 @@ class MyApp extends StatelessWidget {
           '/gov_settings': (context) => SettingsPage(),
           '/ai_chatbot': (context) => AIChatbotScreen(),
           '/camp': (context) => RefugeeCampPage(),
+          '/deployed_teams': (context) => TeamsPage(),
         },
       ),
-
     );
   }
 }
@@ -167,8 +157,7 @@ void setupFirebaseMessaging() async {
 /// 🔔 **Setup Local Notifications**
 void setupLocalNotifications() {
   const AndroidInitializationSettings androidInitSettings =
-
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
   const InitializationSettings initSettings = InitializationSettings(
     android: androidInitSettings,
@@ -186,7 +175,6 @@ void setupLocalNotifications() {
 /// 📢 **Show Local Notification**
 void _showLocalNotification(RemoteNotification notification) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-
       AndroidNotificationDetails(
         'sos_channel',
         'SOS Alerts',
@@ -199,7 +187,6 @@ void _showLocalNotification(RemoteNotification notification) async {
   const NotificationDetails platformChannelSpecifics = NotificationDetails(
     android: androidPlatformChannelSpecifics,
   );
-
 
   await flutterLocalNotificationsPlugin.show(
     0,
@@ -228,6 +215,4 @@ void storeFCMToken([String? newToken]) async {
   } catch (e) {
     print("❌ Error storing FCM Token: $e");
   }
-
 }
-
