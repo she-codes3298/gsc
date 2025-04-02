@@ -43,8 +43,17 @@ class TeamsPage extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
-                  title: Text("Location: ${team["location"]}"),
-                  subtitle: Text("Members: ${team["members"]?.length ?? 0}"),
+                  title: Text(
+                    team["name"] ?? "Unknown Team",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Location: ${team["location"] ?? "Unknown"}"),
+                      Text("Members: ${team["members"]?.length ?? 0}"),
+                    ],
+                  ),
                   trailing: const Icon(Icons.arrow_forward),
                   onTap: () {
                     Navigator.push(
