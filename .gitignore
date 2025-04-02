@@ -47,3 +47,4 @@ app.*.map.json
 /.dart_tool/
 /.idea/
 android/app/service_inventory.json
+android/app/service_inventory.json
