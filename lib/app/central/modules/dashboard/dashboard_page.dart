@@ -7,11 +7,14 @@ import '../../common/dashboard_card.dart';
 import '../../common/translatable_text.dart';  // Import the TranslatableText widget
 import '../../common/language_selection_dialog.dart';  // Import the language dialog
 import '../community/community_page.dart';
+import '../Teams/teams_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
 import 'flood_details_page.dart';
+
 import 'package:gsc/services/translation_service.dart';
+
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -33,7 +36,8 @@ class _DashboardViewState extends State<DashboardView> {
   Future<void> fetchDisasterData() async {
     final urls = {
       "Earthquake": 'https://my-python-app-wwb655aqwa-uc.a.run.app/',
-      "Flood": 'https://water-level-model-bsbjxt7qdq-el.a.run.app/flood-assessments',
+      "Flood":
+          'https://water-level-model-bsbjxt7qdq-el.a.run.app/flood-assessments',
       "Cyclone": 'https://cyclone-app-vrdkju5xka-el.a.run.app',
     };
 
@@ -98,8 +102,7 @@ class _DashboardViewState extends State<DashboardView> {
         context,
         MaterialPageRoute(builder: (context) => DisasterDetailsPage()),
       );
-    }
-    else if (activeDisasterType == "Flood") {
+    } else if (activeDisasterType == "Flood") {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => FloodDetailsPage()),
@@ -129,8 +132,9 @@ class _DashboardViewState extends State<DashboardView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               const TranslatableText(
-                "Overview",
+    "Overview",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -139,65 +143,78 @@ class _DashboardViewState extends State<DashboardView> {
               ),
               const SizedBox(height: 10),
 
+
               LayoutBuilder(
                 builder: (context, constraints) {
-                  int crossAxisCount = (screenWidth < 600) ? 1 : 2;
+                  int crossAxisCount =
+                      (screenWidth < 500)
+                          ? 1
+                          : (screenWidth < 900)
+                          ? 2
+                          : 3;
+                  double aspectRatio = (screenWidth / (crossAxisCount * 230))
+                      .clamp(1.4, 2.3);
+
+                  List<Map<String, dynamic>> cardData = [
+                    {
+                      "title": "Active Disasters",
+                      "count": activeDisaster,
+                      "icon": Icons.warning_amber_rounded,
+                      "onTap":
+                          activeDisasterType.isNotEmpty
+                              ? navigateToDisasterPage
+                              : null,
+                    },
+                    {
+                      "title": "Central Inventory",
+                      "count": "150 Items",
+                      "icon": Icons.inventory,
+                      "onTap": () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InventoryPage(),
+                          ),
+                        );
+                      },
+                    },
+                    {
+                      "title": "Ongoing SOS Alerts",
+                      "count": "12",
+                      "icon": Icons.sos_outlined,
+                      "onTap": () {
+                        Navigator.pushNamed(context, '/sos_alerts');
+                      },
+                    },
+                    {
+                      "title": "Rescue Teams Deployed",
+                      "count": "5",
+                      "icon": Icons.groups_rounded,
+                      "onTap": () {
+                        Navigator.pushNamed(context, '/deployed_teams');
+                      },
+                    },
+                    {
+                      "title": "Add Refugee Camp",
+                      "icon": Icons.add_location_alt,
+                      "count": "4",
+                      "onTap": () {
+                        Navigator.pushNamed(context, '/camp');
+                      },
+                    },
+                  ];
 
                   return GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: (screenWidth < 400) ? 2.5 : 1.8,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: aspectRatio,
                     ),
-                    itemCount: 4,
+                    itemCount: cardData.length,
                     itemBuilder: (context, index) {
-                      List<Map<String, dynamic>> cardData = [
-                        {
-                          "title": "Active Disasters",
-                          "count": activeDisaster,
-                          "icon": Icons.warning,
-                          "onTap": index == 0 && activeDisasterType.isNotEmpty
-                              ? navigateToDisasterPage
-                              : null,
-                        },
-                        {
-                          "title": "Central Inventory",
-                          "count": "150 Items",
-                          "icon": Icons.storage,
-                          "onTap": () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => InventoryPage()),
-                            );
-                          },
-                        },
-                        {
-                          "title": "Ongoing SOS Alerts",
-                          "count": "12",
-                          "icon": Icons.sos,
-                          "onTap": () {
-                            Navigator.pushNamed(context, '/sos_alerts');
-                          },
-                        },
-                        {
-                          "title": "Rescue Teams Deployed",
-                          "count": "30",
-                          "icon": Icons.people,
-                          "onTap": null, // Keep disabled for now
-                        },
-                        {
-                          "title": "Add Refugee Camp",
-                          "icon": Icons.add_location,
-                          "count": "5",
-                          "onTap": () {
-                      Navigator.pushNamed(context, '/camp');
-                    },
-                        },
-                      ];
-
                       return GestureDetector(
                         onTap: cardData[index]["onTap"],
                         child: DashboardCard(
@@ -211,72 +228,8 @@ class _DashboardViewState extends State<DashboardView> {
                 },
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              // SOS Alerts Button
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/sos_alerts');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: Colors.red,
-                      elevation: 5,
-                    ),
-                    child: const TranslatableText(
-                      "View Active SOS Alerts",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              // Add Refugee Camp Button
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/camp');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: const Color.fromARGB(
-                        255,
-                        124,
-                        138,
-                        163,
-                      ),
-                      elevation: 5,
-                    ),
-                    child: const TranslatableText(
-                      "Add Refugee Camp",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -298,7 +251,9 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
 
   final List<Widget> _pages = [
     const DashboardView(),
+
      CommunityPage(),
+
     const InventoryPage(),
     const SettingsPage(),
   ];
