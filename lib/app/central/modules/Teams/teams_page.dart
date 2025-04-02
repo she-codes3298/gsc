@@ -8,11 +8,17 @@ class TeamsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Deployed Teams'),
+        title: const Text(
+          'Deployed Teams',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add, color: Colors.white),
             onPressed: () {
               _showAddTeamDialog(context);
             },
@@ -23,11 +29,20 @@ class TeamsPage extends StatelessWidget {
         stream: FirebaseDatabase.instance.ref('teams').onValue,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[800]!),
+              ),
+            );
           }
 
           if (!snapshot.hasData || snapshot.data!.snapshot.children.isEmpty) {
-            return const Center(child: Text("No teams deployed yet!"));
+            return Center(
+              child: Text(
+                "No teams deployed yet!",
+                style: TextStyle(color: Colors.grey[800], fontSize: 18),
+              ),
+            );
           }
 
           var teams =
@@ -37,24 +52,60 @@ class TeamsPage extends StatelessWidget {
                   .cast<MapEntry<String, dynamic>>();
 
           return ListView.builder(
+            padding: const EdgeInsets.all(16),
             itemCount: teams.length,
             itemBuilder: (context, index) {
               var team = teams.elementAt(index).value as Map<dynamic, dynamic>;
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(
+                        255,
+                        101,
+                        98,
+                        98,
+                      ).withOpacity(0.2),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: ListTile(
                   title: Text(
-                    team["name"] ?? "Unknown Team",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    team["name"] ?? "TeamX",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[900],
+                      fontSize: 18,
+                    ),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Location: ${team["location"] ?? "Unknown"}"),
-                      Text("Members: ${team["members"]?.length ?? 0}"),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Location: ${team["location"] ?? "Unknown"}",
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        "Members: ${team["members"]?.length ?? 0}",
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
                     ],
                   ),
-                  trailing: const Icon(Icons.arrow_forward),
+                  trailing: Icon(Icons.arrow_forward, color: Colors.grey[800]),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -62,13 +113,9 @@ class TeamsPage extends StatelessWidget {
                         builder:
                             (context) => TeamDetailsPage(
                               teamId: teams.elementAt(index).key!,
-                              teamName:
-                                  team["name"], // Ensure 'name' exists in your data
-                              teamLocation:
-                                  team["location"], // Ensure 'location' exists in your data
-                              members:
-                                  team["members"] ??
-                                  [], // Ensure 'members' exists in your data
+                              teamName: team["name"],
+                              teamLocation: team["location"],
+                              members: team["members"] ?? [],
                             ),
                       ),
                     );
@@ -89,42 +136,99 @@ class TeamsPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Add New Team'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: locationController,
-                decoration: const InputDecoration(
-                  labelText: 'Location',
-                  hintText: 'Enter team location',
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  _showAddMemberDialog(context, members);
-                },
-                child: const Text('Add Members'),
-              ),
-            ],
+        return Dialog(
+          backgroundColor: const Color.fromARGB(255, 109, 102, 102),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Add New Team',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[900],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: locationController,
+                  decoration: InputDecoration(
+                    labelText: 'Location',
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    hintText: 'Enter team location',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[800]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[900],
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      _showAddMemberDialog(context, members);
+                    },
+                    child: const Text(
+                      'Add Members',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.grey[800]),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (locationController.text.isNotEmpty &&
+                            members.isNotEmpty) {
+                          _addNewTeam(locationController.text, members);
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text(
+                        'Add Team',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (locationController.text.isNotEmpty && members.isNotEmpty) {
-                  _addNewTeam(locationController.text, members);
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Add Team'),
-            ),
-          ],
+          ),
         );
       },
     );
@@ -143,78 +247,167 @@ class TeamsPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Member'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Member Name',
-                  hintText: 'Enter member name',
-                ),
-              ),
-              TextField(
-                controller: ecgController,
-                decoration: const InputDecoration(
-                  labelText: 'ECG',
-                  hintText: 'Enter ECG (e.g., 75 BPM)',
-                ),
-              ),
-              TextField(
-                controller: statusController,
-                decoration: const InputDecoration(
-                  labelText: 'Status',
-                  hintText: 'Enter status (e.g., Active)',
-                ),
-              ),
-              TextField(
-                controller: latController,
-                decoration: const InputDecoration(
-                  labelText: 'Latitude',
-                  hintText: 'Enter latitude',
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: longController,
-                decoration: const InputDecoration(
-                  labelText: 'Longitude',
-                  hintText: 'Enter longitude',
-                ),
-                keyboardType: TextInputType.number,
-              ),
-            ],
+        return Dialog(
+          backgroundColor: const Color.fromARGB(255, 143, 140, 140),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty &&
-                    ecgController.text.isNotEmpty &&
-                    statusController.text.isNotEmpty &&
-                    latController.text.isNotEmpty &&
-                    longController.text.isNotEmpty) {
-                  members.add({
-                    "name": nameController.text,
-                    "ECG": ecgController.text,
-                    "status": statusController.text,
-                    "location": {
-                      "lat": double.parse(latController.text),
-                      "long": double.parse(longController.text),
-                    },
-                  });
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Add Member',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 44, 43, 43),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Member Name',
+                    labelStyle: TextStyle(
+                      color: const Color.fromARGB(255, 28, 26, 26),
+                    ),
+                    hintText: 'Enter member name',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[800]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: ecgController,
+                  decoration: InputDecoration(
+                    labelText: 'ECG',
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    hintText: 'Enter ECG (e.g., 75 BPM)',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[800]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: statusController,
+                  decoration: InputDecoration(
+                    labelText: 'Status',
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    hintText: 'Enter status (e.g., Active)',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[800]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: latController,
+                  decoration: InputDecoration(
+                    labelText: 'Latitude',
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    hintText: 'Enter latitude',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[800]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: longController,
+                  decoration: InputDecoration(
+                    labelText: 'Longitude',
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    hintText: 'Enter longitude',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[800]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.grey[800]),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (nameController.text.isNotEmpty &&
+                            ecgController.text.isNotEmpty &&
+                            statusController.text.isNotEmpty &&
+                            latController.text.isNotEmpty &&
+                            longController.text.isNotEmpty) {
+                          members.add({
+                            "name": nameController.text,
+                            "ECG": ecgController.text,
+                            "status": statusController.text,
+                            "location": {
+                              "lat": double.parse(latController.text),
+                              "long": double.parse(longController.text),
+                            },
+                          });
 
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Add Member'),
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text(
+                        'Add Member',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
