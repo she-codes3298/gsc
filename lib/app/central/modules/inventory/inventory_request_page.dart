@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class InventoryRequestPage extends StatefulWidget {
   final List<Map<String, dynamic>> availableItems;
@@ -22,7 +24,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
 
     if (itemName.isEmpty || requestedQuantity <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please enter a valid item and quantity")),
+        SnackBar(content: TranslatableText("Please enter a valid item and quantity")),
       );
       return;
     }
@@ -47,7 +49,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Request added: Stock updated successfully!")),
+          SnackBar(content: TranslatableText("Request added: Stock updated successfully!")),
         );
       } else {
         // If item does not exist, create a new entry
@@ -58,7 +60,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("New inventory item requested successfully!")),
+          SnackBar(content: TranslatableText("New inventory item requested successfully!")),
         );
       }
 
@@ -67,7 +69,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
       _quantityController.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error requesting item: $e")),
+        SnackBar(content: TranslatableText("Error requesting item: $e")),
       );
     }
   }
@@ -75,7 +77,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Request Supplies")),
+      appBar: AppBar(title: const TranslatableText("Request Supplies")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -92,7 +94,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: requestItem,
-              child: const Text("Request Item"),
+              child: const TranslatableText("Request Item"),
             ),
           ],
         ),

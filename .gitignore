@@ -46,3 +46,9 @@ app.*.map.json
 /build/
 /.dart_tool/
 /.idea/
+android/app/service_inventory.json
+android/app/service_inventory.json
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-plugins
+.flutter-plugins-dependencies

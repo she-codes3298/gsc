@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'inventory_service.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 final inventoryProvider = StateNotifierProvider<InventoryNotifier, List<Map<String, dynamic>>>(
       (ref) => InventoryNotifier(),

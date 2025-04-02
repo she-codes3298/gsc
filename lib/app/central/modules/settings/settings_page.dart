@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -6,7 +8,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text("Settings", style: TextStyle(color: Colors.white)),
+      child: TranslatableText("Settings", style: TextStyle(color: Colors.white)),
     );
   }
 }

@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
 import '../../common/dashboard_card.dart';
+import '../../common/translatable_text.dart';  // Import the TranslatableText widget
+import '../../common/language_selection_dialog.dart';  // Import the language dialog
 import '../community/community_page.dart';
 import '../Teams/teams_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
 import 'flood_details_page.dart';
+
+import 'package:gsc/services/translation_service.dart';
+
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -47,8 +52,9 @@ class _DashboardViewState extends State<DashboardView> {
           if (entry.key == "Earthquake" &&
               data.containsKey("high_risk_cities") &&
               data["high_risk_cities"].isNotEmpty) {
+            // Use translation keys:
             setState(() {
-              activeDisaster = "Earthquake";
+              activeDisaster = "Earthquake"; // A key your translation service knows
               activeDisasterType = "Earthquake";
             });
             return;
@@ -126,8 +132,9 @@ class _DashboardViewState extends State<DashboardView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Overview",
+
+              const TranslatableText(
+    "Overview",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -135,6 +142,7 @@ class _DashboardViewState extends State<DashboardView> {
                 ),
               ),
               const SizedBox(height: 10),
+
 
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -221,6 +229,7 @@ class _DashboardViewState extends State<DashboardView> {
               ),
 
               const SizedBox(height: 24),
+
             ],
           ),
         ),
@@ -242,7 +251,9 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
 
   final List<Widget> _pages = [
     const DashboardView(),
-    CommunityPage(),
+
+     CommunityPage(),
+
     const InventoryPage(),
     const SettingsPage(),
   ];
@@ -259,12 +270,16 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("Central Government Dashboard"),
+        title: const TranslatableText("Central Government Dashboard"),
         actions: [
-          IconButton(
+           IconButton(
             icon: const Icon(Icons.language, color: Colors.white),
             onPressed: () {
-              // TODO: Implement Language Change Feature
+              // Implement Language Change Feature
+              showDialog(
+                context: context,
+                builder: (context) => const LanguageSelectionDialog(),
+              );
             },
           ),
           IconButton(

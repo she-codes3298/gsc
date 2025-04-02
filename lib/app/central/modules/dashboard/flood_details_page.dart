@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class FloodDetailsPage extends StatefulWidget {
   @override
@@ -46,7 +48,7 @@ class _FloodDetailsPageState extends State<FloodDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Flood Risk Details"),
+        title: TranslatableText("Flood Risk Details"),
         backgroundColor: Colors.blueAccent,
       ),
       body: isLoading
@@ -56,7 +58,7 @@ class _FloodDetailsPageState extends State<FloodDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  TranslatableText(
                     "High-Risk States:",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -70,9 +72,9 @@ class _FloodDetailsPageState extends State<FloodDetailsPage> {
                           elevation: 3,
                           margin: EdgeInsets.symmetric(vertical: 6),
                           child: ListTile(
-                            title: Text(stateData["state"],
+                            title: TranslatableText(stateData["state"],
                                 style: TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text(
+                            subtitle: TranslatableText(
                                 "Flood Risk Score: ${stateData["flood_risk_score"]}%"),
                             leading: Icon(Icons.warning, color: Colors.red),
                           ),
@@ -81,11 +83,11 @@ class _FloodDetailsPageState extends State<FloodDetailsPage> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  Text(
+                  TranslatableText(
                     "Insights:",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(additionalInsights, style: TextStyle(fontSize: 14)),
+                  TranslatableText(additionalInsights, style: TextStyle(fontSize: 14)),
                   SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
@@ -95,7 +97,7 @@ class _FloodDetailsPageState extends State<FloodDetailsPage> {
                           // You may use url_launcher package here
                         }
                       },
-                      child: Text("Read More"),
+                      child: TranslatableText("Read More"),
                     ),
                   ),
                 ],

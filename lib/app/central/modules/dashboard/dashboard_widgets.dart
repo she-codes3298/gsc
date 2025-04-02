@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 Widget sectionTitle(String title) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Text(
+    child: TranslatableText(
       title,
       style: const TextStyle(
         fontSize: 20,
@@ -22,7 +24,7 @@ Widget communityPost(String postText) {
         const Icon(Icons.campaign, color: Colors.white),
         const SizedBox(width: 10),
         Expanded(
-          child: Text(postText, style: const TextStyle(color: Colors.white)),
+          child: TranslatableText(postText, style: const TextStyle(color: Colors.white)),
         ),
       ],
     ),

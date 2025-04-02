@@ -4,6 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:gsc/app/central/common/translatable_text.dart';
+import 'package:gsc/services/translation_service.dart';
+
 
 class CommunityPage extends StatefulWidget {
   @override
@@ -18,7 +21,7 @@ class _CommunityPageState extends State<CommunityPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Community Announcements"),
+        title: TranslatableText("Community Announcements"),
         backgroundColor: Colors.blueAccent,
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -31,7 +34,7 @@ class _CommunityPageState extends State<CommunityPage> {
             return Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("No posts available"));
+            return Center(child: TranslatableText("No posts available"));
           }
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
@@ -70,7 +73,7 @@ class _CommunityPageState extends State<CommunityPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text("Create a Post"),
+              title: TranslatableText("Create a Post"),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -84,13 +87,13 @@ class _CommunityPageState extends State<CommunityPage> {
                       decoration: InputDecoration(hintText: "Content"),
                     ),
                     SizedBox(height: 16),
-                    image != null ? Image.file(image!, height: 100) : Text("No image selected"),
+                    image != null ? Image.file(image!, height: 100) : TranslatableText("No image selected"),
                     TextButton(
                       onPressed: () async {
                         await pickImage();
                         setState(() {});
                       },
-                      child: Text("Select Image"),
+                      child: TranslatableText("Select Image"),
                     ),
                   ],
                 ),
@@ -103,7 +106,7 @@ class _CommunityPageState extends State<CommunityPage> {
                     });
                     Navigator.pop(context);
                   },
-                  child: Text("Cancel"),
+                  child: TranslatableText("Cancel"),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -119,7 +122,7 @@ class _CommunityPageState extends State<CommunityPage> {
                       Navigator.pop(context);
                     }
                   },
-                  child: Text("Post"),
+                  child: TranslatableText("Post"),
                 ),
               ],
             );
@@ -174,7 +177,7 @@ class PostCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(post['title'], style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                TranslatableText(post['title'], style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 if (isGovernmentUser)
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
@@ -183,7 +186,7 @@ class PostCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 8),
-            Text(post['content']),
+            TranslatableText(post['content']),
             if (post['imageUrl'] != null && post['imageUrl'].isNotEmpty)
               Image.network(post['imageUrl'], height: 150, width: double.infinity, fit: BoxFit.cover),
             Row(
@@ -192,7 +195,7 @@ class PostCard extends StatelessWidget {
                   icon: Icon(Icons.thumb_up),
                   onPressed: () => _likePost(post.id),
                 ),
-                Text(post['likes'].toString()),
+                TranslatableText(post['likes'].toString()),
               ],
             ),
           ],

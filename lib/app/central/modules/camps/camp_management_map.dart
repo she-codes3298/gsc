@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+import 'package:gsc/services/translation_service.dart';
+
 
 class RefugeeCampPage extends StatefulWidget {
   const RefugeeCampPage({super.key});
@@ -92,7 +95,7 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
         contact.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("All fields must be filled!")));
+      ).showSnackBar(SnackBar(content: TranslatableText("All fields must be filled!")));
       return;
     }
 
@@ -140,11 +143,11 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Data sent to civilian!")));
+      ).showSnackBar(SnackBar(content: TranslatableText("Data sent to civilian!")));
     } catch (e) {
       print("Error updating civilian data: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to update civilian data.")),
+        SnackBar(content: TranslatableText("Failed to update civilian data.")),
       );
     }
   }
@@ -164,7 +167,7 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Add Refugee Camp"),
+          title: TranslatableText("Add Refugee Camp"),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -211,7 +214,7 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
                 );
                 Navigator.pop(context);
               },
-              child: Text("Add"),
+              child: TranslatableText("Add"),
             ),
           ],
         );
@@ -222,7 +225,7 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Refugee Camp Management")),
+      appBar: AppBar(title: TranslatableText("Refugee Camp Management")),
       body: Column(
         children: [
           TextField(
@@ -260,7 +263,7 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
           ),
           ElevatedButton(
             onPressed: updateCivilians,
-            child: Text("Send Data to Civilian App"),
+            child: TranslatableText("Send Data to Civilian App"),
           ),
           Expanded(
             child: ListView.builder(
@@ -270,19 +273,19 @@ class _RefugeeCampPageState extends State<RefugeeCampPage> {
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ListTile(
-                    title: Text(
+                    title: TranslatableText(
                       camp['name'],
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Address: ${camp['address']}"),
-                        Text(
+                        TranslatableText("Address: ${camp['address']}"),
+                        TranslatableText(
                           "Capacity: ${camp['capacity']} | Occupied: ${camp['current_occupancy']}",
                         ),
-                        Text("Resources: ${camp['resources']}"),
-                        Text("Contact: ${camp['contact']}"),
+                        TranslatableText("Resources: ${camp['resources']}"),
+                        TranslatableText("Contact: ${camp['contact']}"),
                       ],
                     ),
                     trailing: IconButton(

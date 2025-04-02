@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class DisasterDetailsPage extends StatefulWidget {
   final String? url;
@@ -64,7 +66,7 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Active Disasters"),
+        title: const TranslatableText("Active Disasters"),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
@@ -72,7 +74,7 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
           ? const Center(child: CircularProgressIndicator())
           : hasError
           ? const Center(
-          child: Text("Failed to load data", style: TextStyle(color: Colors.white)))
+          child: TranslatableText("Failed to load data", style: TextStyle(color: Colors.white)))
           : Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(
@@ -93,18 +95,18 @@ class _DisasterDetailsPageState extends State<DisasterDetailsPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: Icon(Icons.terrain, color: zoneColor),
-        title: Text(
+        title: TranslatableText(
           "${quake["city"]}, ${quake["state"]}",
           style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("🌍 Magnitude: ${quake["magnitude"]}",
+            TranslatableText("🌍 Magnitude: ${quake["magnitude"]}",
                 style: const TextStyle(color: Colors.white70, fontSize: 14)),
-            Text("⏰ Time: ${quake["time"]}",
+            TranslatableText("⏰ Time: ${quake["time"]}",
                 style: const TextStyle(color: Colors.white70, fontSize: 14)),
-            Text("🌎 Depth: ${quake["depth"]} km",
+            TranslatableText("🌎 Depth: ${quake["depth"]} km",
                 style: const TextStyle(color: Colors.white70, fontSize: 14)),
           ],
         ),

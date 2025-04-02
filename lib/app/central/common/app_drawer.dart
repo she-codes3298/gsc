@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../auth/auth.dart'; // Import AuthService
+import 'package:gsc/app/central/common/translatable_text.dart';
+
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -25,7 +27,7 @@ class AppDrawer extends StatelessWidget {
                   child: Icon(Icons.person, color: Colors.black, size: 35),
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                const TranslatableText(
                   "Central Government",
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
@@ -36,7 +38,7 @@ class AppDrawer extends StatelessWidget {
           // ✅ Dashboard Button
           ListTile(
             leading: Icon(Icons.dashboard, color: Colors.white30),
-            title: const Text(
+            title: const TranslatableText(
               "Dashboard",
               style: TextStyle(color: Colors.white),
             ),
@@ -46,7 +48,7 @@ class AppDrawer extends StatelessWidget {
           // ✅ Community Button
           ListTile(
             leading: Icon(Icons.group, color: Colors.white30),
-            title: const Text(
+            title: const TranslatableText(
               "Community",
               style: TextStyle(color: Colors.white),
             ),
@@ -56,7 +58,7 @@ class AppDrawer extends StatelessWidget {
           // ✅ Inventory Button
           ListTile(
             leading: Icon(Icons.storage, color: Colors.white30),
-            title: const Text(
+            title: const TranslatableText(
               "Inventory",
               style: TextStyle(color: Colors.white),
             ),
@@ -66,7 +68,7 @@ class AppDrawer extends StatelessWidget {
           // ✅ Settings Button
           ListTile(
             leading: Icon(Icons.settings, color: Colors.white30),
-            title: const Text(
+            title: const TranslatableText(
               "Settings",
               style: TextStyle(color: Colors.white),
             ),
@@ -81,7 +83,7 @@ class AppDrawer extends StatelessWidget {
               height: 30,
               color: Colors.white30,
             ),
-            title: const Text(
+            title: const TranslatableText(
               "E-Sahyog AI",
               style: TextStyle(color: Colors.white),
             ),
@@ -95,7 +97,7 @@ class AppDrawer extends StatelessWidget {
           // ✅ Logout Button
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text("Logout", style: TextStyle(color: Colors.red)),
+            title: const TranslatableText("Logout", style: TextStyle(color: Colors.red)),
             onTap: () {
               authService.signOut(context); // Call signOut method
             },
@@ -114,7 +116,7 @@ class AppDrawer extends StatelessWidget {
   }) {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
-      title: Text(label, style: const TextStyle(color: Colors.white)),
+      title: TranslatableText(label, style: const TextStyle(color: Colors.white)),
       onTap: () {
         _navigateTo(context, route);
       },
