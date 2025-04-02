@@ -238,6 +238,7 @@ class TeamsPage extends StatelessWidget {
     BuildContext context,
     List<Map<String, dynamic>> members,
   ) {
+    final teamNameController = TextEditingController();
     final nameController = TextEditingController();
     final ecgController = TextEditingController();
     final statusController = TextEditingController();
@@ -267,6 +268,27 @@ class TeamsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+                TextField(
+                  controller:
+                      teamNameController, // New controller for team name
+                  decoration: InputDecoration(
+                    labelText: 'Team Name',
+                    labelStyle: TextStyle(
+                      color: const Color.fromARGB(255, 28, 26, 26),
+                    ),
+                    hintText: 'Enter team name',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[800]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(
@@ -380,12 +402,15 @@ class TeamsPage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        if (nameController.text.isNotEmpty &&
+                        if (teamNameController.text.isNotEmpty &&
+                            nameController.text.isNotEmpty &&
                             ecgController.text.isNotEmpty &&
                             statusController.text.isNotEmpty &&
                             latController.text.isNotEmpty &&
                             longController.text.isNotEmpty) {
                           members.add({
+                            "team_name":
+                                teamNameController.text, // Added team name
                             "name": nameController.text,
                             "ECG": ecgController.text,
                             "status": statusController.text,
