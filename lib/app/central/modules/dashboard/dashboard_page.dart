@@ -143,14 +143,14 @@ class _DashboardViewState extends State<DashboardView> {
                           : (screenWidth < 900)
                           ? 2
                           : 3;
-                  double aspectRatio = (screenWidth / (crossAxisCount * 220))
-                      .clamp(1.5, 2.5);
+                  double aspectRatio = (screenWidth / (crossAxisCount * 230))
+                      .clamp(1.4, 2.3);
 
                   List<Map<String, dynamic>> cardData = [
                     {
                       "title": "Active Disasters",
                       "count": activeDisaster,
-                      "icon": Icons.warning,
+                      "icon": Icons.warning_amber_rounded,
                       "onTap":
                           activeDisasterType.isNotEmpty
                               ? navigateToDisasterPage
@@ -159,7 +159,7 @@ class _DashboardViewState extends State<DashboardView> {
                     {
                       "title": "Central Inventory",
                       "count": "150 Items",
-                      "icon": Icons.storage,
+                      "icon": Icons.inventory,
                       "onTap": () {
                         Navigator.push(
                           context,
@@ -172,7 +172,7 @@ class _DashboardViewState extends State<DashboardView> {
                     {
                       "title": "Ongoing SOS Alerts",
                       "count": "12",
-                      "icon": Icons.sos,
+                      "icon": Icons.sos_outlined,
                       "onTap": () {
                         Navigator.pushNamed(context, '/sos_alerts');
                       },
@@ -180,8 +180,16 @@ class _DashboardViewState extends State<DashboardView> {
                     {
                       "title": "Rescue Teams Deployed",
                       "count": "30",
-                      "icon": Icons.people,
+                      "icon": Icons.groups_rounded,
                       "onTap": null, // Disabled for now
+                    },
+                    {
+                      "title": "Add Refugee Camp",
+                      "icon": Icons.add_location_alt,
+                      "count": "5",
+                      "onTap": () {
+                        Navigator.pushNamed(context, '/camp');
+                      },
                     },
                   ];
 
@@ -190,8 +198,8 @@ class _DashboardViewState extends State<DashboardView> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
                       childAspectRatio: aspectRatio,
                     ),
                     itemCount: cardData.length,
@@ -209,7 +217,7 @@ class _DashboardViewState extends State<DashboardView> {
                 },
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
             ],
           ),
         ),
