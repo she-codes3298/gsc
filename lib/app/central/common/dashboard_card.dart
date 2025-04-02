@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gsc/app/central/common/translatable_text.dart';
+import 'package:gsc/services/translation_service.dart';
 
 class DashboardCard extends StatelessWidget {
   final String title;
@@ -37,7 +38,7 @@ class DashboardCard extends StatelessWidget {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 5),
-          TranslatableText(
+          Text(
             count,
             style: TextStyle(fontSize: 16, color: Colors.black),
           ),

@@ -11,6 +11,7 @@ import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
 import 'flood_details_page.dart';
+import 'package:gsc/services/translation_service.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -47,8 +48,9 @@ class _DashboardViewState extends State<DashboardView> {
           if (entry.key == "Earthquake" &&
               data.containsKey("high_risk_cities") &&
               data["high_risk_cities"].isNotEmpty) {
+            // Use translation keys:
             setState(() {
-              activeDisaster = "Earthquake";
+              activeDisaster = "Earthquake"; // A key your translation service knows
               activeDisasterType = "Earthquake";
             });
             return;
@@ -127,7 +129,7 @@ class _DashboardViewState extends State<DashboardView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              const TranslatableText(
                 "Overview",
                 style: TextStyle(
                   fontSize: 20,
@@ -228,7 +230,7 @@ class _DashboardViewState extends State<DashboardView> {
                       backgroundColor: Colors.red,
                       elevation: 5,
                     ),
-                    child: const Text(
+                    child: const TranslatableText(
                       "View Active SOS Alerts",
                       style: TextStyle(
                         fontSize: 16,
@@ -264,7 +266,7 @@ class _DashboardViewState extends State<DashboardView> {
                       ),
                       elevation: 5,
                     ),
-                    child: const Text(
+                    child: const TranslatableText(
                       "Add Refugee Camp",
                       style: TextStyle(
                         fontSize: 16,
@@ -313,7 +315,7 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("Central Government Dashboard"),
+        title: const TranslatableText("Central Government Dashboard"),
         actions: [
            IconButton(
             icon: const Icon(Icons.language, color: Colors.white),

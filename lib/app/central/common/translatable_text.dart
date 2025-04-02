@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/language_provider.dart';
 import 'package:gsc/app/central/common/translatable_text.dart';
+import 'package:gsc/services/translation_service.dart';
 
 
 class TranslatableText extends StatefulWidget {

@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:gsc/app/central/common/translatable_text.dart';
+import 'package:gsc/services/translation_service.dart';
 
 
 class RefugeeCampPage extends StatefulWidget {
