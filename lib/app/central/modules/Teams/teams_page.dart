@@ -1,7 +1,5 @@
-// lib/app/central/modules/Teams/teams_page.dart
-
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'team_details_page.dart';
 
 class TeamsPage extends StatelessWidget {
@@ -16,30 +14,28 @@ class TeamsPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              // TODO: Implement team addition dialog
               _showAddTeamDialog(context);
             },
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance.collection('deployed_teams').snapshots(),
+      body: StreamBuilder<DatabaseEvent>(
+        stream: FirebaseDatabase.instance.ref('deployed_teams').onValue,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.snapshot.children.isEmpty) {
             return const Center(child: Text("No teams deployed yet!"));
           }
 
-          var teams = snapshot.data!.docs;
+          var teams = snapshot.data!.snapshot.children;
 
           return ListView.builder(
             itemCount: teams.length,
             itemBuilder: (context, index) {
-              var team = teams[index].data() as Map<String, dynamic>;
+              var team = teams.elementAt(index).value as Map<dynamic, dynamic>;
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
@@ -52,7 +48,7 @@ class TeamsPage extends StatelessWidget {
                       MaterialPageRoute(
                         builder:
                             (context) => TeamDetailsPage(
-                              teamId: teams[index].id,
+                              teamId: teams.elementAt(index).key!,
                               teamName: team["name"],
                             ),
                       ),
@@ -118,7 +114,7 @@ class TeamsPage extends StatelessWidget {
 
   void _addNewTeam(String name, String location) async {
     try {
-      await FirebaseFirestore.instance.collection('deployed_teams').add({
+      await FirebaseDatabase.instance.ref('deployed_teams').push().set({
         'name': name,
         'location': location,
       });
