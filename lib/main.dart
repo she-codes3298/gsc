@@ -15,6 +15,7 @@ import 'app/central/modules/settings/settings_page.dart';
 import 'app/central/modules/ai_chatbot.dart';
 import 'app/central/modules/camps/camp_management_map.dart';
 import 'app/modules/sos_alerts/sos_alerts_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -36,11 +37,21 @@ void main() async {
   setupFirebaseMessaging();
 }
 
+// Global variable to store the correct database instance
+late FirebaseDatabase firebaseDatabase;
+
 Future<void> initializeFirebase() async {
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    // Assign the correct database instance to the global variable
+    firebaseDatabase = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL: "https://ecgtest.firebaseio.com/",
+    );
+
     print("✅ Firebase initialized successfully");
   } catch (e) {
     print("❌ Firebase initialization failed: $e");
