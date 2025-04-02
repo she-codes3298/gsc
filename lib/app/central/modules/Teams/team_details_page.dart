@@ -114,7 +114,10 @@ class TeamDetailsPage extends StatelessWidget {
 
   Widget _buildMemberLocationMap(double lat, double long, String memberName) {
     return FlutterMap(
-      options: MapOptions(center: LatLng(lat, long), zoom: 13.0),
+      options: MapOptions(
+        initialCenter: LatLng(lat, long), // Corrected from 'center'
+        initialZoom: 13.0,
+      ),
       children: [
         TileLayer(
           urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -123,15 +126,15 @@ class TeamDetailsPage extends StatelessWidget {
         MarkerLayer(
           markers: [
             Marker(
-              point: LatLng(lat, long),
+              point: LatLng(lat, long), // Corrected from 'point'
               width: 80,
               height: 80,
-              builder:
-                  (ctx) => const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                    size: 30,
-                  ),
+              child: const Icon(
+                // Corrected from 'builder'
+                Icons.location_on,
+                color: Colors.red,
+                size: 30,
+              ),
             ),
           ],
         ),

@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'app/central/modules/Teams/deployed.dart';
+import 'app/central/modules/Teams/teams_page.dart';
 import 'firebase_options.dart';
 import 'app/modules/login/login_page.dart';
 import 'app/central/modules/dashboard/dashboard_page.dart';

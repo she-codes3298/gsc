@@ -5,7 +5,7 @@ import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
 import '../../common/dashboard_card.dart';
 import '../community/community_page.dart';
-import '../Teams/deployed.dart';
+import '../Teams/teams_page.dart';
 import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'disaster_details_page.dart';
