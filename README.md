@@ -1,105 +1,117 @@
-# 🌍 Disaster Management App
+# 🌍 GSC - Government-Side Disaster Management App  
 
-![Project Banner](https://via.placeholder.com/1200x400.png?text=Disaster+Management+App) <!-- Replace with your project banner -->
+## 📌 Overview  
+**GSC** is a government-focused disaster management platform that enables officials to monitor, predict, and respond to natural disasters efficiently. It integrates real-time disaster alerts, SOS management, resource tracking, and AI-powered assistance to streamline emergency operations.  
 
-Welcome to the **Disaster Management App**, a comprehensive solution designed to help governments and civilians effectively manage and respond to disasters. This app provides real-time alerts, resource allocation, SOS features, and much more to ensure safety and coordination during emergencies.
-
----
-
-## 🚀 Features
-
-### **Government Side**
-- **Real-Time Alerts**: Send instant disaster alerts to civilians.
-- **Resource Management**: Track and allocate resources like food, water, and medical supplies.
-- **Rescue Team Coordination**: Monitor and coordinate rescue operations.
-- **Data Analytics**: Analyze disaster data for better decision-making.
-
-### **Civilian Side**
-- **Disaster Alerts**: Receive real-time alerts and updates.
-- **SOS Feature**: Send distress signals with your location using **mesh networking**.
-- **Refugee Camp Navigation**: Find the nearest safe zones and refugee camps.
-- **Community Updates**: Stay informed with government announcements via **WebSocket-based real-time communication**.
+> **Note:** For the civilian-facing SOS app (**D_M_**), refer to: [D_M_ GitHub Repository](https://github.com/pratzzz2432/D_M_.git)  
 
 ---
 
-## 🛠️ Technologies Used
+## 🚀 Key Features  
 
-### **Frontend**
-- **Flutter**: For building cross-platform mobile apps for both government and civilian users.
+### 🔥 Disaster Prediction & Alerts  
+- Real-time earthquake & cyclone predictions via external APIs  
+- Automated push notifications for high-risk zones  
+- Geospatial visualization of disaster-prone areas  
 
-### **Backend**
-- **FastAPI**: For building a high-performance backend to handle API requests and data processing.
-- **Firebase**: For real-time database (Firestore), authentication, and cloud messaging.
-- **WebSocket**: For real-time communication in the community feature.
+### 🆘 SOS Alert Management  
+- Receives emergency SOS signals from civilian app ([D_M_](https://github.com/pratzzz2432/D_M_.git))  
+- Auto-assigns rescue teams based on proximity/availability  
+- Firebase-powered real-time alerts with location tracking  
 
-### **Machine Learning**
-- **ML Models**: For disaster prediction and severity assessment using pre-trained models and data from sources like IMD, NDMA, and NCS.
+### 📦 Inventory & Resource Management  
+- Track relief supplies (food, medicine, shelters)  
+- AI-driven allocation suggestions for optimal distribution  
+- Low-stock alerts for critical resources  
 
-### **Hardware**
-- **ESP32**: The microcontroller used in the wearable device.
-- **LoRa Module**: For long-range communication in areas with poor network connectivity.
-- **GSM Module**: For sending SOS signals and location data.
-- **GPS Module**: For real-time location tracking of rescue teams and civilians.
-- **OLED Screen**: For displaying critical information on the wearable device.
+### 🏕️ Community & Camp Coordination  
+- Interactive map of refugee camps/shelters  
+- Live headcount & resource monitoring  
+- Evacuation route planning for disaster zones  
 
-### **Networking**
-- **Mesh Networking**: For SOS signals to work in areas with no cellular network coverage.
-
----
-
-## 🏗️ Currently in Production
-
-We are actively working on this project to bring you the best disaster management solution. Here's what we're focusing on right now:
-
-### **Government App**
-- **Real-Time Alerts**: Implementing a robust system for sending alerts to civilians.
-- **Resource Allocation**: Developing a feature to track and allocate resources efficiently.
-- **Rescue Team Coordination**: Building tools to monitor and coordinate rescue operations.
-
-### **Civilian App**
-- **SOS Feature**: Enhancing the SOS functionality with **mesh networking** and real-time location tracking.
-- **Refugee Camp Navigation**: Adding navigation features to help civilians find safe zones.
-- **Community Updates**: Creating a platform for government announcements and updates using **WebSocket**.
-
-### **Hardware**
-- **Wearable Device**: Developing a wearable device for rescue teams with **ESP32**, **LoRa**, **GSM**, **GPS**, and an **OLED screen**.
-
-Stay tuned for updates as we continue to improve and expand the app!
+### 🤖 AI-Powered Chatbot (Gemini AI)  
+- Instant procedural guidance for officials  
+- Disaster response best practices  
+- FAQs & decision-making support  
 
 ---
 
-## 🧩 How It Works
+## 🛠️ Tech Stack  
 
-### **Government App**
-1. **Login**: Government officials log in with their credentials.
-2. **Dashboard**: View real-time disaster data and manage resources.
-3. **Send Alerts**: Create and send disaster alerts to civilians.
-4. **Track Resources**: Monitor resource allocation and usage.
+**Frontend:**  
+- Flutter (Dart)  
 
-### **Civilian App**
-1. **Login**: Civilians log in or register using their email.
-2. **Home Screen**: View real-time alerts and updates.
-3. **SOS Feature**: Send distress signals with your location using **mesh networking**.
-4. **Refugee Camps**: Find the nearest safe zones and refugee camps.
+**Backend:**  
+- Firebase  
+- Google Cloud Functions  
 
-### **Hardware**
-- **Wearable Device**: Rescue teams use the wearable device to:
-  - Track their location using **GPS**.
-  - Send SOS signals using **GSM** or **LoRa**.
-  - View team members' locations on the **OLED screen**.
+**APIs:**  
+- Earthquake Prediction API  
+- Cyclone Prediction API  
+
+**AI:**  
+- Google Gemini AI  
+
+**Hardware Integration:**  
+- LoRa  
+- GPS  
+- ESP-based wearables  
 
 ---
 
-## 🛠️ Installation
+## 📥 Installation & Setup  
 
-### **Prerequisites**
-- Flutter SDK
-- Python (for FastAPI backend)
-- Firebase account
-- Android Studio or VS Code
-- ESP32 development environment (e.g., Arduino IDE or PlatformIO)
+### Prerequisites  
+- Flutter SDK (v3.x)  
+- Firebase project with:  
+  - google-services.json (Android)  
+  - GoogleService-Info.plist (iOS)  
+- Enabled Firebase Cloud Messaging (FCM)  
 
-### **Steps**
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/disaster-management-app.git
+### Steps to Run:  
+1. Clone the repository:  
+   git clone https://github.com/your-repo/gsc.git  
+   cd gsc  
+
+2. Install dependencies:  
+   flutter pub get  
+
+3. Run the app:  
+   flutter run  
+
+---
+
+## 🔗 API References  
+
+**Earthquake API**  
+
+**Cyclone API**  
+
+**Gemini AI ,Maps SDK for Android 
+, Service Usage API 
+, Analytics Hub API 
+, Cloud Storage API 
+, Cloud Trace API 
+, Cloud Translation API 
+, Dataform API 
+, Geocoding API 
+, Google Cloud APIs 
+, Google Cloud Storage JSON API 
+, Maps JavaScript API 
+, Maps SDK for iOS 
+, Places API (New) 
+, Routes API 
+, Service Management API**  
+
+
+---
+
+## 📌 Future Roadmap  
+- Offline Mesh Networking for SOS  
+- Enhanced ML prediction models  
+- Web dashboard for centralized management  
+
+---
+
+### ✅ Ready for Deployment  
+Follow the installation steps to set up GSC for disaster response operations.
