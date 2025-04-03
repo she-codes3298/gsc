@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gsc/app/central/common/translatable_text.dart';
 
 class InventoryUpdatePage extends StatefulWidget {
   final String itemId; // Item's Firestore document ID
@@ -57,14 +58,14 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
         });
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Item updated successfully!")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: TranslatableText("Item updated successfully!")),
+      );
       Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error updating item: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: TranslatableText("Error updating item: $e")),
+      );
     }
   }
 
@@ -90,7 +91,7 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: updateItem,
-                  child: const Text("Update Item"),
+                  child: const TranslatableText("Update Item"),
                 ),
               ],
             ),
@@ -98,7 +99,7 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
           const Divider(thickness: 2),
           const Padding(
             padding: EdgeInsets.all(8.0),
-            child: Text(
+            child: TranslatableText(
               "Current Inventory Stock",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -112,7 +113,7 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(
-                    child: Text("No inventory items available."),
+                    child: TranslatableText("No inventory items available."),
                   );
                 }
 
