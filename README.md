@@ -19,11 +19,21 @@
 - Auto-assigns rescue teams based on proximity/availability  
 - Firebase-powered real-time alerts with location tracking  
 
-### 📦 Inventory & Resource Management  
-- Track relief supplies (food, medicine, shelters)  
-- AI-driven allocation suggestions for optimal distribution  
-- Low-stock alerts for critical resources  
+### 🏗️ Refugee Camp Coordination  
+- Geo-tagged camp management interface  
+- Capacity planning tools (Food/Medical/Shelter)  
+- Evacuation route mapping
+  
+### 📊 Resource Inventory System  
+- Centralized stock monitoring  
+- Supplier request pipeline  
+- AI-powered distribution optimizer 
 
+### 💬 Public Communication Hub  
+- Official disaster bulletins  
+- Citizen Q&A platform  
+- Multilingual content (12 Indian languages)
+  
 ### 🏕️ Community & Camp Coordination  
 - Interactive map of refugee camps/shelters  
 - Live headcount & resource monitoring  
