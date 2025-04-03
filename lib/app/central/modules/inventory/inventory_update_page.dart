@@ -33,6 +33,13 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
     );
   }
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _quantityController.dispose();
+    super.dispose();
+  }
+
   Future<void> updateItem() async {
     String updatedName = _nameController.text;
     int updatedQuantity =
@@ -69,10 +76,65 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
     }
   }
 
+  // Function to delete an inventory item
+  Future<void> deleteItem(String itemId) async {
+    try {
+      // Show confirmation dialog before deleting
+      bool confirmDelete = await _showDeleteConfirmation(itemId);
+      if (!confirmDelete) return;
+
+      await inventoryCollection.doc(itemId).delete();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: TranslatableText("Item deleted successfully!")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: TranslatableText("Error deleting item: $e")),
+      );
+    }
+  }
+
+  // Confirmation dialog for delete operation
+  Future<bool> _showDeleteConfirmation(String itemId) async {
+    bool result = false;
+    
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: TranslatableText("Confirm Delete"),
+          content: TranslatableText("Are you sure you want to delete this inventory item?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                result = false;
+              },
+              child: TranslatableText("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                result = true;
+              },
+              child: Text(
+                "Delete", 
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Update Inventory & View Stock")),
+      appBar: AppBar(title: TranslatableText("Update Inventory & View Stock")),
       body: Column(
         children: [
           Padding(
@@ -81,23 +143,23 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
               children: [
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: "Item Name"),
+                  decoration: InputDecoration(labelText: "Item Name"),
                 ),
                 TextField(
                   controller: _quantityController,
-                  decoration: const InputDecoration(labelText: "Quantity"),
+                  decoration: InputDecoration(labelText: "Quantity"),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: updateItem,
-                  child: const TranslatableText("Update Item"),
+                  child: TranslatableText("Update Item"),
                 ),
               ],
             ),
           ),
           const Divider(thickness: 2),
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(8.0),
             child: TranslatableText(
               "Current Inventory Stock",
@@ -109,10 +171,10 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
               stream: inventoryCollection.snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: TranslatableText("No inventory items available."),
                   );
                 }
@@ -123,9 +185,40 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
                   itemCount: inventoryList.length,
                   itemBuilder: (context, index) {
                     var item = inventoryList[index];
-                    return ListTile(
-                      title: Text(item['name']),
-                      subtitle: Text("Stock: ${item['quantity']}"),
+                    String itemId = item.id;
+                    
+                    return Card(
+                      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      child: ListTile(
+                        title: Text(item['name']),
+                        subtitle: Text("Stock: ${item['quantity']}"),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Edit button
+                            IconButton(
+                              icon: Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => InventoryUpdatePage(
+                                      itemId: itemId,
+                                      initialName: item['name'],
+                                      initialQuantity: item['quantity'],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            // Delete button
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => deleteItem(itemId),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 );
