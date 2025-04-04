@@ -44,6 +44,22 @@
 - Disaster response best practices  
 - FAQs & decision-making support  
 
+### 🛠️ Hardware Integration  
+- **Rescue Team Wearables**:  
+  - Real-time GPS tracking modules  
+  - Biometric sensors (heart rate/SpO2)  
+  - Emergency distress button with LoRa transmission  
+  - OLED display for mission briefings  
+
+- **Field Deployment Kits**:  
+  - Portable IoT base stations  
+  - Solar-powered charging units  
+  - Ruggedized tablets with offline maps  
+
+- **Civilian Alert System**:  
+  - Community warning sirens  
+  - Mesh network nodes for offline communication  
+
 ---
 
 ## 🛠️ Tech Stack  
@@ -62,10 +78,14 @@
 **AI:**  
 - Google Gemini AI  
 
-**Hardware Integration:**  
-- LoRa  
-- GPS  
-- ESP-based wearables  
+**Hardware Stack:**  
+| Component | Specification | Purpose |
+|-----------|---------------|---------|
+| ESP32 | Dual-core 240MHz | Wearable controller |
+| LoRa Module | 915MHz | Long-range comms |
+| GPS Module | U-blox NEO-6M | Location tracking |
+| Biometric Sensor | MAX30102 | Health monitoring |
+| OLED Display | 1.3" SH1106 | Field data display |
 
 ---
 
@@ -77,17 +97,24 @@
   - google-services.json (Android)  
   - GoogleService-Info.plist (iOS)  
 - Enabled Firebase Cloud Messaging (FCM)  
+- Hardware provisioning:  
+  - ESP32 dev kits (for wearables)  
+  - LoRa gateways  
 
 ### Steps to Run:  
 1. Clone the repository:  
-   git clone https://github.com/your-repo/gsc.git  
-   cd gsc  
+   `git clone https://github.com/your-repo/gsc.git`  
+   `cd gsc`  
 
 2. Install dependencies:  
-   flutter pub get  
+   `flutter pub get`  
 
-3. Run the app:  
-   flutter run  
+3. Configure hardware:  
+   `cd hardware/firmware`  
+   `platformio run --target upload`  
+
+4. Run the app:  
+   `flutter run`  
 
 ---
 
@@ -97,31 +124,55 @@
 
 **Cyclone API**  
 
-**Gemini AI ,Maps SDK for Android 
-, Service Usage API 
-, Analytics Hub API 
-, Cloud Storage API 
-, Cloud Trace API 
-, Cloud Translation API 
-, Dataform API 
-, Geocoding API 
-, Google Cloud APIs 
-, Google Cloud Storage JSON API 
-, Maps JavaScript API 
-, Maps SDK for iOS 
-, Places API (New) 
-, Routes API 
-, Service Management API**  
+**Gemini AI, Maps SDK for Android**  
+**Service Usage API**  
+**Analytics Hub API**  
+**Cloud Storage API**  
+**Cloud Trace API**  
+**Cloud Translation API**  
+**Dataform API**  
+**Geocoding API**  
+**Google Cloud APIs**  
+**Google Cloud Storage JSON API**  
+**Maps JavaScript API**  
+**Maps SDK for iOS**  
+**Places API (New)**  
+**Routes API**  
+**Service Management API**  
 
+**Hardware APIs**:  
+- LoRaWAN Network Server  
+- ESP32 AT Commands  
+- Biometric Sensor SDK  
 
 ---
 
 ## 📌 Future Roadmap  
-- Offline Mesh Networking for SOS  
-- Enhanced ML prediction models  
-- Web dashboard for centralized management  
+- **Hardware Enhancements**:  
+  - AI-accelerated edge processing  
+  - Drone integration for aerial recon  
+  - AR goggles for rescue teams  
+
+- Software:  
+  - Offline Mesh Networking for SOS  
+  - Enhanced ML prediction models  
+  - Web dashboard for centralized management  
 
 ---
 
-### ✅ Ready for Deployment  
-Follow the installation steps to set up GSC for disaster response operations.
+### ✅ Deployment Guide  
+1. **Field Setup**:  
+   - Deploy LoRa gateways in operational zone  
+   - Distribute wearables to rescue teams  
+   - Calibrate biometric sensors  
+
+2. **Software Deployment**:  
+   `flutter build apk --release`  
+   `adb install build/app/outputs/flutter-apk/app-release.apk`  
+
+3. **Verification**:  
+   - Test SOS signal reception  
+   - Validate wearable telemetry  
+   - Conduct disaster drill  
+
+---
