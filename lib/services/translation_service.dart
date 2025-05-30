@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TranslationService {
   // Replace with your actual Google Cloud API key
-  static const String apiKey = 'AIzaSyCcLmxWvCRczGUg3HwerXM6H3wAWrIca4I';
+  static const String apiKey = 'AIzaSyDx5jUKoJPNoeKSjbLcaCqMGrpVHErGhq0';
   static const String baseUrl = 'https://translation.googleapis.com/language/translate/v2';
-  
+
   // Cache for translated texts to minimize API calls
   static Map<String, Map<String, String>> _translationCache = {};
-  
+
   // Preloaded disaster-related translations to avoid API calls for common terms
   static final Map<String, Map<String, String>> _disasterTranslations = {
     'hi': {
@@ -101,90 +101,85 @@ class TranslationService {
       'Failed to load data': 'ডাটা লোড কৰিবলৈ বিফল',
     },
   };
-  
+
   // Available languages
   static final List<LanguageOption> availableLanguages = [
-    LanguageOption(code: 'en', name: 'English',englishName: 'English'),
-    LanguageOption(code: 'hi', name: 'Hindi',englishName: 'Hindi'),
-    LanguageOption(code: 'ta', name: 'Tamil',englishName: 'Tamil'),
-    LanguageOption(code: 'te', name: 'Telugu',englishName: 'Telugu'),
-    LanguageOption(code: 'kn', name: 'Kannada',englishName: 'Kannada'),
-    LanguageOption(code: 'ml', name: 'Malayalam',englishName: 'Malayalam'),
+    LanguageOption(code: 'en', name: 'English', englishName: 'English'),
+    LanguageOption(code: 'hi', name: 'Hindi', englishName: 'Hindi'),
+    LanguageOption(code: 'ta', name: 'Tamil', englishName: 'Tamil'),
+    LanguageOption(code: 'te', name: 'Telugu', englishName: 'Telugu'),
+    LanguageOption(code: 'kn', name: 'Kannada', englishName: 'Kannada'),
+    LanguageOption(code: 'ml', name: 'Malayalam', englishName: 'Malayalam'),
     // Other Major Indian Languages
-    LanguageOption(code: 'bn', name: 'Bengali',englishName: 'Bengali'),
-    LanguageOption(code: 'mr', name: 'Marathi',englishName: 'Marathi'),
-    LanguageOption(code: 'gu', name: 'Gujarati',englishName: 'Gujarati'),
-    LanguageOption(code: 'pa', name: 'Punjabi',englishName: 'Punjabi'),
-    LanguageOption(code: 'or', name: 'Odia',englishName: 'Odia'),
-    LanguageOption(code: 'as', name: 'Assamese',englishName: 'Assamese'),
+    LanguageOption(code: 'bn', name: 'Bengali', englishName: 'Bengali'),
+    LanguageOption(code: 'mr', name: 'Marathi', englishName: 'Marathi'),
+    LanguageOption(code: 'gu', name: 'Gujarati', englishName: 'Gujarati'),
+    LanguageOption(code: 'pa', name: 'Punjabi', englishName: 'Punjabi'),
+    LanguageOption(code: 'or', name: 'Odia', englishName: 'Odia'),
+    LanguageOption(code: 'as', name: 'Assamese', englishName: 'Assamese'),
     // Add more languages as needed
   ];
-  
+
   // Get current language from SharedPreferences
   static Future<String> getCurrentLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selectedLanguage') ?? 'en';
+    return prefs.getString('Language') ?? 'en';
   }
-  
+
   // Save language preference
   static Future<void> setLanguage(String languageCode) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedLanguage', languageCode);
+    await prefs.setString('Language', languageCode);
   }
-  
+
   // Check if we have a preloaded translation for disaster terms
   static String? getPreloadedTranslation(String text, String targetLanguage) {
     if (targetLanguage == 'en') return text;
-    
+
     if (_disasterTranslations.containsKey(targetLanguage) &&
         _disasterTranslations[targetLanguage]!.containsKey(text)) {
       return _disasterTranslations[targetLanguage]![text];
     }
     return null;
   }
-  
-  // Translate text using Google Cloud Translation API
-  static Future<String> translateText(String text, String targetLanguage) async {
-    // Don't translate if target is English (assuming English is your default language)
-    if (targetLanguage == 'en') {
-      return text;
+
+  static Future<String> translateText(String text,
+      String targetLanguage) async {
+    if (targetLanguage == 'en') return text;
+
+    // Check preloaded disaster terms first
+    final preloaded = getPreloadedTranslation(text, targetLanguage);
+    if (preloaded != null) return preloaded;
+
+    // Check cache
+    if (_translationCache.containsKey(text) &&
+        _translationCache[text]!.containsKey(targetLanguage)) {
+      return _translationCache[text]![targetLanguage]!;
     }
-    
-    // Check for preloaded translations first (for disaster terms)
-    final preloadedTranslation = getPreloadedTranslation(text, targetLanguage);
-    if (preloadedTranslation != null) {
-      return preloadedTranslation;
-    }
-    
-    // Check if we have this translation in cache
-    if (_translationCache.containsKey(targetLanguage) &&
-        _translationCache[targetLanguage]!.containsKey(text)) {
-      return _translationCache[targetLanguage]![text]!;
-    }
-    
+
     try {
+      final url = Uri.parse('$baseUrl?key=$apiKey');
       final response = await http.post(
-        Uri.parse('$baseUrl?key=$apiKey'),
+        url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'q': text,
           'target': targetLanguage,
-          'format': 'text'
+          'format': 'text',
         }),
       );
-      
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final translation = data['data']['translations'][0]['translatedText'];
-        
+        final json = jsonDecode(response.body);
+        final translatedText = json['data']['translations'][0]['translatedText'];
+
         // Save to cache
-        _translationCache[targetLanguage] ??= {};
-        _translationCache[targetLanguage]![text] = translation;
-        
-        return translation;
+        _translationCache[text] ??= {};
+        _translationCache[text]![targetLanguage] = translatedText;
+
+        return translatedText;
       } else {
-        print('Translation API error: ${response.body}');
-        return text; // Return original text if translation fails
+        return text; // fallback
       }
     } catch (e) {
       print('Translation error: $e');
@@ -192,6 +187,7 @@ class TranslationService {
     }
   }
 }
+
 
 // Language option model
 class LanguageOption {

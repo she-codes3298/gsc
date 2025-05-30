@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gsc/services/translation_service.dart';
+import 'package:provider/provider.dart';
+import 'package:gsc/providers/language_provider.dart'; // ✅ Adjust the path if needed
+
 
 
 class LanguageSelectionDialog extends StatelessWidget {
@@ -27,11 +30,12 @@ class LanguageSelectionDialog extends StatelessWidget {
                   ),
                 ],
               ),
-              onTap: () {
-                // Handle language selection
-                TranslationService.setLanguage(language.code);
+              onTap: () async {
+                final provider = Provider.of<LanguageProvider>(context, listen: false);
+                await provider.changeLanguage(language.code);
                 Navigator.pop(context);
               },
+
             );
           },
         ),
