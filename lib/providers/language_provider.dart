@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
-import '../services/translation_service.dart';
+import 'package:gsc/services/translation_service.dart';
 
-class LanguageProvider with ChangeNotifier {
-  String _currentLanguage = 'en';
+class LanguageProvider extends ChangeNotifier {
+  String _languageCode = 'en';
 
-  String get currentLanguage => _currentLanguage;
+  String get languageCode => _languageCode;
 
   LanguageProvider() {
-    // Load saved language preference on initialization
     _loadSavedLanguage();
   }
 
   Future<void> _loadSavedLanguage() async {
-    _currentLanguage = await TranslationService.getCurrentLanguage();
+    _languageCode = await TranslationService.getCurrentLanguage();
     notifyListeners();
   }
 
-  // Change language and notify listeners
-  Future<void> changeLanguage(String languageCode) async {
-    _currentLanguage = languageCode;
-    await TranslationService.setLanguage(languageCode);
+  Future<void> changeLanguage(String newCode) async {
+    await TranslationService.setLanguage(newCode);
+    _languageCode = newCode;
     notifyListeners();
   }
 
-  // Translate a given text to current language
   Future<String> translateText(String text) async {
-    return await TranslationService.translateText(text, _currentLanguage);
+    return await TranslationService.translateText(text, _languageCode);
   }
 }

@@ -28,7 +28,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// 🔔 Global instance for local notifications
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -157,7 +157,7 @@ void setupFirebaseMessaging() async {
 /// 🔔 **Setup Local Notifications**
 void setupLocalNotifications() {
   const AndroidInitializationSettings androidInitSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
+  AndroidInitializationSettings('@mipmap/ic_launcher');
 
   const InitializationSettings initSettings = InitializationSettings(
     android: androidInitSettings,
@@ -175,14 +175,14 @@ void setupLocalNotifications() {
 /// 📢 **Show Local Notification**
 void _showLocalNotification(RemoteNotification notification) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
-        'sos_channel',
-        'SOS Alerts',
-        channelDescription: 'Emergency SOS notifications',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: false,
-      );
+  AndroidNotificationDetails(
+    'sos_channel',
+    'SOS Alerts',
+    channelDescription: 'Emergency SOS notifications',
+    importance: Importance.max,
+    priority: Priority.high,
+    showWhen: false,
+  );
 
   const NotificationDetails platformChannelSpecifics = NotificationDetails(
     android: androidPlatformChannelSpecifics,
