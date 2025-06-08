@@ -113,7 +113,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
     try {
       final response = await Gemini.instance.textAndImage(
         text: "Describe this image in detail",
-        images: [bytes], // Changed from File to Uint8List
+        images: [bytes],
       );
 
       setState(() {
