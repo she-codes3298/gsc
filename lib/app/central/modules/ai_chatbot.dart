@@ -44,15 +44,31 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
 
     try {
       final response = await Gemini.instance.text(message.text);
+      String fullText = response?.output ?? 'No response received';
+      String cleanedText = fullText.replaceAll('**', '');
+      ChatMessage botMessage = ChatMessage(
+        user: _bot,
+        text: '',
+        createdAt: DateTime.now(),
+      );
+
       setState(() {
-        _messages.insert(
-          0,
-          ChatMessage(
+        _messages.insert(0, botMessage);
+      });
+
+      for (int i = 0; i < cleanedText.length; i++) {
+        await Future.delayed(const Duration(milliseconds: 2)); // Fast typing
+
+        setState(() {
+          _messages[0] = ChatMessage(
             user: _bot,
-            text: response?.output ?? 'No response received',
-            createdAt: DateTime.now(),
-          ),
-        );
+            text: cleanedText.substring(0, i + 1),
+            createdAt: botMessage.createdAt,
+          );
+        });
+      }
+
+      setState(() {
         _isTyping = false;
       });
     } catch (e) {
@@ -188,7 +204,9 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                 height: 100,
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.8),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(10),
+                  ),
                 ),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
