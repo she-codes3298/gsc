@@ -3,8 +3,6 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:gsc/app/central/common/translatable_text.dart';
 
 class AIChatbotScreen extends StatefulWidget {
   const AIChatbotScreen({super.key});
@@ -12,6 +10,11 @@ class AIChatbotScreen extends StatefulWidget {
   @override
   _AIChatbotScreenState createState() => _AIChatbotScreenState();
 }
+
+const Color darkBackground = Color(0xFF121212);
+const Color darkChatBubble = Color(0xFF424242);
+const Color darkInputBackground = Color(0xFF1E1E1E);
+const Color darkPromptButton = Color(0xFF4A4A4A);
 
 class _AIChatbotScreenState extends State<AIChatbotScreen> {
   final ChatUser _user = ChatUser(id: '1', firstName: 'User');
@@ -44,15 +47,31 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
 
     try {
       final response = await Gemini.instance.text(message.text);
+      String fullText = response?.output ?? 'No response received';
+      String cleanedText = fullText.replaceAll('**', '');
+      ChatMessage botMessage = ChatMessage(
+        user: _bot,
+        text: '',
+        createdAt: DateTime.now(),
+      );
+
       setState(() {
-        _messages.insert(
-          0,
-          ChatMessage(
+        _messages.insert(0, botMessage);
+      });
+
+      for (int i = 0; i < cleanedText.length; i++) {
+        await Future.delayed(const Duration(milliseconds: 1)); // Fast typing
+
+        setState(() {
+          _messages[0] = ChatMessage(
             user: _bot,
-            text: response?.output ?? 'No response received',
-            createdAt: DateTime.now(),
-          ),
-        );
+            text: cleanedText.substring(0, i + 1),
+            createdAt: botMessage.createdAt,
+          );
+        });
+      }
+
+      setState(() {
         _isTyping = false;
       });
     } catch (e) {
@@ -97,7 +116,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
     try {
       final response = await Gemini.instance.textAndImage(
         text: "Describe this image in detail",
-        images: [bytes], // Changed from File to Uint8List
+        images: [bytes],
       );
 
       setState(() {
@@ -129,6 +148,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: darkBackground,
       appBar: AppBar(
         title: const Text('E-Sahyog', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
@@ -137,7 +157,6 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      backgroundColor: Colors.grey[900],
       body: Stack(
         children: [
           DashChat(
@@ -145,15 +164,18 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
             messages: _messages,
             typingUsers: _isTyping ? [_bot] : [],
             messageOptions: MessageOptions(
-              containerColor: const Color.fromARGB(255, 66, 66, 66),
+              containerColor: darkChatBubble,
               textColor: Colors.white,
-              currentUserContainerColor: Colors.blue,
+              currentUserContainerColor: Colors.blue[800]!,
+              currentUserTextColor: Colors.white,
             ),
             inputOptions: InputOptions(
               inputTextStyle: const TextStyle(color: Colors.white),
               inputDecoration: InputDecoration(
-                fillColor: Colors.black,
+                fillColor: darkInputBackground,
                 filled: true,
+                hintText: 'Type your message...',
+                hintStyle: const TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: const BorderSide(color: Colors.grey, width: 2),
@@ -166,8 +188,6 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                   borderRadius: BorderRadius.circular(20),
                   borderSide: const BorderSide(color: Colors.white, width: 2),
                 ),
-                hintText: 'Type your message...',
-                hintStyle: const TextStyle(color: Colors.grey),
               ),
               trailing: [
                 IconButton(
@@ -187,25 +207,26 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
               child: Container(
                 height: 100,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.8),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                  color: Colors.black.withOpacity(0.85),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
                 ),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: _customPrompts.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 12,
+                      ),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[700],
+                          backgroundColor: darkPromptButton,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
                           ),
                         ),
                         onPressed: () {
@@ -219,7 +240,7 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
                         },
                         child: Text(
                           _customPrompts[index],
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 13),
                         ),
                       ),
                     );
