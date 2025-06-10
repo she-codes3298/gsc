@@ -40,7 +40,7 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
     super.dispose();
   }
 
-  Future<void> updateItem() async {
+ /* Future<void> updateItem() async {
     String updatedName = _nameController.text;
     int updatedQuantity =
         int.tryParse(_quantityController.text) ?? widget.initialQuantity;
@@ -74,7 +74,7 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
         SnackBar(content: TranslatableText("Error updating item: $e")),
       );
     }
-  }
+  }*/
 
   // Function to delete an inventory item
   Future<void> deleteItem(String itemId) async {
@@ -134,31 +134,16 @@ class _InventoryUpdatePageState extends State<InventoryUpdatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: TranslatableText("Update Inventory & View Stock")),
+      appBar: AppBar(title: TranslatableText("View Stock")),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              children: [
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: "Item Name"),
-                ),
-                TextField(
-                  controller: _quantityController,
-                  decoration: InputDecoration(labelText: "Quantity"),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: updateItem,
-                  child: TranslatableText("Update Item"),
-                ),
-              ],
+
             ),
           ),
-          const Divider(thickness: 2),
+
           Padding(
             padding: EdgeInsets.all(8.0),
             child: TranslatableText(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'inventory_request_page.dart';
 import 'inventory_update_page.dart';
+import 'vendor_registration_page.dart';
+import 'vendor_list_page.dart';
+import 'govt_e_commerce.dart';
 import 'package:gsc/app/central/common/translatable_text.dart';
-
 
 class InventoryPage extends StatelessWidget {
   const InventoryPage({super.key});
@@ -34,45 +36,82 @@ class InventoryPage extends StatelessWidget {
             const TranslatableText("Quick Actions", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
 
-            GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              shrinkWrap: true,
-              children: [
-                _buildActionCard(
-                  title: "Request Supplies",
-                  icon: Icons.shopping_cart,
-                  color: Colors.orange,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InventoryRequestPage(
-                        availableItems: [
-                          {"name": "Water Bottles", "quantity": 100},
-                          {"name": "Food Packets", "quantity": 200},
-                          {"name": "Medical Kits", "quantity": 50},
-                        ],
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                children: [
+
+                  _buildActionCard(
+                    title: "Register Vendor",
+                    icon: Icons.person_add,
+                    color: Colors.blue,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VendorRegistrationPage(),
                       ),
                     ),
                   ),
-                ),
-                _buildActionCard(
-                  title: "Update Stock",
-                  icon: Icons.edit,
-                  color: Colors.green,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InventoryUpdatePage(
-                        itemId: "123", // Replace with actual item ID
-                        initialName: "Water Bottles",
-                        initialQuantity: 50,
+                  _buildActionCard(
+                    title: "View Vendors",
+                    icon: Icons.store,
+                    color: Colors.purple,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VendorListPage(),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  _buildActionCard(
+                    title: "Request Supplies",
+                    icon: Icons.shopping_cart,
+                    color: Colors.orange,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InventoryRequestPage(
+                          availableItems: [
+                            {"name": "Water Bottles", "quantity": 100},
+                            {"name": "Food Packets", "quantity": 200},
+                            {"name": "Medical Kits", "quantity": 50},
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  _buildActionCard(
+                    title: "Update Stock",
+                    icon: Icons.edit,
+                    color: Colors.green,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InventoryUpdatePage(
+                          itemId: "123", // Replace with actual item ID
+                          initialName: "Water Bottles",
+                          initialQuantity: 50,
+                        ),
+                      ),
+                    ),
+                  ),
+
+
+                  _buildActionCard(
+                    title: "E-commerce",
+                    icon: Icons.person_add,
+                    color: Colors.blue,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EcommercePage(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../auth/auth.dart';
-import '../register/register_page.dart'; // Redirect to Register Page
+import '../register/register_page.dart';
+import '../../central/modules/inventory/vendor_dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -31,12 +32,26 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      await _authService.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-        context: context,
-        role: selectedRole, // Pass selected role to AuthService
-      );
+      if (selectedRole == "vendor") {
+        // For vendor login, navigate directly to vendor dashboard
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => VendorDashboardPage()),
+        );
+      } else {
+        // For government roles, use existing auth service
+        await _authService.signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+          context: context,
+          role: selectedRole,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message ?? "An error occurred. Please try again.";
@@ -58,8 +73,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                "GOVERNMENT LOGIN",
+              Text(
+                selectedRole == "vendor" ? "VENDOR LOGIN" : "GOVERNMENT LOGIN",
                 style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -74,11 +89,15 @@ class _LoginPageState extends State<LoginPage> {
                     selectedRole = newValue!;
                   });
                 },
-                items: <String>['central_gov', 'state_gov']
+                items: <String>['central_gov', 'state_gov', 'vendor']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value, style: const TextStyle(color: Colors.white)),
+                    child: Text(
+                        value == 'vendor' ? 'Vendor' :
+                        value == 'central_gov' ? 'Central Govt' : 'State Govt',
+                        style: const TextStyle(color: Colors.white)
+                    ),
                   );
                 }).toList(),
                 dropdownColor: Colors.grey[900],
@@ -88,10 +107,10 @@ class _LoginPageState extends State<LoginPage> {
               isLoading
                   ? const CircularProgressIndicator(color: Colors.white)
                   : ElevatedButton(
-                      onPressed: login,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                      child: const Text("LOGIN", style: TextStyle(color: Colors.black)),
-                    ),
+                onPressed: login,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                child: const Text("LOGIN", style: TextStyle(color: Colors.black)),
+              ),
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () => Navigator.push(
