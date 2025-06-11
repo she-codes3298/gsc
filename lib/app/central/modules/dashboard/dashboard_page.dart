@@ -177,7 +177,7 @@ class _DashboardViewState extends State<DashboardView> {
           width: 80.0,
           height: 80.0,
           point: point,
-          builder: (ctx) => GestureDetector(
+          child: GestureDetector(
             onTap: () {
               final eventData = event.predictionData;
               if (event.type == DisasterType.cyclone && eventData is CyclonePrediction) {

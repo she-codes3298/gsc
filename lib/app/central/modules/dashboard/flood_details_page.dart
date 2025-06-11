@@ -133,8 +133,8 @@ class FloodDetailsPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.0),
                         child: FlutterMap(
                           options: MapOptions(
-                            center: LatLng(floodPrediction.lat, floodPrediction.lon),
-                            zoom: 9.0, // Zoom level
+                            initialCenter: LatLng(floodPrediction.lat, floodPrediction.lon),
+                            initialZoom: 9.0, // Zoom level
                           ),
                           children: [
                             TileLayer(
@@ -147,7 +147,7 @@ class FloodDetailsPage extends StatelessWidget {
                                   width: 80.0,
                                   height: 80.0,
                                   point: LatLng(floodPrediction.lat, floodPrediction.lon),
-                                  builder: (ctx) => Icon(
+                                  child: Icon(
                                     Icons.water_drop,
                                     color: _getRiskColor(floodPrediction.floodRisk),
                                     size: 40.0,
