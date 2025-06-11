@@ -19,6 +19,7 @@ import 'app/central/modules/settings/settings_page.dart';
 import 'app/central/modules/ai_chatbot.dart';
 import 'app/central/modules/camps/camp_management_map.dart';
 import 'app/modules/sos_alerts/sos_alerts_page.dart';
+import 'app/central/modules/dashboard/active_disasters_map_page.dart';
 
 import 'providers/language_provider.dart';
 
@@ -100,6 +101,7 @@ class MyApp extends StatelessWidget {
           '/ai_chatbot': (context) => AIChatbotScreen(),
           '/camp': (context) => RefugeeCampPage(),
           '/deployed_teams': (context) => TeamsPage(),
+          '/active_disasters_map': (context) => const ActiveDisastersMapPage(),
         },
       ),
     );

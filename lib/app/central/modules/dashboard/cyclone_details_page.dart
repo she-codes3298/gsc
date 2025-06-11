@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:gsc/models/flood_prediction.dart';
-import 'package:gsc/app/central/common/translatable_text.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:gsc/models/cyclone_prediction.dart'; // Model for cyclone data
+import 'package:gsc/app/central/common/translatable_text.dart'; // For translatable text
+import 'package:flutter_map/flutter_map.dart'; // For map display
+import 'package:latlong2/latlong.dart';         // For LatLng objects
 
-class FloodDetailsPage extends StatelessWidget {
-  final FloodPrediction floodPrediction;
+class CycloneDetailsPage extends StatelessWidget {
+  final CyclonePrediction cyclonePrediction;
 
-  const FloodDetailsPage({Key? key, required this.floodPrediction}) : super(key: key);
+  const CycloneDetailsPage({Key? key, required this.cyclonePrediction}) : super(key: key);
 
-  // Consistent styling colors
+  // Define custom colors (consistent with other detail pages if possible)
   static const Color navyBlue = Color(0xFF1A324C);
   static const Color lightBlue = Color(0xFF3789BB);
-  static const Color gradientStart = Color(0xFF87B7E8);
-  static const Color gradientEnd = Color(0xFF414C58);
 
-  // Helper widget for detail rows (can be extracted to a common file later)
   Widget _buildDetailRow(BuildContext context, String label, String value, {IconData? icon}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -46,25 +43,15 @@ class FloodDetailsPage extends StatelessWidget {
     );
   }
 
-  Color _getRiskColor(String risk) {
-    switch (risk.toLowerCase()) {
-      case 'high':
-        return Colors.redAccent;
-      case 'medium': // Assuming 'medium' might be a value
-        return Colors.orangeAccent;
-      case 'low':
-        return Colors.greenAccent;
-      default:
-        return Colors.yellowAccent; // For unknown or other values
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Location loc = cyclonePrediction.location;
+    final WeatherData weather = cyclonePrediction.weatherData;
+
     return Scaffold(
       appBar: AppBar(
         title: const TranslatableText(
-          "Flood Details",
+          "Cyclone Details",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: navyBlue,
@@ -76,7 +63,7 @@ class FloodDetailsPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [gradientStart, gradientEnd],
+            colors: [Color(0xFF87B7E8), Color(0xFF414C58)],
             stops: [0.8, 1.0],
           ),
         ),
@@ -93,18 +80,42 @@ class FloodDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TranslatableText(
-                      "Risk: ${floodPrediction.floodRisk}",
-                      style: TextStyle(
-                        color: _getRiskColor(floodPrediction.floodRisk),
+                      cyclonePrediction.cycloneCondition.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.orangeAccent, // Highlight condition
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 10),
-                    _buildDetailRow(context, "Matched District:", floodPrediction.matchedDistrict, icon: Icons.location_on),
-                    _buildDetailRow(context, "Original District:", floodPrediction.originalDistrict, icon: Icons.location_history),
-                    _buildDetailRow(context, "Latitude:", floodPrediction.lat.toStringAsFixed(4), icon: Icons.pin_drop),
-                    _buildDetailRow(context, "Longitude:", floodPrediction.lon.toStringAsFixed(4), icon: Icons.pin_drop),
+                    _buildDetailRow(context, "Timestamp (UTC):", cyclonePrediction.timestampUtc, icon: Icons.access_time),
+                    _buildDetailRow(context, "District:", loc.district, icon: Icons.location_city),
+                    _buildDetailRow(context, "Latitude:", loc.latitude.toStringAsFixed(4), icon: Icons.pin_drop),
+                    _buildDetailRow(context, "Longitude:", loc.longitude.toStringAsFixed(4), icon: Icons.pin_drop),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              color: navyBlue.withOpacity(0.85),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const TranslatableText(
+                      "Weather Data",
+                      style: TextStyle(color: lightBlue, fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const Divider(color: lightBlue),
+                    _buildDetailRow(context, "Wind (USA):", "${weather.usaWind} m/s", icon: Icons.air),
+                    _buildDetailRow(context, "Pressure (USA):", "${weather.usaPres} hPa", icon: Icons.compress),
+                    _buildDetailRow(context, "Storm Speed:", "${weather.stormSpeed} km/h", icon: Icons.speed), // Assuming km/h
+                    _buildDetailRow(context, "Storm Direction:", "${weather.stormDir}°", icon: Icons.explore),
+                    _buildDetailRow(context, "Month:", weather.month.toString(), icon: Icons.calendar_today),
                   ],
                 ),
               ),
@@ -128,13 +139,13 @@ class FloodDetailsPage extends StatelessWidget {
                   SizedBox(
                     height: 250, // Adjust height as needed
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ClipRRect(
+                      padding: const EdgeInsets.all(8.0), // Add padding around the map
+                      child: ClipRRect( // Clip the map with rounded corners
                         borderRadius: BorderRadius.circular(8.0),
                         child: FlutterMap(
                           options: MapOptions(
-                            initialCenter: LatLng(floodPrediction.lat, floodPrediction.lon),
-                            initialZoom: 9.0, // Zoom level
+                            initialCenter: LatLng(loc.latitude, loc.longitude),
+                            initialZoom: 8.0, // Zoom level for a more focused view
                           ),
                           children: [
                             TileLayer(
@@ -146,12 +157,12 @@ class FloodDetailsPage extends StatelessWidget {
                                 Marker(
                                   width: 80.0,
                                   height: 80.0,
-                                  point: LatLng(floodPrediction.lat, floodPrediction.lon),
-                                  child: Icon(
-                                    Icons.water_drop,
-                                    color: _getRiskColor(floodPrediction.floodRisk),
+                                  point: LatLng(loc.latitude, loc.longitude),
+                                  child: const Icon(
+                                    Icons.cyclone,
+                                    color: Colors.orangeAccent,
                                     size: 40.0,
-                                    semanticLabel: "Flood Location",
+                                    semanticLabel: "Cyclone Location",
                                   ),
                                 ),
                               ],
@@ -164,7 +175,6 @@ class FloodDetailsPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Remove old UI elements related to highRiskStates, additionalInsights, readMoreUrl
           ],
         ),
       ),
