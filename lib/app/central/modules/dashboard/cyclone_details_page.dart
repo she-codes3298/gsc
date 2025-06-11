@@ -144,8 +144,8 @@ class CycloneDetailsPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.0),
                         child: FlutterMap(
                           options: MapOptions(
-                            center: LatLng(loc.latitude, loc.longitude),
-                            zoom: 8.0, // Zoom level for a more focused view
+                            initialCenter: LatLng(loc.latitude, loc.longitude),
+                            initialZoom: 8.0, // Zoom level for a more focused view
                           ),
                           children: [
                             TileLayer(
@@ -158,7 +158,7 @@ class CycloneDetailsPage extends StatelessWidget {
                                   width: 80.0,
                                   height: 80.0,
                                   point: LatLng(loc.latitude, loc.longitude),
-                                  builder: (ctx) => const Icon(
+                                  child: const Icon(
                                     Icons.cyclone,
                                     color: Colors.orangeAccent,
                                     size: 40.0,
