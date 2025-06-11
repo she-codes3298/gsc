@@ -326,8 +326,9 @@ class _DashboardViewState extends State<DashboardView> {
               const SizedBox(height: 10),
 
               // Disaster Cards List Section
-              Expanded(
-                child: ListView.builder(
+              ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: disasterEvents.length,
                   itemBuilder: (context, index) {
                     final event = disasterEvents[index];
@@ -414,7 +415,6 @@ class _DashboardViewState extends State<DashboardView> {
                     );
                   },
                 ),
-              ),
                const SizedBox(height: 10), // Spacing before the GridView
               // Existing Quick Actions GridView (kept as per revised plan)
               const TranslatableText(
@@ -476,7 +476,7 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ],
                 ),
-              ),
+              
             ],
             ),
           ),
