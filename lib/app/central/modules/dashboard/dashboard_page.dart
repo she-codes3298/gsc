@@ -20,11 +20,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'cyclone_details_page.dart'; // Import for navigation
 import 'flood_details_page.dart'; // Import for FloodDetailsPage
-import 'active_disasters_map_page.dart';
-import 'package:gsc/services/disaster_service.dart'; // Import the DisasterService
+
 import 'package:gsc/services/translation_service.dart';
-import 'package:firebase_database/firebase_database.dart'; // Import Firebase
-import 'package:gsc/main.dart'; // Import main.dart for firebaseDatabase instance
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -33,61 +30,116 @@ class DashboardView extends StatefulWidget {
   _DashboardViewState createState() => _DashboardViewState();
 }
 
-import 'package:provider/provider.dart'; // Import Provider
-
 class _DashboardViewState extends State<DashboardView> {
   List<DisasterEvent> disasterEvents = [];
-  late DisasterService _disasterService; // To be initialized from Provider
-  bool _isLoading = true; // To manage loading state
+
+  final List<Map<String, dynamic>> representativeLocations = [
+    {'name': 'Delhi', 'lat': 28.7041, 'lon': 77.1025},
+    {'name': 'Mumbai', 'lat': 19.0760, 'lon': 72.8777},
+    {'name': 'Kolkata', 'lat': 22.5726, 'lon': 88.3639},
+    {'name': 'Chennai', 'lat': 13.0827, 'lon': 80.2707},
+    {'name': 'Bengaluru', 'lat': 12.9716, 'lon': 77.5946},
+    {'name': 'Hyderabad', 'lat': 17.3850, 'lon': 78.4867},
+    {'name': 'Ahmedabad', 'lat': 23.0225, 'lon': 72.5714},
+    {'name': 'Pune', 'lat': 18.5204, 'lon': 73.8567},
+    {'name': 'Jaipur', 'lat': 26.9124, 'lon': 75.7873},
+    {'name': 'Lucknow', 'lat': 26.8467, 'lon': 80.9462},
+    // Add more locations as desired for demonstration
+  ];
 
   @override
   void initState() {
     super.initState();
-    // _disasterService is not available here yet if using didChangeDependencies for init.
-    // If fetching data in initState, it must be done carefully or via another method.
-    // For simplicity with Provider, often didChangeDependencies is used for one-time setup
-    // or a post-frame callback if context is needed immediately in initState.
-    // Or, pass context to _loadDisasterData if called from initState.
-    // Let's assume _loadDisasterData will be called from didChangeDependencies or similar.
+    fetchDisasterData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Initialize and load data here as Provider.of can be safely called.
-    if (_isLoading) { // Only load if not already loaded (e.g. due to other dependency changes)
-      _disasterService = Provider.of<DisasterService>(context, listen: false);
-      _loadDisasterData();
-    }
-  }
+  Future<void> fetchDisasterData() async {
+    List<DisasterEvent> allFetchedDisasterData = [];
+    const newFloodApiUrl = 'https://flood-api-756506665902.us-central1.run.app/predict';
+    const newCycloneApiUrl = 'https://cyclone-api-756506665902.asia-south1.run.app/predict';
+    const newEarthquakeApiUrl = 'https://my-python-app-wwb655aqwa-uc.a.run.app/';
 
-  Future<void> _loadDisasterData() async {
-    if (!mounted) return;
-    // setState for _isLoading is already called before _loadDisasterData in common patterns,
-    // but if not, ensure it's set at the start of the load.
-    // Since _isLoading is true initially, and we call this once in didChangeDependencies,
-    // we might not need to set _isLoading = true here again unless _loadDisasterData can be called multiple times.
-    // For safety, let's ensure it:
-    if (!_isLoading) { // If called again (e.g. refresh)
-       setState(() { _isLoading = true; });
-    }
-
+    // --- Earthquake (fetches once) ---
     try {
-      final fetchedEvents = await _disasterService.fetchAndFilterDisasterData();
-      if (mounted) {
-        setState(() {
-          disasterEvents = fetchedEvents;
-          _isLoading = false;
-        });
+      final response = await http.get(Uri.parse(newEarthquakeApiUrl));
+      if (response.statusCode == 200) {
+        final earthquakeData = jsonDecode(response.body);
+        final earthquakePrediction = EarthquakePrediction.fromJson(earthquakeData);
+        // Optional: Filter if earthquake API might return "no significant event"
+        // For now, assuming it always returns something relevant or empty highRiskCities list
+        allFetchedDisasterData.add(DisasterEvent(
+          type: DisasterType.earthquake,
+          predictionData: earthquakePrediction,
+          timestamp: DateTime.now(),
+        ));
+      } else {
+        print('Earthquake API Error: ${response.statusCode}');
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+      print('Earthquake API Exception: $e');
+    }
+
+    // --- Flood and Cyclone (iterate through representativeLocations) ---
+    for (var locData in representativeLocations) {
+      final double lat = locData['lat'];
+      final double lon = locData['lon'];
+      final String cityName = locData['name'];
+
+      // Flood API Call for current location
+      try {
+        final floodResponse = await http.post(
+          Uri.parse(newFloodApiUrl),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"lat": lat, "lon": lon}),
+        );
+        if (floodResponse.statusCode == 200) {
+          final data = jsonDecode(floodResponse.body);
+          final prediction = FloodPrediction.fromJson(data);
+          if (prediction.floodRisk.toLowerCase() != "no flood") {
+            allFetchedDisasterData.add(DisasterEvent(
+              type: DisasterType.flood,
+              predictionData: prediction,
+              timestamp: DateTime.now(),
+              // Consider adding cityName or original lat/lon to DisasterEvent if needed for context
+            ));
+          }
+        } else {
+          print('Flood API Error for $cityName: ${floodResponse.statusCode}');
+        }
+      } catch (e) {
+        print('Flood API Exception for $cityName: $e');
       }
-      print("Error loading disaster data in DashboardView: $e");
-      // Optionally, show a snackbar or error message to the user
+
+      // Cyclone API Call for current location
+      try {
+        final cycloneResponse = await http.post(
+          Uri.parse(newCycloneApiUrl),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"lat": lat, "lon": lon}),
+        );
+        if (cycloneResponse.statusCode == 200) {
+          final data = jsonDecode(cycloneResponse.body);
+          final prediction = CyclonePrediction.fromJson(data);
+          if (prediction.cycloneCondition.toLowerCase() != "no cyclone" &&
+              prediction.cycloneCondition.toLowerCase() != "no active cyclones detected") {
+            allFetchedDisasterData.add(DisasterEvent(
+              type: DisasterType.cyclone,
+              predictionData: prediction,
+              timestamp: DateTime.now(),
+            ));
+          }
+        } else {
+          print('Cyclone API Error for $cityName: ${cycloneResponse.statusCode}');
+        }
+      } catch (e) {
+        print('Cyclone API Exception for $cityName: $e');
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        disasterEvents = allFetchedDisasterData;
+      });
     }
   }
 
@@ -180,61 +232,45 @@ class _DashboardViewState extends State<DashboardView> {
             stops: [0.3, 1.0],
           ),
         ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_isLoading)
-                const Center(child: CircularProgressIndicator())
-              else ...[
               // Overview Card (Kept from original layout)
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, '/active_disasters_map');
-                },
-                child: Card(
-                  elevation: 6,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                color: Colors.white.withOpacity(0.95),
+                child: ListTile(
+                  title: const TranslatableText(
+                    "Disaster Overview", // Updated title
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A324C),
+                    ),
                   ),
-                  color: Colors.white.withOpacity(0.95),
-                  child: ListTile(
-                    title: const TranslatableText(
-                      "Disaster Overview", // Updated title
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A324C),
-                      ),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3789BB).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF3789BB).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.map_outlined, // Changed Icon
-                        color: Color(0xFF3789BB),
-                        size: 28,
-                      ),
+                    child: const Icon(
+                      Icons.map_outlined, // Changed Icon
+                      color: Color(0xFF3789BB),
+                      size: 28,
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min, // Important to keep the row compact
-                      children: <Widget>[
-                        Text(
-                          "${disasterEvents.length} Active Event(s)",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFFD32F2F), // A crisis-related color
-                          ),
-                        ),
-                        const SizedBox(width: 8), // Spacing between text and icon
-                        const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey), // Added arrow icon
-                      ],
+                  ),
+                   trailing: Text(
+                    "${disasterEvents.length} Active Event(s)",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFD32F2F), // A crisis-related color
                     ),
                   ),
                 ),
@@ -264,9 +300,8 @@ class _DashboardViewState extends State<DashboardView> {
               const SizedBox(height: 10),
 
               // Disaster Cards List Section
-              ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+              Expanded(
+                child: ListView.builder(
                   itemCount: disasterEvents.length,
                   itemBuilder: (context, index) {
                     final event = disasterEvents[index];
@@ -336,48 +371,8 @@ class _DashboardViewState extends State<DashboardView> {
                                 ),
                                 const SizedBox(width: 8),
                                 ElevatedButton(
-                                  onPressed: () async {
-                                    final eventToAlert = disasterEvents[index];
-                                    String disasterType = eventToAlert.type.toString().split('.').last;
-                                    String riskSeverity = eventToAlert.severitySummary;
-                                    String locationSummary = eventToAlert.locationSummary;
-                                    String timestamp = DateTime.now().toIso8601String();
-                                    double? latitude;
-                                    double? longitude;
-
-                                    if (eventToAlert.type == DisasterType.flood) {
-                                      final data = eventToAlert.predictionData as FloodPrediction;
-                                      latitude = data.lat;
-                                      longitude = data.lon;
-                                    } else if (eventToAlert.type == DisasterType.cyclone) {
-                                      final data = eventToAlert.predictionData as CyclonePrediction;
-                                      latitude = data.location.latitude;
-                                      longitude = data.location.longitude;
-                                    }
-                                    // For earthquakes, lat/lon remain null as per subtask decision.
-
-                                    final alertData = {
-                                      'disasterType': disasterType,
-                                      'riskSeverity': riskSeverity,
-                                      'locationSummary': locationSummary,
-                                      'latitude': latitude,
-                                      'longitude': longitude,
-                                      'timestamp': timestamp,
-                                      'status': 'pending', // Default status
-                                    };
-
-                                    try {
-                                      // Using the global firebaseDatabase instance from main.dart
-                                      await firebaseDatabase.ref('raised_alerts').push().set(alertData);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Alert raised for $disasterType at $locationSummary')),
-                                      );
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Error raising alert: $e')),
-                                      );
-                                      print('Error raising alert: $e');
-                                    }
+                                  onPressed: () {
+                                    // TODO: Implement raise alert functionality
                                   },
                                   child: const TranslatableText("Raise Alert"),
                                   style: ElevatedButton.styleFrom(
@@ -455,9 +450,8 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ],
                 ),
-              ),
+              
             ],
-            ),
           ),
         ),
       ),

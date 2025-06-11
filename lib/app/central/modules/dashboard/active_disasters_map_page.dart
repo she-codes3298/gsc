@@ -14,6 +14,8 @@ import 'package:gsc/main.dart'; // Import main.dart for firebaseDatabase instanc
 // import 'earthquake_details_page.dart';
 // import 'flood_details_page.dart';
 // import 'cyclone_details_page.dart';
+import 'package:provider/provider.dart'; // Import Provider
+
 
 class ActiveDisastersMapPage extends StatefulWidget {
   const ActiveDisastersMapPage({Key? key}) : super(key: key);
@@ -22,7 +24,6 @@ class ActiveDisastersMapPage extends StatefulWidget {
   _ActiveDisastersMapPageState createState() => _ActiveDisastersMapPageState();
 }
 
-import 'package:provider/provider.dart'; // Import Provider
 
 class _ActiveDisastersMapPageState extends State<ActiveDisastersMapPage> {
   List<DisasterEvent> _disasterEvents = []; // To store fetched disaster data
