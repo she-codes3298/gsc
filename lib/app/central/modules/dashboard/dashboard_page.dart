@@ -20,6 +20,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'cyclone_details_page.dart'; // Import for navigation
 import 'flood_details_page.dart'; // Import for FloodDetailsPage
+import 'active_disasters_map_page.dart';
 
 import 'package:gsc/services/translation_service.dart';
 
@@ -34,17 +35,29 @@ class _DashboardViewState extends State<DashboardView> {
   List<DisasterEvent> disasterEvents = [];
 
   final List<Map<String, dynamic>> representativeLocations = [
-    {'name': 'Delhi', 'lat': 28.7041, 'lon': 77.1025},
-    {'name': 'Mumbai', 'lat': 19.0760, 'lon': 72.8777},
-    {'name': 'Kolkata', 'lat': 22.5726, 'lon': 88.3639},
-    {'name': 'Chennai', 'lat': 13.0827, 'lon': 80.2707},
-    {'name': 'Bengaluru', 'lat': 12.9716, 'lon': 77.5946},
-    {'name': 'Hyderabad', 'lat': 17.3850, 'lon': 78.4867},
-    {'name': 'Ahmedabad', 'lat': 23.0225, 'lon': 72.5714},
-    {'name': 'Pune', 'lat': 18.5204, 'lon': 73.8567},
-    {'name': 'Jaipur', 'lat': 26.9124, 'lon': 75.7873},
-    {'name': 'Lucknow', 'lat': 26.8467, 'lon': 80.9462},
-    // Add more locations as desired for demonstration
+    // India
+    {'name': 'Delhi', 'lat': 28.7041, 'lon': 77.1025, 'country': 'India'},
+    {'name': 'Mumbai', 'lat': 19.0760, 'lon': 72.8777, 'country': 'India'},
+    {'name': 'Kolkata', 'lat': 22.5726, 'lon': 88.3639, 'country': 'India'},
+    {'name': 'Chennai', 'lat': 13.0827, 'lon': 80.2707, 'country': 'India'},
+    {'name': 'Bengaluru', 'lat': 12.9716, 'lon': 77.5946, 'country': 'India'},
+    {'name': 'Hyderabad', 'lat': 17.3850, 'lon': 78.4867, 'country': 'India'},
+    {'name': 'Ahmedabad', 'lat': 23.0225, 'lon': 72.5714, 'country': 'India'},
+    {'name': 'Pune', 'lat': 18.5204, 'lon': 73.8567, 'country': 'India'},
+    {'name': 'Jaipur', 'lat': 26.9124, 'lon': 75.7873, 'country': 'India'},
+    {'name': 'Lucknow', 'lat': 26.8467, 'lon': 80.9462, 'country': 'India'},
+    {'name': 'Guwahati', 'lat': 26.1445, 'lon': 91.7362, 'country': 'India'}, // Northeast India
+    {'name': 'Patna', 'lat': 25.5941, 'lon': 85.1376, 'country': 'India'}, // East India
+
+    // Neighboring Countries
+    {'name': 'Karachi', 'lat': 24.8607, 'lon': 67.0011, 'country': 'Pakistan'},
+    {'name': 'Lahore', 'lat': 31.5204, 'lon': 74.3587, 'country': 'Pakistan'},
+    {'name': 'Dhaka', 'lat': 23.8103, 'lon': 90.4125, 'country': 'Bangladesh'},
+    {'name': 'Chittagong', 'lat': 22.3569, 'lon': 91.7832, 'country': 'Bangladesh'},
+    {'name': 'Kathmandu', 'lat': 27.7172, 'lon': 85.3240, 'country': 'Nepal'},
+    {'name': 'Colombo', 'lat': 6.9271, 'lon': 79.8612, 'country': 'Sri Lanka'},
+    {'name': 'Yangon', 'lat': 16.8409, 'lon': 96.1735, 'country': 'Myanmar'},
+    {'name': 'Thimphu', 'lat': 27.4728, 'lon': 89.6390, 'country': 'Bhutan'}
   ];
 
   @override
@@ -232,45 +245,58 @@ class _DashboardViewState extends State<DashboardView> {
             stops: [0.3, 1.0],
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Overview Card (Kept from original layout)
-              Card(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                color: Colors.white.withOpacity(0.95),
-                child: ListTile(
-                  title: const TranslatableText(
-                    "Disaster Overview", // Updated title
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A324C),
-                    ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/active_disasters_map');
+                },
+                child: Card(
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF3789BB).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                  color: Colors.white.withOpacity(0.95),
+                  child: ListTile(
+                    title: const TranslatableText(
+                      "Disaster Overview", // Updated title
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A324C),
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.map_outlined, // Changed Icon
-                      color: Color(0xFF3789BB),
-                      size: 28,
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3789BB).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.map_outlined, // Changed Icon
+                        color: Color(0xFF3789BB),
+                        size: 28,
+                      ),
                     ),
-                  ),
-                   trailing: Text(
-                    "${disasterEvents.length} Active Event(s)",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFD32F2F), // A crisis-related color
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min, // Important to keep the row compact
+                      children: <Widget>[
+                        Text(
+                          "${disasterEvents.length} Active Event(s)",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFD32F2F), // A crisis-related color
+                          ),
+                        ),
+                        const SizedBox(width: 8), // Spacing between text and icon
+                        const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey), // Added arrow icon
+                      ],
                     ),
                   ),
                 ),
@@ -452,6 +478,7 @@ class _DashboardViewState extends State<DashboardView> {
                 ),
               ),
             ],
+            ),
           ),
         ),
       ),
