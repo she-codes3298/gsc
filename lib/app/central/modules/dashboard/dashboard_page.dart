@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
 import '../../common/dashboard_card.dart';
-import '../../common/translatable_text.dart'; // Import the TranslatableText widget
-import '../../common/language_selection_dialog.dart'; // Import the language dialog
+import '../../common/translatable_text.dart';
+import '../../common/language_selection_dialog.dart';
 import '../community/community_page.dart';
 import '../Teams/teams_page.dart';
 import '../inventory/inventory_page.dart';
@@ -24,7 +24,7 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   String activeDisaster = "Loading...";
-  String activeDisasterType = ""; // Stores the type of active disaster
+  String activeDisasterType = "";
 
   @override
   void initState() {
@@ -35,8 +35,7 @@ class _DashboardViewState extends State<DashboardView> {
   Future<void> fetchDisasterData() async {
     final urls = {
       "Earthquake": 'https://my-python-app-wwb655aqwa-uc.a.run.app/',
-      "Flood":
-          'https://water-level-model-bsbjxt7qdq-el.a.run.app/flood-assessments',
+      "Flood": 'https://water-level-model-bsbjxt7qdq-el.a.run.app/flood-assessments',
       "Cyclone": 'https://cyclone-app-vrdkju5xka-el.a.run.app',
     };
 
@@ -51,10 +50,8 @@ class _DashboardViewState extends State<DashboardView> {
           if (entry.key == "Earthquake" &&
               data.containsKey("high_risk_cities") &&
               data["high_risk_cities"].isNotEmpty) {
-            // Use translation keys:
             setState(() {
-              activeDisaster =
-                  "Earthquake"; // A key your translation service knows
+              activeDisaster = "Earthquake";
               activeDisasterType = "Earthquake";
             });
             return;
@@ -82,7 +79,6 @@ class _DashboardViewState extends State<DashboardView> {
         }
       }
 
-      // If no active disasters found
       setState(() {
         activeDisaster = "No active disasters";
         activeDisasterType = "";
@@ -108,91 +104,115 @@ class _DashboardViewState extends State<DashboardView> {
         MaterialPageRoute(builder: (context) => FloodDetailsPage()),
       );
     }
-    // Uncomment when cyclone page is ready
-    // else if (activeDisasterType == "Cyclone") {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => CycloneDetailsPage()),
-    //   );
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    return SingleChildScrollView(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: screenHeight, // Ensures content fills screen
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            transform: GradientRotation(-40 * 3.14159 / 180),
+            colors: [
+              Color(0xFF87CEEB), // Sky Blue - matching inventory page
+              Color(0xFF4682B4), // Steel Blue - matching inventory page
+            ],
+            stops: [0.3, 1.0],
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const TranslatableText(
-                "Overview",
+              // Dashboard Stats Section (similar to inventory stats)
+              Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                color: Colors.white.withOpacity(0.95),
+                child: ListTile(
+                  title: const TranslatableText(
+                    "Overview",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A324C),
+                    ),
+                  ),
+
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3789BB).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.dashboard,
+                      color: Color(0xFF3789BB),
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Quick Actions Section
+             /* const TranslatableText(
+                "Quick Actions",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 10),*/
 
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  int crossAxisCount =
-                      (screenWidth < 500)
-                          ? 1
-                          : (screenWidth < 900)
-                          ? 2
-                          : 3;
-                  double aspectRatio = (screenWidth / (crossAxisCount * 230))
-                      .clamp(1.4, 2.3);
-
-                  List<Map<String, dynamic>> cardData = [
-                    {
-                      "title": "Active Disasters",
-                      "count": activeDisaster,
-                      "icon": Icons.warning_amber_rounded,
-                      "onTap":
-                          activeDisasterType.isNotEmpty
-                              ? navigateToDisasterPage
-                              : null,
-                    },
-                    {
-                      "title": "Add Refugee Camp",
-                      "icon": Icons.add_location_alt,
-                      "count": "4",
-                      "onTap": () {
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.1,
+                  children: [
+                    DashboardCard(
+                      title: "Active Disasters",
+                      count: activeDisaster,
+                      icon: Icons.warning_amber_rounded,
+                      onTap: activeDisasterType.isNotEmpty ? navigateToDisasterPage : null,
+                    ),
+                    DashboardCard(
+                      title: "Add Refugee Camp",
+                      count: "4",
+                      icon: Icons.add_location_alt,
+                      onTap: () {
                         Navigator.pushNamed(context, '/camp');
                       },
-                    },
-                    {
-                      "title": "Ongoing SOS Alerts",
-                      "count": "12",
-                      "icon": Icons.sos_outlined,
-                      "onTap": () {
+                    ),
+                    DashboardCard(
+                      title: "Ongoing SOS Alerts",
+                      count: "12",
+                      icon: Icons.sos_outlined,
+                      onTap: () {
                         Navigator.pushNamed(context, '/sos_alerts');
                       },
-                    },
-                    {
-                      "title": "Rescue Teams Deployed",
-                      "count": "5",
-                      "icon": Icons.groups_rounded,
-                      "onTap": () {
+                    ),
+                    DashboardCard(
+                      title: "Rescue Teams Deployed",
+                      count: "5",
+                      icon: Icons.groups_rounded,
+                      onTap: () {
                         Navigator.pushNamed(context, '/deployed_teams');
                       },
-                    },
-
-                    {
-                      "title": "Central Inventory",
-                      "count": "150 Items",
-                      "icon": Icons.inventory,
-                      "onTap": () {
+                    ),
+                    DashboardCard(
+                      title: "Central Inventory",
+                      count: "150 Items",
+                      icon: Icons.inventory,
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -200,34 +220,10 @@ class _DashboardViewState extends State<DashboardView> {
                           ),
                         );
                       },
-                    },
-                  ];
-
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: aspectRatio,
                     ),
-                    itemCount: cardData.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: cardData[index]["onTap"],
-                        child: DashboardCard(
-                          title: cardData[index]["title"],
-                          count: cardData[index]["count"],
-                          icon: cardData[index]["icon"],
-                        ),
-                      );
-                    },
-                  );
-                },
+                  ],
+                ),
               ),
-
-              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -249,9 +245,7 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
 
   final List<Widget> _pages = [
     const DashboardView(),
-
     CommunityPage(),
-
     const InventoryPage(),
     const SettingsPage(),
   ];
@@ -265,15 +259,17 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const TranslatableText("Central Government Dashboard"),
+        backgroundColor: const Color(0xFF1A324C),
+        title: const TranslatableText(
+          "Central Government Dashboard",
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.language, color: Colors.white),
             onPressed: () {
-              // Implement Language Change Feature
               showDialog(
                 context: context,
                 builder: (context) => const LanguageSelectionDialog(),
@@ -288,23 +284,16 @@ class _CentralDashboardPageState extends State<CentralDashboardPage> {
           ),
         ],
       ),
+      body: _pages[_selectedIndex],
       drawer: const AppDrawer(),
-      body: Stack(
-        children: [
-          _pages[_selectedIndex],
-          Positioned(
-            bottom: 90,
-            right: 16,
-            child: FloatingActionButton(
-              backgroundColor: Colors.white,
-              onPressed: () {
-                Navigator.pushNamed(context, '/ai_chatbot');
-              },
-              child: Image.asset('assets/chatbot.png', width: 35, height: 35),
-            ),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF3789BB),
+        onPressed: () {
+          Navigator.pushNamed(context, '/ai_chatbot');
+        },
+        child: Image.asset('assets/chatbot.png', width: 35, height: 35),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onTap: _onItemTapped,

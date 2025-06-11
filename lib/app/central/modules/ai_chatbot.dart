@@ -131,103 +131,177 @@ class _AIChatbotScreenState extends State<AIChatbotScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('E-Sahyog', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        backgroundColor: const Color(0xFF1A324C), // Match inventory page app bar
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      backgroundColor: Colors.grey[900],
-      body: Stack(
-        children: [
-          DashChat(
-            currentUser: _user,
-            messages: _messages,
-            typingUsers: _isTyping ? [_bot] : [],
-            messageOptions: MessageOptions(
-              containerColor: const Color.fromARGB(255, 66, 66, 66),
-              textColor: Colors.white,
-              currentUserContainerColor: Colors.blue,
-            ),
-            inputOptions: InputOptions(
-              inputTextStyle: const TextStyle(color: Colors.white),
-              inputDecoration: InputDecoration(
-                fillColor: Colors.black,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Colors.grey, width: 2),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Colors.grey, width: 2),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Colors.white, width: 2),
-                ),
-                hintText: 'Type your message...',
-                hintStyle: const TextStyle(color: Colors.grey),
-              ),
-              trailing: [
-                IconButton(
-                  icon: const Icon(Icons.image, color: Colors.white),
-                  onPressed: _sendImage,
-                ),
-              ],
-              alwaysShowSend: true,
-            ),
-            onSend: _sendMessage,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            transform: GradientRotation(-40 * 3.14159 / 180), // -40 degrees in radians
+            colors: [
+              Color(0xFF87CEEB), // Sky Blue - lighter and more vibrant
+              Color(0xFF4682B4), // Steel Blue - professional yet lighter
+            ],
+            stops: [0.3, 1.0],
           ),
-          if (_showPrompts)
-            Positioned(
-              bottom: 80,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.8),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+        ),
+        child: Stack(
+          children: [
+            DashChat(
+              currentUser: _user,
+              messages: _messages,
+              typingUsers: _isTyping ? [_bot] : [],
+              messageOptions: MessageOptions(
+                containerColor: Colors.white.withOpacity(0.95), // Match inventory card style
+                textColor: const Color(0xFF1A324C), // Match inventory text color
+                currentUserContainerColor: const Color(0xFF3789BB), // Use inventory blue
+                currentUserTextColor: Colors.white,
+                messagePadding: const EdgeInsets.all(12),
+                borderRadius: 12,
+              ),
+              inputOptions: InputOptions(
+                inputTextStyle: const TextStyle(color: Color(0xFF1A324C)),
+                inputDecoration: InputDecoration(
+                  fillColor: Colors.white.withOpacity(0.95),
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: const BorderSide(color: Color(0xFF3789BB), width: 2),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: const BorderSide(color: Color(0xFF3789BB), width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: const BorderSide(color: Color(0xFF1A324C), width: 2),
+                  ),
+                  hintText: 'Type your message...',
+                  hintStyle: TextStyle(color: const Color(0xFF1A324C).withOpacity(0.6)),
                 ),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _customPrompts.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[700],
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                        ),
-                        onPressed: () {
-                          _sendMessage(
-                            ChatMessage(
-                              user: _user,
-                              text: _customPrompts[index],
-                              createdAt: DateTime.now(),
-                            ),
-                          );
-                        },
+                trailing: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3789BB).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.image, color: Color(0xFF3789BB)),
+                      onPressed: _sendImage,
+                    ),
+                  ),
+                ],
+                alwaysShowSend: true,
+              ),
+              onSend: _sendMessage,
+            ),
+            if (_showPrompts)
+              Positioned(
+                bottom: 80,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 100,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(12.0),
                         child: Text(
-                          _customPrompts[index],
-                          style: const TextStyle(fontSize: 14),
+                          "Quick Questions",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A324C),
+                          ),
                         ),
                       ),
-                    );
-                  },
+                      Expanded(
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          itemCount: _customPrompts.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [Color(0xFF3789BB), Color(0xFF1A324C)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    _sendMessage(
+                                      ChatMessage(
+                                        user: _user,
+                                        text: _customPrompts[index],
+                                        createdAt: DateTime.now(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    _customPrompts[index],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      shadows: [
+                                        Shadow(
+                                          offset: Offset(0, 1),
+                                          blurRadius: 2,
+                                          color: Colors.black26,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

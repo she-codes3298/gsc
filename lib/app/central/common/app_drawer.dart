@@ -2,135 +2,210 @@ import 'package:flutter/material.dart';
 import '../../../auth/auth.dart'; // Import AuthService
 import 'package:gsc/app/central/common/translatable_text.dart';
 
-
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
     final AuthService authService =
-        AuthService(); // Create an instance of AuthService
+    AuthService(); // Create an instance of AuthService
 
     return Drawer(
-      backgroundColor: Colors.black,
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: Colors.grey[900]),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 30,
-                  child: Icon(Icons.person, color: Colors.black, size: 35),
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF1A324C), // Dark blue - matching inventory page
+              Color(0xFF3789BB), // Medium blue - matching inventory page
+            ],
+          ),
+        ),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF1A324C).withOpacity(0.9),
+                    const Color(0xFF4682B4).withOpacity(0.9),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                const TranslatableText(
-                  "Central Government",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(35),
+                    ),
+                    child: const CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 30,
+                      child: Icon(Icons.person, color: Color(0xFF1A324C), size: 35),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const TranslatableText(
+                    "Central Government",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(0, 1),
+                          blurRadius: 2,
+                          color: Colors.black26,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Dashboard Button
+            _buildDrawerItem(
+              context,
+              icon: Icons.dashboard,
+              label: "Dashboard",
+              route: '/gov_dashboard',
+            ),
+
+            // Community Button
+            _buildDrawerItem(
+              context,
+              icon: Icons.group,
+              label: "Community",
+              route: '/gov_community',
+            ),
+
+            // Inventory Button
+            _buildDrawerItem(
+              context,
+              icon: Icons.storage,
+              label: "Inventory",
+              route: '/gov_inventory',
+            ),
+
+            // Settings Button
+            _buildDrawerItem(
+              context,
+              icon: Icons.settings,
+              label: "Settings",
+              route: '/gov_settings',
+            ),
+
+            // E-Sahyog AI Chatbot Button
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ],
+                child: Image.asset(
+                  'assets/chatbot.png',
+                  width: 24,
+                  height: 24,
+                  color: Colors.white,
+                ),
+              ),
+              title: const TranslatableText(
+                "E-Sahyog AI",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onTap: () {
+                _navigateTo(context, '/ai_chatbot');
+              },
             ),
-          ),
 
-          // ✅ Dashboard Button
-          ListTile(
-            leading: Icon(Icons.dashboard, color: Colors.white30),
-            title: const TranslatableText(
-              "Dashboard",
-              style: TextStyle(color: Colors.white),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Divider(
+                color: Colors.white24,
+                thickness: 1,
+              ),
             ),
-            onTap: () => _navigateTo(context, '/gov_dashboard'),
-          ),
 
-          // ✅ Community Button
-          ListTile(
-            leading: Icon(Icons.group, color: Colors.white30),
-            title: const TranslatableText(
-              "Community",
-              style: TextStyle(color: Colors.white),
+            // Logout Button
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.logout, color: Colors.red, size: 24),
+              ),
+              title: const TranslatableText(
+                "Logout",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onTap: () {
+                authService.signOut(context); // Call signOut method
+              },
             ),
-            onTap: () => _navigateTo(context, '/gov_community'),
-          ),
-
-          // ✅ Inventory Button
-          ListTile(
-            leading: Icon(Icons.storage, color: Colors.white30),
-            title: const TranslatableText(
-              "Inventory",
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () => _navigateTo(context, '/gov_inventory'),
-          ),
-
-          // ✅ Settings Button
-          ListTile(
-            leading: Icon(Icons.settings, color: Colors.white30),
-            title: const TranslatableText(
-              "Settings",
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () => _navigateTo(context, '/gov_settings'),
-          ),
-
-          // ✅ E-Sahyog AI Chatbot Button
-          ListTile(
-            leading: Image.asset(
-              'assets/chatbot.png',
-              width: 30,
-              height: 30,
-              color: Colors.white30,
-            ),
-            title: const TranslatableText(
-              "E-Sahyog AI",
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              _navigateTo(context, '/ai_chatbot');
-            },
-          ),
-
-          const Divider(color: Colors.white30),
-
-          // ✅ Logout Button
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const TranslatableText("Logout", style: TextStyle(color: Colors.red)),
-            onTap: () {
-              authService.signOut(context); // Call signOut method
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // ✅ Function to build a Drawer item
+  // Function to build a Drawer item with consistent styling
   Widget _buildDrawerItem(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required String route,
-  }) {
+      BuildContext context, {
+        required IconData icon,
+        required String label,
+        required String route,
+      }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.white),
-      title: TranslatableText(label, style: const TextStyle(color: Colors.white)),
+      leading: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          color: Colors.white,
+          size: 24,
+        ),
+      ),
+      title: TranslatableText(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       onTap: () {
         _navigateTo(context, route);
       },
     );
   }
 
-  // ✅ FIX: Navigate correctly & close drawer properly
+  // Navigate correctly & close drawer properly
   void _navigateTo(BuildContext context, String route) {
     Navigator.pop(context); // Close the drawer
 
     if (ModalRoute.of(context)?.settings.name != route) {
       Navigator.popUntil(
         context,
-        (route) => route.isFirst,
+            (route) => route.isFirst,
       ); // Remove all previous routes
       Navigator.pushReplacementNamed(
         context,

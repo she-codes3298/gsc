@@ -16,11 +16,13 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: selectedIndex,
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.white70,
-      backgroundColor: Colors.black,
+      selectedItemColor: Color(0xFF3789BB), // Light blue for selected icons
+      unselectedItemColor: Colors.white, // Light blue for unselected icons
+      backgroundColor: Color(0xFF1A324C), // Navy blue background
       type: BottomNavigationBarType.fixed,
       onTap: onTap,
+      selectedLabelStyle: TextStyle(color: Colors.white), // White for selected text
+      unselectedLabelStyle: TextStyle(color: Colors.white), // White for unselected text
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
