@@ -62,7 +62,10 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
 
     if (itemName.isEmpty || requestedQuantity <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: TranslatableText("Please enter a valid item and quantity")),
+        SnackBar(
+          content: TranslatableText("Please enter a valid item and quantity"),
+          backgroundColor: Colors.red[400],
+        ),
       );
       return;
     }
@@ -73,7 +76,10 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
 
       if (relevantVendors.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: TranslatableText("No active vendors found for this item. Try a different item name.")),
+          SnackBar(
+            content: TranslatableText("No active vendors found for this item. Try a different item name."),
+            backgroundColor: Colors.red[400],
+          ),
         );
         return;
       }
@@ -123,7 +129,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: TranslatableText("Request sent to ${relevantVendors.length} vendor(s) successfully!"),
-          backgroundColor: Colors.green,
+          backgroundColor: const Color(0xFF3789BB),
         ),
       );
 
@@ -142,7 +148,7 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: TranslatableText("Error sending request: $e"),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.red[400],
         ),
       );
     }
@@ -153,7 +159,11 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Request Sent To Vendors"),
+          backgroundColor: Colors.white,
+          title: Text(
+            "Request Sent To Vendors",
+            style: TextStyle(color: const Color(0xFF1A324C), fontWeight: FontWeight.bold),
+          ),
           content: Container(
             width: double.maxFinite,
             child: ListView.builder(
@@ -162,9 +172,15 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
               itemBuilder: (context, index) {
                 var vendor = vendors[index];
                 return ListTile(
-                  title: Text(vendor['name']),
-                  subtitle: Text("Contact: ${vendor['contact']}\nEmail: ${vendor['email']}"),
-                  leading: Icon(Icons.store, color: Colors.green),
+                  title: Text(
+                    vendor['name'],
+                    style: TextStyle(color: const Color(0xFF1A324C), fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    "Contact: ${vendor['contact']}\nEmail: ${vendor['email']}",
+                    style: TextStyle(color: const Color(0xFF5F6898)),
+                  ),
+                  leading: Icon(Icons.store, color: const Color(0xFF3789BB)),
                 );
               },
             ),
@@ -172,6 +188,10 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF3789BB),
+                foregroundColor: Colors.white,
+              ),
               child: Text("OK"),
             ),
           ],
@@ -183,179 +203,267 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const TranslatableText("Request Supplies"),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Help text
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue[200]!),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            transform: GradientRotation(-40 * 3.14159 / 180), // -40 degrees in radians
+            colors: [
+              Color(0xFF87CEEB), // Sky Blue - lighter and more vibrant
+              Color(0xFF4682B4), // Steel Blue - professional yet lighter
+            ],
+            stops: [0.3, 1.0],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Help text
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF3789BB).withOpacity(0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "💡 Tips:",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF1A324C)
+                      ),
+                    ),
+                    Text(
+                      "• Use general terms like 'Water', 'Food', 'Medical'\n• System will find vendors that supply similar items\n• Multiple vendors may receive your request",
+                      style: TextStyle(
+                          color: const Color(0xFF5F6898),
+                          fontSize: 12
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "💡 Tips:",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[800]),
-                  ),
-                  Text(
-                    "• Use general terms like 'Water', 'Food', 'Medical'\n• System will find vendors that supply similar items\n• Multiple vendors may receive your request",
-                    style: TextStyle(color: Colors.blue[700], fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
+              SizedBox(height: 16),
 
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: "Item Name",
-                border: OutlineInputBorder(),
-                helperText: "e.g., Water Bottles, Medical Kits, Food Packets",
+              TextField(
+                controller: _nameController,
+                style: TextStyle(color: const Color(0xFF1A324C)),
+                decoration: InputDecoration(
+                  labelText: "Item Name",
+                  labelStyle: TextStyle(color: const Color(0xFF5F6898)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB).withOpacity(0.5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB), width: 2),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.9),
+                  helperText: "e.g., Water Bottles, Medical Kits, Food Packets",
+                  helperStyle: TextStyle(color: const Color(0xFF5F6898)),
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _quantityController,
-              decoration: const InputDecoration(
-                labelText: "Quantity",
-                border: OutlineInputBorder(),
+              SizedBox(height: 16),
+              TextField(
+                controller: _quantityController,
+                style: TextStyle(color: const Color(0xFF1A324C)),
+                decoration: InputDecoration(
+                  labelText: "Quantity",
+                  labelStyle: TextStyle(color: const Color(0xFF5F6898)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB).withOpacity(0.5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB), width: 2),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.9),
+                ),
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedPriority,
-              decoration: InputDecoration(
-                labelText: "Priority Level",
-                border: OutlineInputBorder(),
-              ),
-              items: _priorities.map((String priority) {
-                return DropdownMenuItem<String>(
-                  value: priority,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: _getPriorityColor(priority),
-                          shape: BoxShape.circle,
+              SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedPriority,
+                style: TextStyle(color: const Color(0xFF1A324C)),
+                decoration: InputDecoration(
+                  labelText: "Priority Level",
+                  labelStyle: TextStyle(color: const Color(0xFF5F6898)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB).withOpacity(0.5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: const Color(0xFF3789BB), width: 2),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.9),
+                ),
+                dropdownColor: Colors.white,
+                items: _priorities.map((String priority) {
+                  return DropdownMenuItem<String>(
+                    value: priority,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: _getPriorityColor(priority),
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Text(priority),
-                    ],
+                        SizedBox(width: 8),
+                        Text(priority, style: TextStyle(color: const Color(0xFF1A324C))),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedPriority = newValue!;
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: requestItem,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF5F6898),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedPriority = newValue!;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: requestItem,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                ),
+                child: const TranslatableText(
+                  "Send Request to Vendors",
+                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
+                ),
               ),
-              child: const TranslatableText(
-                "Send Request to Vendors",
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-            SizedBox(height: 24),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('supply_requests')
-                    .orderBy('requestedAt', descending: true)
-                    .limit(10) // Limit to recent requests
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
+              SizedBox(height: 24),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('supply_requests')
+                      .orderBy('requestedAt', descending: true)
+                      .limit(10) // Limit to recent requests
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF3789BB)),
+                        ),
+                      );
+                    }
 
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(
-                      child: TranslatableText("No recent requests"),
-                    );
-                  }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(
+                        child: TranslatableText(
+                          "No recent requests",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      );
+                    }
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TranslatableText(
-                        "Recent Requests",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            var request = snapshot.data!.docs[index];
-                            var requestData = request.data() as Map<String, dynamic>;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TranslatableText(
+                          "Recent Requests",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              var request = snapshot.data!.docs[index];
+                              var requestData = request.data() as Map<String, dynamic>;
 
-                            return Card(
-                              child: ListTile(
-                                title: Text(requestData['itemName'] ?? 'Unknown Item'),
-                                subtitle: Text(
-                                    "Qty: ${requestData['quantity']} | Priority: ${requestData['priority']}\nVendors: ${(requestData['vendorIds'] as List?)?.length ?? 0}"
-                                ),
-                                leading: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: _getPriorityColor(requestData['priority']),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                trailing: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: requestData['status'] == 'pending'
-                                        ? Colors.orange
-                                        : requestData['status'] == 'fulfilled'
-                                        ? Colors.green
-                                        : Colors.grey,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    requestData['status'] ?? 'unknown',
+                              return Card(
+                                color: Colors.white.withOpacity(0.95),
+                                elevation: 3,
+                                margin: EdgeInsets.symmetric(vertical: 4),
+                                child: ListTile(
+                                  title: Text(
+                                    requestData['itemName'] ?? 'Unknown Item',
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10,
+                                      color: const Color(0xFF1A324C),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    "Qty: ${requestData['quantity']} | Priority: ${requestData['priority']}\nVendors: ${(requestData['vendorIds'] as List?)?.length ?? 0}",
+                                    style: TextStyle(color: const Color(0xFF5F6898)),
+                                  ),
+                                  leading: Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      color: _getPriorityColor(requestData['priority']),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  trailing: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: requestData['status'] == 'pending'
+                                          ? Colors.orange
+                                          : requestData['status'] == 'fulfilled'
+                                          ? const Color(0xFF3789BB)
+                                          : const Color(0xFF5F6898),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      requestData['status'] ?? 'unknown',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                },
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+      appBar: AppBar(
+        title: const TranslatableText(
+          "Request Supplies",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF1A324C),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
     );
   }
@@ -367,11 +475,11 @@ class _InventoryRequestPageState extends State<InventoryRequestPage> {
       case 'high':
         return Colors.orange;
       case 'medium':
-        return Colors.blue;
+        return const Color(0xFF3789BB);
       case 'low':
         return Colors.green;
       default:
-        return Colors.blue;
+        return const Color(0xFF3789BB);
     }
   }
 }
