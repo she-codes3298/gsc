@@ -35,16 +35,41 @@ class _DashboardViewState extends State<DashboardView> {
   bool _isLoading = true;
 
   final List<Map<String, dynamic>> representativeLocations = [
-    {'name': 'Delhi', 'lat': 28.7041, 'lon': 77.1025},
-    {'name': 'Mumbai', 'lat': 19.0760, 'lon': 72.8777},
-    {'name': 'Kolkata', 'lat': 22.5726, 'lon': 88.3639},
-    {'name': 'Chennai', 'lat': 13.0827, 'lon': 80.2707},
-    {'name': 'Bengaluru', 'lat': 12.9716, 'lon': 77.5946},
-    {'name': 'Hyderabad', 'lat': 17.3850, 'lon': 78.4867},
+    // Northern India (Earthquake Prone)
+    {'name': 'Srinagar', 'lat': 34.0837, 'lon': 74.7973}, // Zone V
+    {'name': 'Shimla', 'lat': 31.1048, 'lon': 77.1734}, // Zone IV
+    {'name': 'Dehradun', 'lat': 30.3165, 'lon': 78.0322}, // Zone IV
+    {'name': 'Delhi', 'lat': 28.7041, 'lon': 77.1025}, // Zone IV
+    // North-Eastern India (High Earthquake & Flood Risk)
+    {'name': 'Guwahati', 'lat': 26.1445, 'lon': 91.7362}, // Zone V
+    {'name': 'Imphal', 'lat': 24.8170, 'lon': 93.9368}, // Zone V
+    {'name': 'Agartala', 'lat': 23.8315, 'lon': 91.2868}, // Zone V
+    {'name': 'Aizawl', 'lat': 23.7271, 'lon': 92.7176}, // Zone V
+    // Eastern India (Flood & Cyclone Prone)
+    {'name': 'Kolkata', 'lat': 22.5726, 'lon': 88.3639}, // Flood/Cyclone
+    {'name': 'Bhubaneswar', 'lat': 20.2961, 'lon': 85.8245}, // Cyclone
+    {'name': 'Puri', 'lat': 19.8135, 'lon': 85.8312}, // Cyclone
+    {'name': 'Patna', 'lat': 25.5941, 'lon': 85.1376}, // Flood
+    // Western India (Earthquake & Cyclone Prone)
+    {'name': 'Mumbai', 'lat': 19.0760, 'lon': 72.8777}, // Cyclone/Flood
     {'name': 'Ahmedabad', 'lat': 23.0225, 'lon': 72.5714},
+    {'name': 'Surat', 'lat': 21.1702, 'lon': 72.8311}, // Cyclone/Flood
+    {'name': 'Bhuj', 'lat': 23.2423, 'lon': 69.6672}, // Zone V (Earthquake)
     {'name': 'Pune', 'lat': 18.5204, 'lon': 73.8567},
-    {'name': 'Jaipur', 'lat': 26.9124, 'lon': 75.7873},
-    {'name': 'Lucknow', 'lat': 26.8467, 'lon': 80.9462},
+
+    // Southern India (Cyclone & Flood Prone)
+    {'name': 'Chennai', 'lat': 13.0827, 'lon': 80.2707}, // Cyclone/Flood
+    {'name': 'Visakhapatnam', 'lat': 17.6868, 'lon': 83.2185}, // Cyclone
+    {'name': 'Kochi', 'lat': 9.9312, 'lon': 76.2673}, // Flood
+    {'name': 'Hyderabad', 'lat': 17.3850, 'lon': 78.4867},
+    {'name': 'Bengaluru', 'lat': 12.9716, 'lon': 77.5946},
+
+    // Central India
+    {'name': 'Nagpur', 'lat': 21.1458, 'lon': 79.0882},
+    {'name': 'Bhopal', 'lat': 23.2599, 'lon': 77.4126},
+
+    // Islands (High Seismic and Cyclone risk)
+    {'name': 'Port Blair', 'lat': 11.6234, 'lon': 92.7265}, // Zone V
   ];
 
   @override
