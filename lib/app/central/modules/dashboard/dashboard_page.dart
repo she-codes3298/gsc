@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
-import '../../common/dashboard_card.dart'; // Ensure this common widget is available
-import '../../common/translatable_text.DART';
+import '../../common/dashboard_card.dart';
+import '../../common/translatable_text.dart';
 import '../../common/language_selection_dialog.dart';
 import '../community/community_page.dart';
 import '../Teams/teams_page.dart';
@@ -12,16 +12,14 @@ import '../inventory/inventory_page.dart';
 import '../settings/settings_page.dart';
 import 'earthquake_details_page.dart';
 import 'flood_details_page.dart';
-import 'package:gsc/models/disaster_event.dart'; // Ensure these models are defined
+import 'package:gsc/models/disaster_event.dart';
 import 'package:gsc/models/flood_prediction.dart';
 import 'package:gsc/models/cyclone_prediction.dart';
 import 'package:gsc/models/earthquake_prediction.dart';
-import 'package:flutter_map/flutter_map.dart'; // Ensure flutter_map is imported and configured
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'cyclone_details_page.dart';
-// import 'flood_details_page.dart'; // Already imported, good to keep it for FloodDetailsPage
-
-import 'package:gsc/services/translation_service.dart'; // Ensure translation service is defined
+import 'package:gsc/services/translation_service.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -32,9 +30,10 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   List<DisasterEvent> disasterEvents = [];
-  bool _isLoading = true; // Added for loading state
+  // NEW: A state variable to hold the count of significant disasters.
+  int _significantDisasterCount = 0;
+  bool _isLoading = true;
 
-  // Representative locations for fetching data
   final List<Map<String, dynamic>> representativeLocations = [
     {'name': 'Delhi', 'lat': 28.7041, 'lon': 77.1025},
     {'name': 'Mumbai', 'lat': 19.0760, 'lon': 72.8777},
@@ -51,13 +50,27 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   void initState() {
     super.initState();
-    // Fetch disaster data when the widget initializes
     fetchDisasterData();
   }
 
-  // Asynchronously fetches disaster data from various APIs
+  /// Extracts the category number from a cyclone condition string.
+  /// This is an assumption based on potential API responses like "Category 2".
+  /// You should adapt this to your actual CyclonePrediction model if it's different.
+  int _getCycloneCategory(String condition) {
+    if (condition.toLowerCase().contains("category")) {
+      try {
+        var catNumberString =
+            condition.toLowerCase().split("category")[1].trim().split(" ")[0];
+        return int.tryParse(catNumberString) ?? 0;
+      } catch (e) {
+        print("Could not parse cyclone category: $e");
+        return 0;
+      }
+    }
+    return 0; // Return 0 if no category info is found
+  }
+
   Future<void> fetchDisasterData() async {
-    // Set loading state to true at the beginning
     if (mounted) {
       setState(() {
         _isLoading = true;
@@ -94,7 +107,7 @@ class _DashboardViewState extends State<DashboardView> {
       print('Earthquake API Exception: $e');
     }
 
-    // Fetch Flood and Cyclone data for each representative location
+    // Fetch Flood and Cyclone data
     for (var locData in representativeLocations) {
       final double lat = locData['lat'];
       final double lon = locData['lon'];
@@ -157,10 +170,45 @@ class _DashboardViewState extends State<DashboardView> {
       }
     }
 
-    // Update the state with fetched disaster events and set loading to false
+    // NEW: Logic to count only significant disasters based on your criteria.
+    int significantCount = 0;
+    for (var event in allFetchedDisasterData) {
+      bool isSignificant = false;
+      if (event.type == DisasterType.earthquake) {
+        final data = event.predictionData as EarthquakePrediction;
+        // *** FIX STARTS HERE ***
+        // The error occurred because 'magnitude' is not a direct property of EarthquakePrediction.
+        // It belongs to each 'HighRiskCity' inside the 'highRiskCities' list.
+        // This new logic checks if ANY city in the list has a magnitude > 3.2.
+        if (data.highRiskCities.any((city) => city.magnitude > 3.2)) {
+          isSignificant = true;
+        }
+        // *** FIX ENDS HERE ***
+      } else if (event.type == DisasterType.flood) {
+        final data = event.predictionData as FloodPrediction;
+        String risk = data.floodRisk.toLowerCase();
+        if (risk == 'medium' || risk == 'high') {
+          isSignificant = true;
+        }
+      } else if (event.type == DisasterType.cyclone) {
+        final data = event.predictionData as CyclonePrediction;
+        // NOTE: This uses the helper function to parse the category.
+        // Adapt this if your model has a direct integer 'category' field.
+        if (_getCycloneCategory(data.cycloneCondition) > 1) {
+          isSignificant = true;
+        }
+      }
+
+      if (isSignificant) {
+        significantCount++;
+      }
+    }
+
     if (mounted) {
       setState(() {
         disasterEvents = allFetchedDisasterData;
+        _significantDisasterCount =
+            significantCount; // Update the significant count
         _isLoading = false;
       });
     }
@@ -168,7 +216,6 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    // Prepare markers for the map based on disaster events
     List<Marker> mapMarkers =
         disasterEvents
             .map((event) {
@@ -189,11 +236,12 @@ class _DashboardViewState extends State<DashboardView> {
               } else if (event.type == DisasterType.earthquake) {
                 markerColor = Colors.brown;
                 markerIcon = Icons.volcano;
-                // For earthquake, if LatLng is not available from API, marker won't be created
-                // You might need to geocode city names if you want earthquake markers on the map
+                final data = event.predictionData as EarthquakePrediction;
+                // NOTE: Earthquake API might not return lat/lon.
+                // You might need to add logic to get coordinates if you want to show it on the map.
+                // For now, it will only appear in the list if it has no coordinates.
               }
 
-              // Return a Marker widget if a valid point is available
               if (point != null) {
                 return Marker(
                   width: 80.0,
@@ -201,7 +249,6 @@ class _DashboardViewState extends State<DashboardView> {
                   point: point,
                   child: GestureDetector(
                     onTap: () {
-                      // Handle tap on individual map markers
                       final eventData = event.predictionData;
                       if (event.type == DisasterType.cyclone &&
                           eventData is CyclonePrediction) {
@@ -236,14 +283,6 @@ class _DashboardViewState extends State<DashboardView> {
                                 ),
                           ),
                         );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "No details page available for this map marker.",
-                            ),
-                          ),
-                        );
                       }
                     },
                     child: Tooltip(
@@ -260,10 +299,9 @@ class _DashboardViewState extends State<DashboardView> {
                   ),
                 );
               }
-              return null; // Filter out null markers
+              return null;
             })
-            .where((marker) => marker != null)
-            .cast<Marker>()
+            .whereType<Marker>()
             .toList();
 
     return Scaffold(
@@ -280,7 +318,6 @@ class _DashboardViewState extends State<DashboardView> {
             stops: [0.3, 1.0],
           ),
         ),
-        // Using a SafeArea to avoid intrusion from OS UI elements
         child: SafeArea(
           child:
               _isLoading
@@ -288,19 +325,15 @@ class _DashboardViewState extends State<DashboardView> {
                     child: CircularProgressIndicator(color: Colors.white),
                   )
                   : SingleChildScrollView(
-                    // Makes the entire content scrollable
                     padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
-                    // Added bottom padding to ensure content is visible above the BottomNavBar
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .stretch, // MODIFIED: This makes children fill the width
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // --- REFACTORED SECTION ---
-                        // Replaced GridView with a direct DashboardCard widget for simplicity and flexibility.
                         DashboardCard(
                           title: "Disaster Overview",
-                          count: "${disasterEvents.length} Active Event(s)",
+                          // UPDATED: Display the count of significant events.
+                          count:
+                              "$_significantDisasterCount Significant Event(s)",
                           icon: Icons.map_outlined,
                           onTap: () {
                             Navigator.push(
@@ -316,8 +349,6 @@ class _DashboardViewState extends State<DashboardView> {
                           },
                         ),
                         const SizedBox(height: 24),
-
-                        // Quick Actions Section
                         const TranslatableText(
                           "Quick Actions",
                           style: TextStyle(
@@ -327,13 +358,8 @@ class _DashboardViewState extends State<DashboardView> {
                           ),
                         ),
                         const SizedBox(height: 12),
-
-                        // Replaced GridView with a Column for a flexible vertical layout.
-                        // This is the key fix for the overflow issue.
                         Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment
-                                  .stretch, // ADDED: Ensures cards in this column also stretch
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             DashboardCard(
                               title: "Add Refugee Camp",
@@ -343,7 +369,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 Navigator.pushNamed(context, '/camp');
                               },
                             ),
-                            const SizedBox(height: 12), // Spacing between cards
+                            const SizedBox(height: 12),
                             DashboardCard(
                               title: "Ongoing SOS Alerts",
                               count: "12",
@@ -352,7 +378,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 Navigator.pushNamed(context, '/sos_alerts');
                               },
                             ),
-                            const SizedBox(height: 12), // Spacing between cards
+                            const SizedBox(height: 12),
                             DashboardCard(
                               title: "Rescue Teams",
                               count: "5",
@@ -361,7 +387,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 Navigator.pushNamed(context, '/deployed_teams');
                               },
                             ),
-                            const SizedBox(height: 12), // Spacing between cards
+                            const SizedBox(height: 12),
                             DashboardCard(
                               title: "Central Inventory",
                               count: "150 Items",
@@ -377,7 +403,6 @@ class _DashboardViewState extends State<DashboardView> {
                             ),
                           ],
                         ),
-                        // --- END OF REFACTORED SECTION ---
                       ],
                     ),
                   ),
@@ -387,7 +412,10 @@ class _DashboardViewState extends State<DashboardView> {
   }
 }
 
-// New Page to display Map and Disaster Details when "Disaster Overview" is tapped
+// The rest of your file (DisasterOverviewPage, CentralDashboardPage, etc.)
+// can remain the same as it correctly uses the full list of disasterEvents.
+// ... (paste the rest of your original code here)
+
 class DisasterOverviewPage extends StatelessWidget {
   final List<DisasterEvent> disasterEvents;
   final List<Marker> mapMarkers;
@@ -404,13 +432,8 @@ class DisasterOverviewPage extends StatelessWidget {
       appBar: AppBar(
         title: const TranslatableText("Disaster Overview Details"),
         backgroundColor: const Color(0xFF1A324C),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ), // Set back button color
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ), // Set title text color
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -426,12 +449,10 @@ class DisasterOverviewPage extends StatelessWidget {
           ),
         ),
         child: SingleChildScrollView(
-          // Make the content of this page scrollable
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Map Section
               const TranslatableText(
                 "Disaster Map",
                 style: TextStyle(
@@ -442,7 +463,7 @@ class DisasterOverviewPage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               SizedBox(
-                height: 300, // Adjust height as needed
+                height: 300,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
                   child: FlutterMap(
@@ -464,8 +485,7 @@ class DisasterOverviewPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20), // Add more spacing
-              // Disaster Details List
+              const SizedBox(height: 20),
               const TranslatableText(
                 "All Active Disaster Events",
                 style: TextStyle(
@@ -476,10 +496,8 @@ class DisasterOverviewPage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               ListView.builder(
-                shrinkWrap:
-                    true, // Crucial for ListView inside SingleChildScrollView
-                physics:
-                    const NeverScrollableScrollPhysics(), // Disables internal scrolling
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: disasterEvents.length,
                 itemBuilder: (context, index) {
                   final event = disasterEvents[index];
@@ -557,14 +575,6 @@ class DisasterOverviewPage extends StatelessWidget {
                                             ),
                                       ),
                                     );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          "Details page for this disaster type not implemented or data mismatch.",
-                                        ),
-                                      ),
-                                    );
                                   }
                                 },
                                 child: const TranslatableText("View Details"),
@@ -600,7 +610,6 @@ class DisasterOverviewPage extends StatelessWidget {
   }
 }
 
-// Main Dashboard Page (remains largely unchanged)
 class CentralDashboardPage extends StatefulWidget {
   const CentralDashboardPage({Key? key}) : super(key: key);
 
