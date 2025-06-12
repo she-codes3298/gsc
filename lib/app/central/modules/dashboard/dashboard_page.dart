@@ -19,7 +19,6 @@ import 'package:gsc/models/earthquake_prediction.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'cyclone_details_page.dart';
-import 'package:gsc/services/translation_service.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -30,7 +29,6 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   List<DisasterEvent> disasterEvents = [];
-  // NEW: A state variable to hold the count of significant disasters.
   int _significantDisasterCount = 0;
   bool _isLoading = true;
 
@@ -78,9 +76,6 @@ class _DashboardViewState extends State<DashboardView> {
     fetchDisasterData();
   }
 
-  /// Extracts the category number from a cyclone condition string.
-  /// This is an assumption based on potential API responses like "Category 2".
-  /// You should adapt this to your actual CyclonePrediction model if it's different.
   int _getCycloneCategory(String condition) {
     if (condition.toLowerCase().contains("category")) {
       try {
@@ -92,9 +87,11 @@ class _DashboardViewState extends State<DashboardView> {
         return 0;
       }
     }
-    return 0; // Return 0 if no category info is found
+    return 0;
   }
 
+  /// DEBUG: This function has been refactored to fetch all data in parallel
+  /// to significantly improve loading performance.
   Future<void> fetchDisasterData() async {
     if (mounted) {
       setState(() {
@@ -102,7 +99,6 @@ class _DashboardViewState extends State<DashboardView> {
       });
     }
 
-    List<DisasterEvent> allFetchedDisasterData = [];
     const newFloodApiUrl =
         'https://flood-api-756506665902.us-central1.run.app/predict';
     const newCycloneApiUrl =
@@ -110,11 +106,49 @@ class _DashboardViewState extends State<DashboardView> {
     const newEarthquakeApiUrl =
         'https://my-python-app-wwb655aqwa-uc.a.run.app/';
 
-    // Fetch Earthquake data
+    // A list to hold all our API call futures
+    final List<Future> apiCallFutures = [];
+
+    // --- 1. Add the single earthquake API call future ---
+    apiCallFutures.add(http.get(Uri.parse(newEarthquakeApiUrl)));
+
+    // --- 2. Add all flood and cyclone API call futures ---
+    for (final locData in representativeLocations) {
+      final double lat = locData['lat'];
+      final double lon = locData['lon'];
+
+      apiCallFutures.add(
+        http.post(
+          Uri.parse(newFloodApiUrl),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"lat": lat, "lon": lon}),
+        ),
+      );
+      apiCallFutures.add(
+        http.post(
+          Uri.parse(newCycloneApiUrl),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"lat": lat, "lon": lon}),
+        ),
+      );
+    }
+
+    List<DisasterEvent> allFetchedDisasterData = [];
+
     try {
-      final response = await http.get(Uri.parse(newEarthquakeApiUrl));
-      if (response.statusCode == 200) {
-        final earthquakeData = jsonDecode(response.body);
+      // --- 3. Execute all futures in parallel ---
+      // We use catchError so that one failed request doesn't stop everything.
+      final List<dynamic> responses = await Future.wait(
+        apiCallFutures.map((f) => f.catchError((e) => e)),
+      );
+
+      // --- 4. Process all results after they have completed ---
+
+      // Process earthquake response (the first result in the list)
+      final earthquakeResponse = responses[0];
+      if (earthquakeResponse is http.Response &&
+          earthquakeResponse.statusCode == 200) {
+        final earthquakeData = jsonDecode(earthquakeResponse.body);
         final earthquakePrediction = EarthquakePrediction.fromJson(
           earthquakeData,
         );
@@ -126,26 +160,17 @@ class _DashboardViewState extends State<DashboardView> {
           ),
         );
       } else {
-        print('Earthquake API Error: ${response.statusCode}');
+        print('Earthquake API Exception: $earthquakeResponse');
       }
-    } catch (e) {
-      print('Earthquake API Exception: $e');
-    }
 
-    // Fetch Flood and Cyclone data
-    for (var locData in representativeLocations) {
-      final double lat = locData['lat'];
-      final double lon = locData['lon'];
-      final String cityName = locData['name'];
+      // Process flood and cyclone responses
+      int locationIndex = 0;
+      for (int i = 1; i < responses.length; i += 2) {
+        final String cityName = representativeLocations[locationIndex]['name'];
 
-      // Flood API Call
-      try {
-        final floodResponse = await http.post(
-          Uri.parse(newFloodApiUrl),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({"lat": lat, "lon": lon}),
-        );
-        if (floodResponse.statusCode == 200) {
+        // Flood response is at index 'i'
+        final floodResponse = responses[i];
+        if (floodResponse is http.Response && floodResponse.statusCode == 200) {
           final data = jsonDecode(floodResponse.body);
           final prediction = FloodPrediction.fromJson(data);
           if (prediction.floodRisk.toLowerCase() != "no flood") {
@@ -158,20 +183,13 @@ class _DashboardViewState extends State<DashboardView> {
             );
           }
         } else {
-          print('Flood API Error for $cityName: ${floodResponse.statusCode}');
+          print('Flood API Exception for $cityName: $floodResponse');
         }
-      } catch (e) {
-        print('Flood API Exception for $cityName: $e');
-      }
 
-      // Cyclone API Call
-      try {
-        final cycloneResponse = await http.post(
-          Uri.parse(newCycloneApiUrl),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({"lat": lat, "lon": lon}),
-        );
-        if (cycloneResponse.statusCode == 200) {
+        // Cyclone response is at index 'i + 1'
+        final cycloneResponse = responses[i + 1];
+        if (cycloneResponse is http.Response &&
+            cycloneResponse.statusCode == 200) {
           final data = jsonDecode(cycloneResponse.body);
           final prediction = CyclonePrediction.fromJson(data);
           if (prediction.cycloneCondition.toLowerCase() != "no cyclone" &&
@@ -186,56 +204,52 @@ class _DashboardViewState extends State<DashboardView> {
             );
           }
         } else {
-          print(
-            'Cyclone API Error for $cityName: ${cycloneResponse.statusCode}',
-          );
+          print('Cyclone API Exception for $cityName: $cycloneResponse');
         }
-      } catch (e) {
-        print('Cyclone API Exception for $cityName: $e');
-      }
-    }
 
-    // NEW: Logic to count only significant disasters based on your criteria.
-    int significantCount = 0;
-    for (var event in allFetchedDisasterData) {
-      bool isSignificant = false;
-      if (event.type == DisasterType.earthquake) {
-        final data = event.predictionData as EarthquakePrediction;
-        // *** FIX STARTS HERE ***
-        // The error occurred because 'magnitude' is not a direct property of EarthquakePrediction.
-        // It belongs to each 'HighRiskCity' inside the 'highRiskCities' list.
-        // This new logic checks if ANY city in the list has a magnitude > 3.2.
-        if (data.highRiskCities.any((city) => city.magnitude > 3.2)) {
-          isSignificant = true;
+        locationIndex++;
+      }
+
+      // --- 5. Count significant disasters ---
+      int significantCount = 0;
+      for (var event in allFetchedDisasterData) {
+        bool isSignificant = false;
+        if (event.type == DisasterType.earthquake) {
+          final data = event.predictionData as EarthquakePrediction;
+          if (data.highRiskCities.any((city) => city.magnitude > 3.2)) {
+            isSignificant = true;
+          }
+        } else if (event.type == DisasterType.flood) {
+          final data = event.predictionData as FloodPrediction;
+          if (['medium', 'high'].contains(data.floodRisk.toLowerCase())) {
+            isSignificant = true;
+          }
+        } else if (event.type == DisasterType.cyclone) {
+          final data = event.predictionData as CyclonePrediction;
+          if (_getCycloneCategory(data.cycloneCondition) > 1) {
+            isSignificant = true;
+          }
         }
-        // *** FIX ENDS HERE ***
-      } else if (event.type == DisasterType.flood) {
-        final data = event.predictionData as FloodPrediction;
-        String risk = data.floodRisk.toLowerCase();
-        if (risk == 'medium' || risk == 'high') {
-          isSignificant = true;
-        }
-      } else if (event.type == DisasterType.cyclone) {
-        final data = event.predictionData as CyclonePrediction;
-        // NOTE: This uses the helper function to parse the category.
-        // Adapt this if your model has a direct integer 'category' field.
-        if (_getCycloneCategory(data.cycloneCondition) > 1) {
-          isSignificant = true;
+        if (isSignificant) {
+          significantCount++;
         }
       }
 
-      if (isSignificant) {
-        significantCount++;
+      // --- 6. Update the state ---
+      if (mounted) {
+        setState(() {
+          disasterEvents = allFetchedDisasterData;
+          _significantDisasterCount = significantCount;
+        });
       }
-    }
-
-    if (mounted) {
-      setState(() {
-        disasterEvents = allFetchedDisasterData;
-        _significantDisasterCount =
-            significantCount; // Update the significant count
-        _isLoading = false;
-      });
+    } catch (e) {
+      print("An unexpected error occurred during parallel data fetching: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -262,9 +276,6 @@ class _DashboardViewState extends State<DashboardView> {
                 markerColor = Colors.brown;
                 markerIcon = Icons.volcano;
                 final data = event.predictionData as EarthquakePrediction;
-                // NOTE: Earthquake API might not return lat/lon.
-                // You might need to add logic to get coordinates if you want to show it on the map.
-                // For now, it will only appear in the list if it has no coordinates.
               }
 
               if (point != null) {
@@ -336,10 +347,7 @@ class _DashboardViewState extends State<DashboardView> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             transform: GradientRotation(-40 * 3.14159 / 180),
-            colors: [
-              Color(0xFF87CEEB), // Sky Blue
-              Color(0xFF4682B4), // Steel Blue
-            ],
+            colors: [Color(0xFF87CEEB), Color(0xFF4682B4)],
             stops: [0.3, 1.0],
           ),
         ),
@@ -356,7 +364,6 @@ class _DashboardViewState extends State<DashboardView> {
                       children: [
                         DashboardCard(
                           title: "Disaster Overview",
-                          // UPDATED: Display the count of significant events.
                           count:
                               "$_significantDisasterCount Significant Event(s)",
                           icon: Icons.map_outlined,
@@ -390,41 +397,43 @@ class _DashboardViewState extends State<DashboardView> {
                               title: "Add Refugee Camp",
                               count: "4",
                               icon: Icons.add_location_alt,
-                              onTap: () {
-                                Navigator.pushNamed(context, '/camp');
-                              },
+                              onTap:
+                                  () => Navigator.pushNamed(context, '/camp'),
                             ),
                             const SizedBox(height: 12),
                             DashboardCard(
                               title: "Ongoing SOS Alerts",
                               count: "12",
                               icon: Icons.sos_outlined,
-                              onTap: () {
-                                Navigator.pushNamed(context, '/sos_alerts');
-                              },
+                              onTap:
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    '/sos_alerts',
+                                  ),
                             ),
                             const SizedBox(height: 12),
                             DashboardCard(
                               title: "Rescue Teams",
                               count: "5",
                               icon: Icons.groups_rounded,
-                              onTap: () {
-                                Navigator.pushNamed(context, '/deployed_teams');
-                              },
+                              onTap:
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    '/deployed_teams',
+                                  ),
                             ),
                             const SizedBox(height: 12),
                             DashboardCard(
                               title: "Central Inventory",
                               count: "150 Items",
                               icon: Icons.inventory,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => InventoryPage(),
+                              onTap:
+                                  () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => InventoryPage(),
+                                    ),
                                   ),
-                                );
-                              },
                             ),
                           ],
                         ),
@@ -436,10 +445,6 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 }
-
-// The rest of your file (DisasterOverviewPage, CentralDashboardPage, etc.)
-// can remain the same as it correctly uses the full list of disasterEvents.
-// ... (paste the rest of your original code here)
 
 class DisasterOverviewPage extends StatelessWidget {
   final List<DisasterEvent> disasterEvents;
@@ -466,10 +471,7 @@ class DisasterOverviewPage extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             transform: GradientRotation(-40 * 3.14159 / 180),
-            colors: [
-              Color(0xFF87CEEB), // Sky Blue
-              Color(0xFF4682B4), // Steel Blue
-            ],
+            colors: [Color(0xFF87CEEB), Color(0xFF4682B4)],
             stops: [0.3, 1.0],
           ),
         ),
@@ -611,7 +613,7 @@ class DisasterOverviewPage extends StatelessWidget {
                               const SizedBox(width: 8),
                               ElevatedButton(
                                 onPressed: () {
-                                  // TODO: Implement raise alert functionality
+                                  /* TODO: Implement raise alert */
                                 },
                                 child: const TranslatableText("Raise Alert"),
                                 style: ElevatedButton.styleFrom(
