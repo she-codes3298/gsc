@@ -298,137 +298,10 @@ class _DashboardViewState extends State<DashboardView> {
               ),
               const SizedBox(height: 10),
 
-              // Disaster Cards List Section (These are the existing individual disaster cards)
-              // This ListView is now separate from the main map view
-              const TranslatableText(
-                "Current Disaster Alerts",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap:
-                    true, // Prevents ListView from taking infinite height
-                physics:
-                    const NeverScrollableScrollPhysics(), // Disables internal scrolling for ListView
-                itemCount: disasterEvents.length,
-                itemBuilder: (context, index) {
-                  final event = disasterEvents[index];
-                  return Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 6.0,
-                      horizontal: 0,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            event.type.toString().split('.').last.toUpperCase(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color:
-                                  event.type == DisasterType.flood
-                                      ? Colors.blue.shade700
-                                      : event.type == DisasterType.cyclone
-                                      ? Colors.orange.shade700
-                                      : event.type == DisasterType.earthquake
-                                      ? Colors.brown.shade700
-                                      : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text("Location: ${event.locationSummary}"),
-                          const SizedBox(height: 4),
-                          Text("Details: ${event.severitySummary}"),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  final eventData = event.predictionData;
-                                  if (event.type == DisasterType.cyclone &&
-                                      eventData is CyclonePrediction) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => CycloneDetailsPage(
-                                              cyclonePrediction: eventData,
-                                            ),
-                                      ),
-                                    );
-                                  } else if (event.type == DisasterType.flood &&
-                                      eventData is FloodPrediction) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => FloodDetailsPage(
-                                              floodPrediction: eventData,
-                                            ),
-                                      ),
-                                    );
-                                  } else if (event.type ==
-                                          DisasterType.earthquake &&
-                                      eventData is EarthquakePrediction) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => EarthquakeDetailsPage(
-                                              earthquakePrediction: eventData,
-                                            ),
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          "Details page for this disaster type not implemented or data mismatch.",
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: const TranslatableText("View Details"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey[200],
-                                  foregroundColor: Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // TODO: Implement raise alert functionality
-                                },
-                                child: const TranslatableText("Raise Alert"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red.shade600,
-                                  foregroundColor: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
+              // Removed "Current Disaster Alerts" section from DashboardView
+              // This section is now only present on the DisasterOverviewPage
 
-              // Quick Actions GridView
+              // Quick Actions GridView, now displaying one card per row
               const TranslatableText(
                 "Quick Actions",
                 style: TextStyle(
@@ -439,10 +312,11 @@ class _DashboardViewState extends State<DashboardView> {
               ),
               const SizedBox(height: 10),
               GridView.count(
-                crossAxisCount: 2,
+                crossAxisCount: 1, // Changed to 1 to display one card per row
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 0.95, // Adjusted for better vertical spacing
+                childAspectRatio:
+                    3.5, // Adjusted for single column, wider cards
                 shrinkWrap:
                     true, // Prevents GridView from taking infinite height
                 physics:
