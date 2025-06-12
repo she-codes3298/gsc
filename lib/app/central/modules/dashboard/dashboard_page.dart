@@ -55,23 +55,30 @@ class _DashboardViewState extends State<DashboardView> {
 
   Future<void> fetchDisasterData() async {
     List<DisasterEvent> allFetchedDisasterData = [];
-    const newFloodApiUrl = 'https://flood-api-756506665902.us-central1.run.app/predict';
-    const newCycloneApiUrl = 'https://cyclone-api-756506665902.asia-south1.run.app/predict';
-    const newEarthquakeApiUrl = 'https://my-python-app-wwb655aqwa-uc.a.run.app/';
+    const newFloodApiUrl =
+        'https://flood-api-756506665902.us-central1.run.app/predict';
+    const newCycloneApiUrl =
+        'https://cyclone-api-756506665902.asia-south1.run.app/predict';
+    const newEarthquakeApiUrl =
+        'https://my-python-app-wwb655aqwa-uc.a.run.app/';
 
     // --- Earthquake (fetches once) ---
     try {
       final response = await http.get(Uri.parse(newEarthquakeApiUrl));
       if (response.statusCode == 200) {
         final earthquakeData = jsonDecode(response.body);
-        final earthquakePrediction = EarthquakePrediction.fromJson(earthquakeData);
+        final earthquakePrediction = EarthquakePrediction.fromJson(
+          earthquakeData,
+        );
         // Optional: Filter if earthquake API might return "no significant event"
         // For now, assuming it always returns something relevant or empty highRiskCities list
-        allFetchedDisasterData.add(DisasterEvent(
-          type: DisasterType.earthquake,
-          predictionData: earthquakePrediction,
-          timestamp: DateTime.now(),
-        ));
+        allFetchedDisasterData.add(
+          DisasterEvent(
+            type: DisasterType.earthquake,
+            predictionData: earthquakePrediction,
+            timestamp: DateTime.now(),
+          ),
+        );
       } else {
         print('Earthquake API Error: ${response.statusCode}');
       }
@@ -96,12 +103,14 @@ class _DashboardViewState extends State<DashboardView> {
           final data = jsonDecode(floodResponse.body);
           final prediction = FloodPrediction.fromJson(data);
           if (prediction.floodRisk.toLowerCase() != "no flood") {
-            allFetchedDisasterData.add(DisasterEvent(
-              type: DisasterType.flood,
-              predictionData: prediction,
-              timestamp: DateTime.now(),
-              // Consider adding cityName or original lat/lon to DisasterEvent if needed for context
-            ));
+            allFetchedDisasterData.add(
+              DisasterEvent(
+                type: DisasterType.flood,
+                predictionData: prediction,
+                timestamp: DateTime.now(),
+                // Consider adding cityName or original lat/lon to DisasterEvent if needed for context
+              ),
+            );
           }
         } else {
           print('Flood API Error for $cityName: ${floodResponse.statusCode}');
@@ -121,15 +130,20 @@ class _DashboardViewState extends State<DashboardView> {
           final data = jsonDecode(cycloneResponse.body);
           final prediction = CyclonePrediction.fromJson(data);
           if (prediction.cycloneCondition.toLowerCase() != "no cyclone" &&
-              prediction.cycloneCondition.toLowerCase() != "no active cyclones detected") {
-            allFetchedDisasterData.add(DisasterEvent(
-              type: DisasterType.cyclone,
-              predictionData: prediction,
-              timestamp: DateTime.now(),
-            ));
+              prediction.cycloneCondition.toLowerCase() !=
+                  "no active cyclones detected") {
+            allFetchedDisasterData.add(
+              DisasterEvent(
+                type: DisasterType.cyclone,
+                predictionData: prediction,
+                timestamp: DateTime.now(),
+              ),
+            );
           }
         } else {
-          print('Cyclone API Error for $cityName: ${cycloneResponse.statusCode}');
+          print(
+            'Cyclone API Error for $cityName: ${cycloneResponse.statusCode}',
+          );
         }
       } catch (e) {
         print('Cyclone API Exception for $cityName: $e');
@@ -146,77 +160,106 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     // Prepare markers for the map
-    List<Marker> mapMarkers = disasterEvents.map((event) {
-      LatLng? point;
-      Color markerColor = Colors.grey;
-      IconData markerIcon = Icons.place;
+    List<Marker> mapMarkers =
+        disasterEvents
+            .map((event) {
+              LatLng? point;
+              Color markerColor = Colors.grey;
+              IconData markerIcon = Icons.place;
 
-      if (event.type == DisasterType.flood) {
-        final data = event.predictionData as FloodPrediction;
-        point = LatLng(data.lat, data.lon);
-        markerColor = Colors.blue;
-        markerIcon = Icons.water_drop;
-      } else if (event.type == DisasterType.cyclone) {
-        final data = event.predictionData as CyclonePrediction;
-        point = LatLng(data.location.latitude, data.location.longitude);
-        markerColor = Colors.orange;
-        markerIcon = Icons.cyclone;
-      } else if (event.type == DisasterType.earthquake) {
-        // final data = event.predictionData as EarthquakePrediction;
-        // Simplified: Earthquake markers are skipped if direct LatLng is not available.
-        // A proper implementation would require geocoding city names.
-        // For now, we can assign a generic icon and color but no point unless one is available.
-        markerColor = Colors.brown;
-        markerIcon = Icons.volcano;
-        // If you have a representative LatLng for earthquakes, assign it to `point` here.
-        // Otherwise, `point` remains null and the marker won't be built.
-      }
+              if (event.type == DisasterType.flood) {
+                final data = event.predictionData as FloodPrediction;
+                point = LatLng(data.lat, data.lon);
+                markerColor = Colors.blue;
+                markerIcon = Icons.water_drop;
+              } else if (event.type == DisasterType.cyclone) {
+                final data = event.predictionData as CyclonePrediction;
+                point = LatLng(data.location.latitude, data.location.longitude);
+                markerColor = Colors.orange;
+                markerIcon = Icons.cyclone;
+              } else if (event.type == DisasterType.earthquake) {
+                // final data = event.predictionData as EarthquakePrediction;
+                // Simplified: Earthquake markers are skipped if direct LatLng is not available.
+                // A proper implementation would require geocoding city names.
+                // For now, we can assign a generic icon and color but no point unless one is available.
+                markerColor = Colors.brown;
+                markerIcon = Icons.volcano;
+                // If you have a representative LatLng for earthquakes, assign it to `point` here.
+                // Otherwise, `point` remains null and the marker won't be built.
+              }
 
-      if (point != null) {
-        return Marker(
-          width: 80.0,
-          height: 80.0,
-          point: point,
-          child: GestureDetector(
-            onTap: () {
-              final eventData = event.predictionData;
-              if (event.type == DisasterType.cyclone && eventData is CyclonePrediction) {
-                Navigator.push(
-                  context, // Using the main page's context
-                  MaterialPageRoute(builder: (context) => CycloneDetailsPage(cyclonePrediction: eventData)),
-                );
-              } else if (event.type == DisasterType.flood && eventData is FloodPrediction) {
-                Navigator.push(
-                  context, // Using the main page's context
-                  MaterialPageRoute(builder: (context) => FloodDetailsPage(floodPrediction: eventData)),
-                );
-              } else if (event.type == DisasterType.earthquake && eventData is EarthquakePrediction) {
-                // This case might not be hit by map markers if they are not created for earthquakes without direct LatLng
-                Navigator.push(
-                  context, // Using the main page's context
-                  MaterialPageRoute(builder: (context) => EarthquakeDetailsPage(earthquakePrediction: eventData)),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar( // Using main page's context for ScaffoldMessenger
-                  SnackBar(content: Text("No details page available for this map marker.")),
+              if (point != null) {
+                return Marker(
+                  width: 80.0,
+                  height: 80.0,
+                  point: point,
+                  child: GestureDetector(
+                    onTap: () {
+                      final eventData = event.predictionData;
+                      if (event.type == DisasterType.cyclone &&
+                          eventData is CyclonePrediction) {
+                        Navigator.push(
+                          context, // Using the main page's context
+                          MaterialPageRoute(
+                            builder:
+                                (context) => CycloneDetailsPage(
+                                  cyclonePrediction: eventData,
+                                ),
+                          ),
+                        );
+                      } else if (event.type == DisasterType.flood &&
+                          eventData is FloodPrediction) {
+                        Navigator.push(
+                          context, // Using the main page's context
+                          MaterialPageRoute(
+                            builder:
+                                (context) => FloodDetailsPage(
+                                  floodPrediction: eventData,
+                                ),
+                          ),
+                        );
+                      } else if (event.type == DisasterType.earthquake &&
+                          eventData is EarthquakePrediction) {
+                        // This case might not be hit by map markers if they are not created for earthquakes without direct LatLng
+                        Navigator.push(
+                          context, // Using the main page's context
+                          MaterialPageRoute(
+                            builder:
+                                (context) => EarthquakeDetailsPage(
+                                  earthquakePrediction: eventData,
+                                ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          // Using main page's context for ScaffoldMessenger
+                          SnackBar(
+                            content: Text(
+                              "No details page available for this map marker.",
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Tooltip(
+                      message:
+                          "${event.type.toString().split('.').last}: ${event.locationSummary}",
+                      child: Icon(
+                        markerIcon,
+                        color: markerColor,
+                        size: 40.0,
+                        semanticLabel:
+                            "${event.type.toString().split('.').last} marker",
+                      ),
+                    ),
+                  ),
                 );
               }
-            },
-            child: Tooltip(
-              message: "${event.type.toString().split('.').last}: ${event.locationSummary}",
-              child: Icon(
-                markerIcon,
-                color: markerColor,
-                size: 40.0,
-                semanticLabel: "${event.type.toString().split('.').last} marker",
-              ),
-            ),
-          ),
-        );
-      }
-      return null; // Return null for events that can't be mapped
-    }).where((marker) => marker != null).cast<Marker>().toList(); // Filter out nulls
-
+              return null; // Return null for events that can't be mapped
+            })
+            .where((marker) => marker != null)
+            .cast<Marker>()
+            .toList(); // Filter out nulls
 
     return Scaffold(
       body: Container(
@@ -232,7 +275,7 @@ class _DashboardViewState extends State<DashboardView> {
             stops: [0.3, 1.0],
           ),
         ),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,7 +308,7 @@ class _DashboardViewState extends State<DashboardView> {
                       size: 28,
                     ),
                   ),
-                   trailing: Text(
+                  trailing: Text(
                     "${disasterEvents.length} Active Event(s)",
                     style: TextStyle(
                       fontSize: 14,
@@ -284,12 +327,16 @@ class _DashboardViewState extends State<DashboardView> {
                   borderRadius: BorderRadius.circular(12.0),
                   child: FlutterMap(
                     options: MapOptions(
-                      initialCenter: LatLng(20.5937, 78.9629), // Center of India
+                      initialCenter: LatLng(
+                        20.5937,
+                        78.9629,
+                      ), // Center of India
                       initialZoom: 4.0,
                     ),
                     children: [
                       TileLayer(
-                        urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        urlTemplate:
+                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                         subdomains: const ['a', 'b', 'c'],
                       ),
                       MarkerLayer(markers: mapMarkers),
@@ -300,96 +347,126 @@ class _DashboardViewState extends State<DashboardView> {
               const SizedBox(height: 10),
 
               // Disaster Cards List Section
-              Expanded(
-                child: ListView.builder(
-                  itemCount: disasterEvents.length,
-                  itemBuilder: (context, index) {
-                    final event = disasterEvents[index];
-                    return Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0),
-                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              event.type.toString().split('.').last.toUpperCase(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: event.type == DisasterType.flood ? Colors.blue.shade700 :
-                                       event.type == DisasterType.cyclone ? Colors.orange.shade700 :
-                                       event.type == DisasterType.earthquake ? Colors.brown.shade700 :
-                                       Colors.black,
+              ListView.builder(
+                shrinkWrap:
+                    true, // Important: Makes ListView take only needed height
+                physics:
+                    const NeverScrollableScrollPhysics(), // Prevents nested scrolling
+                itemCount: disasterEvents.length,
+                itemBuilder: (context, index) {
+                  final event = disasterEvents[index];
+                  return Card(
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 6.0,
+                      horizontal: 0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            event.type.toString().split('.').last.toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color:
+                                  event.type == DisasterType.flood
+                                      ? Colors.blue.shade700
+                                      : event.type == DisasterType.cyclone
+                                      ? Colors.orange.shade700
+                                      : event.type == DisasterType.earthquake
+                                      ? Colors.brown.shade700
+                                      : Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text("Location: ${event.locationSummary}"),
+                          const SizedBox(height: 4),
+                          Text("Details: ${event.severitySummary}"),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  final eventData =
+                                      event
+                                          .predictionData; // To make conditions cleaner
+                                  if (event.type == DisasterType.cyclone &&
+                                      eventData is CyclonePrediction) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => CycloneDetailsPage(
+                                              cyclonePrediction: eventData,
+                                            ),
+                                      ),
+                                    );
+                                  } else if (event.type == DisasterType.flood &&
+                                      eventData is FloodPrediction) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => FloodDetailsPage(
+                                              floodPrediction: eventData,
+                                            ),
+                                      ),
+                                    );
+                                  } else if (event.type ==
+                                          DisasterType.earthquake &&
+                                      eventData is EarthquakePrediction) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => EarthquakeDetailsPage(
+                                              earthquakePrediction: eventData,
+                                            ),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "Details page for ${event.type.toString().split('.').last} not implemented or data mismatch.",
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: const TranslatableText("View Details"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey[200],
+                                  foregroundColor: Colors.black87,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text("Location: ${event.locationSummary}"),
-                            const SizedBox(height: 4),
-                            Text("Details: ${event.severitySummary}"),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    final eventData = event.predictionData; // To make conditions cleaner
-                                    if (event.type == DisasterType.cyclone && eventData is CyclonePrediction) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CycloneDetailsPage(cyclonePrediction: eventData),
-                                        ),
-                                      );
-                                    } else if (event.type == DisasterType.flood && eventData is FloodPrediction) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => FloodDetailsPage(floodPrediction: eventData),
-                                        ),
-                                      );
-                                    } else if (event.type == DisasterType.earthquake && eventData is EarthquakePrediction) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => EarthquakeDetailsPage(earthquakePrediction: eventData)),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text("Details page for ${event.type.toString().split('.').last} not implemented or data mismatch.")),
-                                      );
-                                    }
-                                  },
-                                  child: const TranslatableText("View Details"),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey[200],
-                                    foregroundColor: Colors.black87,
-                                  )
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // TODO: Implement raise alert functionality
+                                },
+                                child: const TranslatableText("Raise Alert"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red.shade600,
+                                  foregroundColor: Colors.white,
                                 ),
-                                const SizedBox(width: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // TODO: Implement raise alert functionality
-                                  },
-                                  child: const TranslatableText("Raise Alert"),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red.shade600,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-               const SizedBox(height: 10), // Spacing before the GridView
+              const SizedBox(height: 10), // Spacing before the GridView
               // Existing Quick Actions GridView (kept as per revised plan)
               const TranslatableText(
                 "Quick Actions",
@@ -400,57 +477,56 @@ class _DashboardViewState extends State<DashboardView> {
                 ),
               ),
               const SizedBox(height: 10),
-              // Removed Expanded from GridView. GridView will take its natural height.
-              // If scrolling is needed for the whole page, the outer Column should be in a SingleChildScrollView.
               GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 1.2,
+                // Decreased childAspectRatio to make cards taller, providing more vertical space.
+                // You might need to experiment with this value based on your DashboardCard's internal layout.
+                childAspectRatio:
+                    0.95, // Adjusted from 1.2 to 0.95 (example value)
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  // Note: The "Active Disasters" card is removed as per plan
                   DashboardCard(
-                      title: "Add Refugee Camp",
-                      count: "4", // Example count
-                      icon: Icons.add_location_alt,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/camp');
-                      },
-                    ),
-                    DashboardCard(
-                      title: "Ongoing SOS Alerts",
-                      count: "12", // Example count
-                      icon: Icons.sos_outlined,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/sos_alerts');
-                      },
-                    ),
-                    DashboardCard(
-                      title: "Rescue Teams", // Simplified title
-                      count: "5", // Example count
-                      icon: Icons.groups_rounded,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/deployed_teams');
-                      },
-                    ),
-                    DashboardCard(
-                      title: "Central Inventory",
-                      count: "150 Items", // Example count
-                      icon: Icons.inventory,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InventoryPage(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              
+                    title: "Add Refugee Camp",
+                    count: "4", // Example count
+                    icon: Icons.add_location_alt,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/camp');
+                    },
+                  ),
+                  DashboardCard(
+                    title: "Ongoing SOS Alerts",
+                    count: "12", // Example count
+                    icon: Icons.sos_outlined,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/sos_alerts');
+                    },
+                  ),
+                  DashboardCard(
+                    title: "Rescue Teams", // Simplified title
+                    count: "5", // Example count
+                    icon: Icons.groups_rounded,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/deployed_teams');
+                    },
+                  ),
+                  DashboardCard(
+                    title: "Central Inventory",
+                    count: "150 Items", // Example count
+                    icon: Icons.inventory,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InventoryPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ],
           ),
         ),
