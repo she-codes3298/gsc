@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../common/app_drawer.dart';
 import '../../common/bottom_nav.dart';
 import '../../common/dashboard_card.dart'; // Ensure this common widget is available
-import '../../common/translatable_text.dart';
+import '../../common/translatable_text.DART';
 import '../../common/language_selection_dialog.dart';
 import '../community/community_page.dart';
 import '../Teams/teams_page.dart';
@@ -274,94 +274,109 @@ class _DashboardViewState extends State<DashboardView> {
         child: SingleChildScrollView(
           // Makes the entire content scrollable
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 'Disaster Overview' card using DashboardCard
-              // Tapping this card will navigate to a new page with map and details
-              DashboardCard(
-                title: "Disaster Overview",
-                count: "${disasterEvents.length} Active Event(s)",
-                icon: Icons.map_outlined,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => DisasterOverviewPage(
-                            disasterEvents: disasterEvents,
-                            mapMarkers: mapMarkers,
+          // Added a bottom padding to ensure content above the BottomNavBar is visible
+          // and to prevent any potential clipping issues with the FAB.
+          child: Padding(
+            padding: const EdgeInsets.only(
+              bottom: 80.0,
+            ), // Adjust this value as needed
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 'Disaster Overview' card now also within a GridView.count for uniform styling
+                GridView.count(
+                  crossAxisCount: 1, // Ensures it takes full width
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio:
+                      2.5, // Adjusted for consistent height with other cards
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    DashboardCard(
+                      title: "Disaster Overview",
+                      count: "${disasterEvents.length} Active Event(s)",
+                      icon: Icons.map_outlined,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => DisasterOverviewPage(
+                                  disasterEvents: disasterEvents,
+                                  mapMarkers: mapMarkers,
+                                ),
                           ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-
-              // Removed "Current Disaster Alerts" section from DashboardView
-              // This section is now only present on the DisasterOverviewPage
-
-              // Quick Actions GridView, now displaying one card per row
-              const TranslatableText(
-                "Quick Actions",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              GridView.count(
-                crossAxisCount: 1, // Changed to 1 to display one card per row
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio:
-                    3.5, // Adjusted for single column, wider cards
-                shrinkWrap:
-                    true, // Prevents GridView from taking infinite height
-                physics:
-                    const NeverScrollableScrollPhysics(), // Disables internal scrolling for GridView
-                children: [
-                  DashboardCard(
-                    title: "Add Refugee Camp",
-                    count: "4",
-                    icon: Icons.add_location_alt,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/camp');
-                    },
+                const SizedBox(height: 10),
+
+                // Quick Actions GridView, now displaying one card per row
+                const TranslatableText(
+                  "Quick Actions",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  DashboardCard(
-                    title: "Ongoing SOS Alerts",
-                    count: "12",
-                    icon: Icons.sos_outlined,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/sos_alerts');
-                    },
-                  ),
-                  DashboardCard(
-                    title: "Rescue Teams",
-                    count: "5",
-                    icon: Icons.groups_rounded,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/deployed_teams');
-                    },
-                  ),
-                  DashboardCard(
-                    title: "Central Inventory",
-                    count: "150 Items",
-                    icon: Icons.inventory,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => InventoryPage(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 10),
+                GridView.count(
+                  crossAxisCount: 1, // Changed to 1 to display one card per row
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  // Adjusted childAspectRatio to give more vertical space and resolve overflow
+                  childAspectRatio:
+                      2.5, // Increased from 3.5 to 2.5 (example value)
+                  shrinkWrap:
+                      true, // Prevents GridView from taking infinite height
+                  physics:
+                      const NeverScrollableScrollPhysics(), // Disables internal scrolling for GridView
+                  children: [
+                    DashboardCard(
+                      title: "Add Refugee Camp",
+                      count: "4",
+                      icon: Icons.add_location_alt,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/camp');
+                      },
+                    ),
+                    DashboardCard(
+                      title: "Ongoing SOS Alerts",
+                      count: "12",
+                      icon: Icons.sos_outlined,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/sos_alerts');
+                      },
+                    ),
+                    DashboardCard(
+                      title: "Rescue Teams",
+                      count: "5",
+                      icon: Icons.groups_rounded,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/deployed_teams');
+                      },
+                    ),
+                    DashboardCard(
+                      title: "Central Inventory",
+                      count: "150 Items",
+                      icon: Icons.inventory,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InventoryPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
