@@ -137,12 +137,12 @@ class _RegisterPageState extends State<RegisterPage> {
                               selectedRole = newValue!;
                             });
                           },
-                          items: <String>['central_gov', 'state_gov']
+                          items: <String>['central_gov', 'Vendor']
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(
-                                value == 'central_gov' ? 'Central Government' : 'State Government',
+                                value == 'central_gov' ? 'Central Government' : 'Vendor',
                                 style: const TextStyle(color: Color(0xFF1A324C)),
                               ),
                             );

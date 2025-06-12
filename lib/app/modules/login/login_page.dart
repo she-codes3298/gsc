@@ -66,12 +66,17 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Set resizeToAvoidBottomInset to true (which is default, but explicitly stating for clarity)
+      // This allows the Scaffold to resize its body when the keyboard appears.
+      resizeToAvoidBottomInset: true,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            transform: GradientRotation(-40 * 3.14159 / 180), // -40 degrees in radians
+            transform: GradientRotation(
+              -40 * 3.14159 / 180,
+            ), // -40 degrees in radians
             colors: [
               Color(0xFF87CEEB), // Sky Blue - lighter and more vibrant
               Color(0xFF4682B4), // Steel Blue - professional yet lighter
@@ -79,140 +84,173 @@ class _LoginPageState extends State<LoginPage> {
             stops: [0.3, 1.0],
           ),
         ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Card(
-              elevation: 12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              color: Colors.white.withOpacity(0.95),
+        // Wrap the content with SingleChildScrollView to prevent overflow when keyboard appears.
+        // The keyboard will now push the content up, and if the content is too tall, it will scroll.
+        child: SingleChildScrollView(
+          // Ensure the content always occupies at least the available height,
+          // which helps when the content is shorter than the screen.
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1A324C).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.login,
-                        size: 48,
-                        color: Color(0xFF1A324C),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      selectedRole == "vendor" ? "VENDOR LOGIN" : "GOVERNMENT LOGIN",
-                      style: const TextStyle(
-                        color: Color(0xFF1A324C),
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    _buildTextField(emailController, "Email"),
-                    const SizedBox(height: 20),
-                    _buildTextField(passwordController, "Password", isPassword: true),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFF3789BB)),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: DropdownButton<String>(
-                        value: selectedRole,
-                        isExpanded: true,
-                        underline: const SizedBox(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedRole = newValue!;
-                          });
-                        },
-                        items: <String>['central_gov', 'vendor']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value == 'vendor' ? 'Vendor' : 'Central Government',
-                              style: const TextStyle(color: Color(0xFF1A324C)),
-                            ),
-                          );
-                        }).toList(),
-                        dropdownColor: Colors.white,
-                        iconEnabledColor: const Color(0xFF3789BB),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    isLoading
-                        ? const CircularProgressIndicator(
-                      color: Color(0xFF3789BB),
-                    )
-                        : SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3789BB),
-                          shape: RoundedRectangleBorder(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Card(
+                  elevation: 12,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  color: Colors.white.withOpacity(0.95),
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // Keep the column compact
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A324C).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          elevation: 4,
+                          child: const Icon(
+                            Icons.login,
+                            size: 48,
+                            color: Color(0xFF1A324C),
+                          ),
                         ),
-                        child: const Text(
-                          "LOGIN",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+                        const SizedBox(height: 20),
+                        Text(
+                          selectedRole == "vendor"
+                              ? "VENDOR LOGIN"
+                              : "GOVERNMENT LOGIN",
+                          style: const TextStyle(
+                            color: Color(0xFF1A324C),
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RegisterPage()),
-                      ),
-                      child: const Text(
-                        "Don't have an account? Register",
-                        style: TextStyle(color: Color(0xFF3789BB)),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: Implement password reset functionality
-                      },
-                      child: const Text(
-                        "Forgot Password?",
-                        style: TextStyle(color: Color(0xFF3789BB)),
-                      ),
-                    ),
-                    if (errorMessage.isNotEmpty) ...[
-                      const SizedBox(height: 15),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.red.withOpacity(0.3)),
+                        const SizedBox(height: 30),
+                        _buildTextField(emailController, "Email"),
+                        const SizedBox(height: 20),
+                        _buildTextField(
+                          passwordController,
+                          "Password",
+                          isPassword: true,
                         ),
-                        child: Text(
-                          errorMessage,
-                          style: const TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xFF3789BB)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: DropdownButton<String>(
+                            value: selectedRole,
+                            isExpanded: true,
+                            underline: const SizedBox(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedRole = newValue!;
+                              });
+                            },
+                            items:
+                                <String>[
+                                  'central_gov',
+                                  'vendor',
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value == 'vendor'
+                                          ? 'Vendor'
+                                          : 'Central Government',
+                                      style: const TextStyle(
+                                        color: Color(0xFF1A324C),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                            dropdownColor: Colors.white,
+                            iconEnabledColor: const Color(0xFF3789BB),
+                          ),
                         ),
-                      ),
-                    ],
-                  ],
+                        const SizedBox(height: 30),
+                        isLoading
+                            ? const CircularProgressIndicator(
+                              color: Color(0xFF3789BB),
+                            )
+                            : SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: login,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF3789BB),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 4,
+                                ),
+                                child: const Text(
+                                  "LOGIN",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed:
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegisterPage(),
+                                ),
+                              ),
+                          child: const Text(
+                            "Don't have an account? Register",
+                            style: TextStyle(color: Color(0xFF3789BB)),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextButton(
+                          onPressed: () {
+                            // TODO: Implement password reset functionality
+                          },
+                          child: const Text(
+                            "Forgot Password?",
+                            style: TextStyle(color: Color(0xFF3789BB)),
+                          ),
+                        ),
+                        if (errorMessage.isNotEmpty) ...[
+                          const SizedBox(height: 15),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.red.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Text(
+                              errorMessage,
+                              style: const TextStyle(color: Colors.red),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -222,7 +260,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, {bool isPassword = false}) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label, {
+    bool isPassword = false,
+  }) {
     return TextField(
       controller: controller,
       obscureText: isPassword,

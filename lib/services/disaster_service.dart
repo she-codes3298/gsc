@@ -29,25 +29,35 @@ class DisasterService {
     {'name': 'Karachi', 'lat': 24.8607, 'lon': 67.0011, 'country': 'Pakistan'},
     {'name': 'Lahore', 'lat': 31.5204, 'lon': 74.3587, 'country': 'Pakistan'},
     {'name': 'Dhaka', 'lat': 23.8103, 'lon': 90.4125, 'country': 'Bangladesh'},
-    {'name': 'Chittagong', 'lat': 22.3569, 'lon': 91.7832, 'country': 'Bangladesh'},
+    {
+      'name': 'Chittagong',
+      'lat': 22.3569,
+      'lon': 91.7832,
+      'country': 'Bangladesh',
+    },
     {'name': 'Kathmandu', 'lat': 27.7172, 'lon': 85.3240, 'country': 'Nepal'},
     {'name': 'Colombo', 'lat': 6.9271, 'lon': 79.8612, 'country': 'Sri Lanka'},
     {'name': 'Yangon', 'lat': 16.8409, 'lon': 96.1735, 'country': 'Myanmar'},
-    {'name': 'Thimphu', 'lat': 27.4728, 'lon': 89.6390, 'country': 'Bhutan'}
+    {'name': 'Thimphu', 'lat': 27.4728, 'lon': 89.6390, 'country': 'Bhutan'},
   ];
 
   Future<List<DisasterEvent>> fetchAndFilterDisasterData() async {
     List<DisasterEvent> allFetchedDisasterData = [];
-    const newFloodApiUrl = 'https://flood-api-756506665902.us-central1.run.app/predict';
-    const newCycloneApiUrl = 'https://cyclone-api-756506665902.asia-south1.run.app/predict';
-    const newEarthquakeApiUrl = 'https://my-python-app-wwb655aqwa-uc.a.run.app/';
+    const newFloodApiUrl =
+        'https://flood-api-756506665902.us-central1.run.app/predict';
+    const newCycloneApiUrl =
+        'https://cyclone-api-756506665902.asia-south1.run.app/predict';
+    const newEarthquakeApiUrl =
+        'https://my-fastapi-app-wwb655aqwa-uc.a.run.app/';
 
     // --- Earthquake (fetches once) ---
     try {
       final response = await _client.get(Uri.parse(newEarthquakeApiUrl));
       if (response.statusCode == 200) {
         final earthquakeData = jsonDecode(response.body);
-        final earthquakePrediction = EarthquakePrediction.fromJson(earthquakeData);
+        final earthquakePrediction = EarthquakePrediction.fromJson(
+          earthquakeData,
+        );
 
         // Earthquake Filtering:
         bool meetsMagnitudeCriteria = false;
@@ -73,11 +83,13 @@ class DisasterService {
         }
 
         if (meetsMagnitudeCriteria && isLocatedInIndia) {
-          allFetchedDisasterData.add(DisasterEvent(
-            type: DisasterType.earthquake,
-            predictionData: earthquakePrediction,
-            timestamp: DateTime.now(),
-          ));
+          allFetchedDisasterData.add(
+            DisasterEvent(
+              type: DisasterType.earthquake,
+              predictionData: earthquakePrediction,
+              timestamp: DateTime.now(),
+            ),
+          );
         }
       } else {
         print('Earthquake API Error: ${response.statusCode}');
@@ -110,11 +122,13 @@ class DisasterService {
           // Flood Filtering: Only include events where floodRisk is "medium" or "high".
           final floodRisk = prediction.floodRisk.toLowerCase();
           if (floodRisk == "medium" || floodRisk == "high") {
-            allFetchedDisasterData.add(DisasterEvent(
-              type: DisasterType.flood,
-              predictionData: prediction,
-              timestamp: DateTime.now(),
-            ));
+            allFetchedDisasterData.add(
+              DisasterEvent(
+                type: DisasterType.flood,
+                predictionData: prediction,
+                timestamp: DateTime.now(),
+              ),
+            );
           }
         } else {
           print('Flood API Error for $cityName: ${floodResponse.statusCode}');
@@ -143,18 +157,24 @@ class DisasterService {
                 includeCyclone = true;
               }
             } catch (e) {
-              print('Error parsing cyclone category for $cityName: $cycloneCondition, Error: $e');
+              print(
+                'Error parsing cyclone category for $cityName: $cycloneCondition, Error: $e',
+              );
             }
           }
           if (includeCyclone) {
-            allFetchedDisasterData.add(DisasterEvent(
-              type: DisasterType.cyclone,
-              predictionData: prediction,
-              timestamp: DateTime.now(),
-            ));
+            allFetchedDisasterData.add(
+              DisasterEvent(
+                type: DisasterType.cyclone,
+                predictionData: prediction,
+                timestamp: DateTime.now(),
+              ),
+            );
           }
         } else {
-          print('Cyclone API Error for $cityName: ${cycloneResponse.statusCode}');
+          print(
+            'Cyclone API Error for $cityName: ${cycloneResponse.statusCode}',
+          );
         }
       } catch (e) {
         print('Cyclone API Exception for $cityName: $e');
