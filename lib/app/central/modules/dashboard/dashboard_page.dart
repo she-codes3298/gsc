@@ -275,7 +275,6 @@ class _DashboardViewState extends State<DashboardView> {
             stops: [0.3, 1.0],
           ),
         ),
-        // Wrap the Padding with SingleChildScrollView
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -348,10 +347,6 @@ class _DashboardViewState extends State<DashboardView> {
               const SizedBox(height: 10),
 
               // Disaster Cards List Section
-              // The ListView.builder should ideally not be inside a Column wrapped by SingleChildScrollView if it has unbound height.
-              // However, since it's already wrapped by an Expanded, it will take remaining space.
-              // To make the entire screen scrollable, we remove the Expanded from the ListView.builder and allow it to
-              // take its intrinsic height within the SingleChildScrollView.
               ListView.builder(
                 shrinkWrap:
                     true, // Important: Makes ListView take only needed height
@@ -482,17 +477,17 @@ class _DashboardViewState extends State<DashboardView> {
                 ),
               ),
               const SizedBox(height: 10),
-              // Removed Expanded from GridView. GridView will take its natural height.
-              // If scrolling is needed for the whole page, the outer Column should be in a SingleChildScrollView.
               GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 1.2,
+                // Decreased childAspectRatio to make cards taller, providing more vertical space.
+                // You might need to experiment with this value based on your DashboardCard's internal layout.
+                childAspectRatio:
+                    0.95, // Adjusted from 1.2 to 0.95 (example value)
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  // Note: The "Active Disasters" card is removed as per plan
                   DashboardCard(
                     title: "Add Refugee Camp",
                     count: "4", // Example count
