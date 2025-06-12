@@ -7,8 +7,10 @@ enum DisasterType { flood, cyclone, earthquake, unknown }
 
 class DisasterEvent {
   final DisasterType type;
-  final dynamic predictionData; // This will hold FloodPrediction, CyclonePrediction, or EarthquakePrediction
-  final DateTime timestamp; // Common field for when the event was fetched or occurred
+  final dynamic
+  predictionData; // This will hold FloodPrediction, CyclonePrediction, or EarthquakePrediction
+  final DateTime
+  timestamp; // Common field for when the event was fetched or occurred
 
   DisasterEvent({
     required this.type,
@@ -20,11 +22,16 @@ class DisasterEvent {
   String get locationSummary {
     if (type == DisasterType.flood && predictionData is FloodPrediction) {
       return (predictionData as FloodPrediction).matchedDistrict;
-    } else if (type == DisasterType.cyclone && predictionData is CyclonePrediction) {
+    } else if (type == DisasterType.cyclone &&
+        predictionData is CyclonePrediction) {
       return (predictionData as CyclonePrediction).location.district;
-    } else if (type == DisasterType.earthquake && predictionData is EarthquakePrediction) {
+    } else if (type == DisasterType.earthquake &&
+        predictionData is EarthquakePrediction) {
       if ((predictionData as EarthquakePrediction).highRiskCities.isNotEmpty) {
-        return (predictionData as EarthquakePrediction).highRiskCities.first.city;
+        return (predictionData as EarthquakePrediction)
+            .highRiskCities
+            .first
+            .city;
       }
       return "Multiple Areas";
     }
@@ -33,11 +40,13 @@ class DisasterEvent {
 
   // Helper to get a general severity string
   String get severitySummary {
-     if (type == DisasterType.flood && predictionData is FloodPrediction) {
+    if (type == DisasterType.flood && predictionData is FloodPrediction) {
       return "Risk: ${(predictionData as FloodPrediction).floodRisk}";
-    } else if (type == DisasterType.cyclone && predictionData is CyclonePrediction) {
+    } else if (type == DisasterType.cyclone &&
+        predictionData is CyclonePrediction) {
       return (predictionData as CyclonePrediction).cycloneCondition;
-    } else if (type == DisasterType.earthquake && predictionData is EarthquakePrediction) {
+    } else if (type == DisasterType.earthquake &&
+        predictionData is EarthquakePrediction) {
       if ((predictionData as EarthquakePrediction).highRiskCities.isNotEmpty) {
         // Find max magnitude or summarize
         double maxMag = 0;
