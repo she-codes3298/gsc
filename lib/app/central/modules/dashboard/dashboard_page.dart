@@ -292,7 +292,9 @@ class _DashboardViewState extends State<DashboardView> {
                     padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
                     // Added bottom padding to ensure content is visible above the BottomNavBar
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment
+                              .stretch, // MODIFIED: This makes children fill the width
                       children: [
                         // --- REFACTORED SECTION ---
                         // Replaced GridView with a direct DashboardCard widget for simplicity and flexibility.
@@ -329,6 +331,9 @@ class _DashboardViewState extends State<DashboardView> {
                         // Replaced GridView with a Column for a flexible vertical layout.
                         // This is the key fix for the overflow issue.
                         Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .stretch, // ADDED: Ensures cards in this column also stretch
                           children: [
                             DashboardCard(
                               title: "Add Refugee Camp",
